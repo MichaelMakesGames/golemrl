@@ -1,0 +1,46 @@
+* Levels
+At least for the first build, there will be set levels that the player goes through. Each level has a distinct theme and appearance, and some unique enemies. Later, the selection of levels may vary each playthrough.
+
+** (01) Graveyard
+*** Enemies
+The creatures in the first level are the remains of other dying golems.
+
+Animated Clay: The very last remnants of golems. They are slow and weak, and pose little threat on their own. However, they tend to group together.
+
+Eroded Golem: These golems are in a state only slightly worse than the player. They pose larger threat and fighting more than one at once can overwhelm the player. To compensate, they provide more clay.
+
+Giant Earthworm: These worms have become bloated feasting on the corpses of golems. They are the most dangerous monster in the Graveyard. They are typically found alone, but Animated Clay emerge from their dead bodies.
+
+Golem Cannibal: Some golems from Outcast Town come to prey on the weak and dying. These enemies tend to be strong and can be the cause of many early deaths. They usually work alone, but sometimes are found working in teams.
+
+*** Resources
+Clay is available in large amounts, both from defeated enemies and from some map features.
+
+Rock can be found in small amounts from eroded golems and golem cannibals.
+
+*** Map
+A winding passageway interspersed with caverns. There are also some side passages offering greater reward / greater risk.
+
+** (02) Outcast Town
+** (03) Cavern
+** (04) Dwarven Heretic Outpost
+** (05) Hive
+** (06) Queen's Layer
+** (07) Clay Mines
+** (08) Slave Quarters
+** (09) Dungeon
+** (10) Cellar
+** (11) Kitchens
+** (12) Atrium
+** (13) Barracks
+** (14) Apprentices' Dormitory
+** (15) Library
+** (16) Portal Nexus
+** (17) Training Rooms
+** (18) Alchemy Lab
+** (19) Golem Factory
+** (20) Creator's Study
+
+* Gameplay
+
+* Plot
