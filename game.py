@@ -120,8 +120,7 @@ def new_game(seed = 0xDEADBEEF):
     player.input_handler.owner = player
     g = Game(player, [], game_map, [])
 
-    mon1_x,mon1_y = 2,28
-    mon1_physics_comp = Physics(2,28,game_map.levels[0],False,True)
+    mon1_physics_comp = Physics(5,26,game_map.levels[0],False,True)
     mon1_creature_comp = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
     mon1 = GameObject(obj_id = 1,
                       physics_comp = mon1_physics_comp,

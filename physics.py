@@ -22,8 +22,15 @@ class Physics:
             new_y >= self.level.first_row and
             new_y <= self.level.last_row):
             obj_positions = [obj.physics_comp.pos for obj in game.g.game_objects]
-            if (self.level(new_x,new_y).move_through and
-                (new_x,new_y) not in obj_positions) or self.ghost:
+            for obj in game.g.game_objects:
+                if (obj.physics_comp and
+                    (new_x,new_y) == obj.physics_comp.pos):
+                    if obj.creature_comp and obj.creature_comp.alive:
+                        self.owner.creature_comp.attack(obj)
+                        return
+
+            if (self.level(new_x,new_y).move_through):# and
+                #(new_x,new_y) not in obj_positions) or self.ghost:
                 self.x = new_x
                 self.y = new_y
                 if self.owner.creature_comp:

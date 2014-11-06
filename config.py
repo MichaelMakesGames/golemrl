@@ -20,8 +20,8 @@ PANEL_H=50
 
 LIMIT_FPS=30
 
-LEVEL_W = 75
-LEVEL_H = 75
+LEVEL_W = 50
+LEVEL_H = 50
 
 WALL_CHAR = '#'
 C_WALL = libtcod.dark_sepia
@@ -38,6 +38,9 @@ C_FLOOR_BKGND_UNSEEN = libtcod.light_gray
 C_BORDER = libtcod.light_gray
 C_BORDER_BKGND = libtcod.black
 
+CORPSE_CHAR = '%'
+C_CORPSE = libtcod.dark_red
+
 LOG_FADE = 0.75
 C_DEBUG_MSG = libtcod.light_blue
-C_COMBAT_MSG = libtcod.red
+C_COMBAT_MSG = libtcod.light_red

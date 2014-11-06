@@ -33,10 +33,18 @@ class Creature:
     def attack(self,obj):
         if obj.creature_comp:
             obj.creature_comp.take_damage(self.strength)
+            game.g.message(self.name + ' hits ' +
+                           obj.creature_comp.name +
+                           ' for ' + str(self.strength) + ' damage.',
+                           C_COMBAT_MSG)
 
     def die(self):
+        self.char = CORPSE_CHAR
+        self.color = C_CORPSE
+        game.g.message(self.name + ' dies!',C_COMBAT_MSG)
+        self.name += ' Corpse'
         pass
 
     @property
     def alive(self):
-        return self.health < 0
+        return self.health > 0
