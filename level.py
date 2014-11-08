@@ -241,6 +241,13 @@ class Level:
                             cur_dir = libtcod.random_get_int(self.rng,0,1)
                     for i in range(libtcod.random_get_int(self.rng,min_length,max_length)):
                         #now go forward a randomized number of spaces
+
+                        if i == 0 and turn_num != 0:
+                            #just turned, check corner to avoid following:   .###
+                            for neighbor in self.get_neighbors(cur_x,cur_y): #...
+                                if neighbor.is_floor():      #.##
+                                    abandon = True                           #.##
+
                         if cur_dir == 0: #north/up
                             cur_y -= 1
                         elif cur_dir == 1: #south/down
@@ -249,6 +256,7 @@ class Level:
                             cur_x += 1
                         elif cur_dir == 3: #west/left
                             cur_x -= 1
+
                         if not connection and not abandon:
                             if not self.is_in_level(cur_x,cur_y):
                                 #abandon if tunnel runs of edge of map
