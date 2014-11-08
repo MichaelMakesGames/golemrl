@@ -29,8 +29,7 @@ class Physics:
                         self.owner.creature_comp.attack(obj)
                         return
 
-            if (self.level(new_x,new_y).move_through):# and
-                #(new_x,new_y) not in obj_positions) or self.ghost:
+            if (self.level(new_x,new_y).move_through) or self.ghost:
                 self.x = new_x
                 self.y = new_y
                 if self.owner.creature_comp:
