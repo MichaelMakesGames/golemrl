@@ -27,7 +27,8 @@ def main():
         if choice == 0:
             seed = random.randrange(10000)
             print seed
-            game.new_game()#seed)
+            logging.info('Starting new game with seed %i' % seed)
+            game.new_game(seed)
             game.g.play()
         elif choice == 1:
             load_game()

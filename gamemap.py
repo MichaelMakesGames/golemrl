@@ -6,16 +6,21 @@ from level import Level
 from room import Cave
 import game
 
+logger = logging.getLogger('map')
+
 class GameMap:
     """GameMap now is mostly a container for levels, and handles
     rendering"""
     def __init__(self, seed):
+        logger.info('Making game map')
         self.rng = libtcod.random_new_from_seed(seed)
         self.messages = ['player_moved']
         
         self.levels = [None]
         passed = False
-        while not passed:
+        attempt_num = 1
+        while not passed and attempt_num < 10:
+            logger.info('Generating level, attempt %i' % attempt_num)
             self.levels[0] = Level(self.rng,LEVEL_W,LEVEL_H)
             self.levels[0].generate_caves()
             self.levels[0].smooth_caves()
@@ -23,8 +28,9 @@ class GameMap:
             self.levels[0].remove_caves_by_size()
             self.levels[0].connect_caves()
             self.levels[0].remove_isolated_caves()
-            if len(self.levels[0].rooms) >= 8:
+            if len(self.levels[0].rooms) >= 15:
                 passed = True
+            attempt_num += 1
 
         for level in self.levels:
             level.owner = self

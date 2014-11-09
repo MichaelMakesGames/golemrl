@@ -76,3 +76,11 @@ class Cave:
     @property
     def max_y(self):
         return self.max_y_cells[0][1]
+
+    def add_connection(self,room):
+        if room not in self.connections:
+            self.connections.append(room.room_id)
+            room.connections.append(self.room_id)
+
+class Tunnel(Cave):
+    pass

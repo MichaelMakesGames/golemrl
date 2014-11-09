@@ -2,7 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging
 from tile import Tile
-from room import Cave
+from room import Cave, Tunnel
 
 class Level:
     """The GameMap consists of several levels. This contains
@@ -224,7 +224,7 @@ class Level:
     def connect_caves(self,max_turns=2,min_length=4,max_length=6):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
-        for cave in self.rooms:
+        for cave in self.caves:
             attempts = [ positions[libtcod.random_get_int(self.rng,0,len(positions)-1)] for positions in [cave.min_y_cells,cave.max_y_cells,cave.max_x_cells,cave.min_x_cells] ] #creates list of starting coordinates for each attempt in the four directions
             for attempt in attempts:
                 cur_x,cur_y = attempt
@@ -245,7 +245,7 @@ class Level:
                         if i == 0 and turn_num != 0:
                             #just turned, check corner to avoid following:   .###
                             for neighbor in self.get_neighbors(cur_x,cur_y): #...
-                                if neighbor.is_floor():      #.##
+                                if neighbor.is_floor():                      #.##
                                     abandon = True                           #.##
 
                         if cur_dir == 0: #north/up
@@ -263,13 +263,12 @@ class Level:
                                 abandon = True
                             elif self.is_room(cur_x,cur_y): #found room
                                 connected_to = self.which_room(cur_x,cur_y)
-                                if connected_to == start_room_id:
-                                    #abandon if back starting room
+                                if (connected_to == start_room_id or
+                                    self.get_room(connected_to) in self.tunnels):
+                                    #abandon if back starting room or connected to tunnel
                                     abandon = True
                                 else:
                                     connection = True
-                                    if connected_to not in self.get_room(start_room_id).connections:
-                                        self.get_room(start_room_id).connections.append(connected_to)
                             elif self.get_tile(cur_x,cur_y).is_floor():
                                 #not room but is floor
                                 #intersecting other tunnel, abandon
@@ -284,10 +283,17 @@ class Level:
                                 #hasn't found room or run off map
                                 #so append new pos to tunnel list
                                 tunnel_positions.append((cur_x,cur_y))
-                if connection: #dig tunnel if successful
+
+                if connection:
+                    #dig tunnel if successful and make rooms
                     for pos in tunnel_positions:
                         self.get_tile(*pos).make_floor()
                         #self.get_tile(*pos).color = libtcod.blue #DEBUG
+                    tunnel = Tunnel(self.get_next_room_id())
+                    tunnel.tile_positions = tunnel_positions
+                    tunnel.add_connection(self.get_room(start_room_id))
+                    tunnel.add_connection(self.get_room(connected_to))
+                    self.rooms.append(tunnel)
 
     def remove_isolated_caves(self):
         """finds largest cave network and removes other caves.
