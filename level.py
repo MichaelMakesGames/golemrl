@@ -108,7 +108,7 @@ class Level:
         room = self.get_room(room_id)
         for pos in room.tile_positions:
             self.get_tile(*pos).make_wall()
-            #self.get_tile(*pos).color = libtcod.red #DEBUG
+            self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
         self.rooms.remove(room)
 
     def get_start_pos(self):
@@ -131,8 +131,8 @@ class Level:
             for y in range(self.h):
                 self.get_tile(x,y).explored = True
 
-    def generate_caves(self, init_chance=0.5,
-                       grow=6, starve=9, wither=3,
+    def generate_caves(self, init_chance=0.7,
+                       grow=7, starve=9, wither=5,
                        num_visits=2500):
         """Automata cave generation based on Evil Science's method"""
         for col in self.tiles[1:-1]:
@@ -212,7 +212,7 @@ class Level:
         cave.tile_positions = tile_positions
         self.rooms.append(cave)
 
-    def remove_caves_by_size(self,min_size=20,max_size=500):
+    def remove_caves_by_size(self,min_size=12,max_size=200):
         """remove caves deemed too large or small"""
         caves_to_remove = []
         for cave in self.rooms:
@@ -221,79 +221,95 @@ class Level:
         for cave in caves_to_remove:
             self.remove_room(cave)
 
-    def connect_caves(self,max_turns=2,min_length=4,max_length=6):
+    def connect_caves(self,tries_per_room=16,
+                      max_turns=2,min_length=6,max_length=10):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
         for cave in self.caves:
-            attempts = [ positions[libtcod.random_get_int(self.rng,0,len(positions)-1)] for positions in [cave.min_y_cells,cave.max_y_cells,cave.max_x_cells,cave.min_x_cells] ] #creates list of starting coordinates for each attempt in the four directions
-            for attempt in attempts:
-                cur_x,cur_y = attempt
-                start_room_id = self.which_room(*attempt)
-                abandon = False
-                connection = False
-                tunnel_positions = []
-                cur_dir = attempts.index(attempt) #directions: n-0, s-1, e-2, w-3
-                for turn_num in range(max_turns+1):
-                    if turn_num != 0: #turn if not first segment
-                        if cur_dir == 0 or cur_dir == 1: #go east/west
-                            cur_dir = libtcod.random_get_int(self.rng,2,3)
-                        else: #go north/south
-                            cur_dir = libtcod.random_get_int(self.rng,0,1)
-                    for i in range(libtcod.random_get_int(self.rng,min_length,max_length)):
-                        #now go forward a randomized number of spaces
+            possible_starts = (cave.min_x_cells + cave.max_x_cells +
+                               cave.min_y_cells + cave.max_y_cells)
+            for try_num in range(tries_per_room):
+                if possible_starts:
+                    start_cell = possible_starts[libtcod.random_get_int(self.rng,0,len(possible_starts)-1)]
+                    cur_x,cur_y = start_cell
+                    start_room_id = self.which_room(*start_cell)
+                    abandon = False
+                    connection = False
+                    tunnel_positions = []
+                    if start_cell in cave.min_y_cells:
+                        cur_dir = 0 #north
+                    elif start_cell in cave.max_y_cells:
+                        cur_dir = 1 #south
+                    elif start_cell in cave.max_x_cells:
+                        cur_dir = 2 #east
+                    elif start_cell in cave.min_x_cells:
+                        cur_dir = 3 #west
 
-                        if i == 0 and turn_num != 0:
-                            #just turned, check corner to avoid following:   .###
-                            for neighbor in self.get_neighbors(cur_x,cur_y): #...
-                                if neighbor.is_floor():                      #.##
-                                    abandon = True                           #.##
+                    for turn_num in range(max_turns+1):
+                        if turn_num != 0: #turn if not first segment
+                            if cur_dir == 0 or cur_dir == 1: #go east/west
+                                cur_dir = libtcod.random_get_int(self.rng,2,3)
+                            else: #go north/south
+                                cur_dir = libtcod.random_get_int(self.rng,0,1)
+                        for i in range(libtcod.random_get_int(self.rng,min_length,max_length)):
+                            #now go forward a randomized number of spaces
 
-                        if cur_dir == 0: #north/up
-                            cur_y -= 1
-                        elif cur_dir == 1: #south/down
-                            cur_y += 1
-                        elif cur_dir == 2: #east/right
-                            cur_x += 1
-                        elif cur_dir == 3: #west/left
-                            cur_x -= 1
+                            if i == 0 and turn_num != 0:
+                                #just turned, check corner to avoid following:   .###
+                                for neighbor in self.get_neighbors(cur_x,cur_y): #...
+                                    if neighbor.is_floor():                      #.##
+                                        abandon = True                           #.##
 
-                        if not connection and not abandon:
-                            if not self.is_in_level(cur_x,cur_y):
-                                #abandon if tunnel runs of edge of map
-                                abandon = True
-                            elif self.is_room(cur_x,cur_y): #found room
-                                connected_to = self.which_room(cur_x,cur_y)
-                                if (connected_to == start_room_id or
-                                    self.get_room(connected_to) in self.tunnels):
-                                    #abandon if back starting room or connected to tunnel
+                            if cur_dir == 0: #north/up
+                                cur_y -= 1
+                            elif cur_dir == 1: #south/down
+                                cur_y += 1
+                            elif cur_dir == 2: #east/right
+                                cur_x += 1
+                            elif cur_dir == 3: #west/left
+                                cur_x -= 1
+
+                            if not connection and not abandon:
+                                if not self.is_in_level(cur_x,cur_y):
+                                    #abandon if tunnel runs of edge of map
+                                    abandon = True
+                                elif self.is_room(cur_x,cur_y): #found room
+                                    connected_to = self.which_room(cur_x,cur_y)
+                                    if (connected_to == start_room_id or
+                                        self.get_room(connected_to) in self.tunnels):
+                                        #abandon if back starting room or connected to tunnel
+                                        abandon = True
+                                    else:
+                                        connection = True
+                                elif self.get_tile(cur_x,cur_y).is_floor():
+                                    #not room but is floor
+                                    #intersecting other tunnel, abandon
+                                    abandon = True
+                                elif ((cur_dir >= 2 and (self.get_tile(cur_x,cur_y+1,True).is_floor() or
+                                                         self.get_tile(cur_x,cur_y-1,True).is_floor())) or
+                                      (cur_dir <= 1 and (self.get_tile(cur_x+1,cur_y,True).is_floor() or
+                                                         self.get_tile(cur_x-1,cur_y,True).is_floor()))):
+                                    #adjacent is floor, abandon
                                     abandon = True
                                 else:
-                                    connection = True
-                            elif self.get_tile(cur_x,cur_y).is_floor():
-                                #not room but is floor
-                                #intersecting other tunnel, abandon
-                                abandon = True
-                            elif ((cur_dir >= 2 and (self.get_tile(cur_x,cur_y+1,True).is_floor() or
-                                                     self.get_tile(cur_x,cur_y-1,True).is_floor())) or
-                                  (cur_dir <= 1 and (self.get_tile(cur_x+1,cur_y,True).is_floor() or
-                                                     self.get_tile(cur_x-1,cur_y,True).is_floor()))):
-                                #adjacent is floor, abandon
-                                abandon = True
-                            else:
-                                #hasn't found room or run off map
-                                #so append new pos to tunnel list
-                                tunnel_positions.append((cur_x,cur_y))
+                                    #hasn't found room or run off map
+                                    #so append new pos to tunnel list
+                                    tunnel_positions.append((cur_x,cur_y))
 
-                if connection:
-                    #dig tunnel if successful and make rooms
-                    for pos in tunnel_positions:
-                        self.get_tile(*pos).make_floor()
-                        #self.get_tile(*pos).color = libtcod.blue #DEBUG
-                    tunnel = Tunnel(self.get_next_room_id())
-                    tunnel.tile_positions = tunnel_positions
-                    tunnel.add_connection(self.get_room(start_room_id))
-                    tunnel.add_connection(self.get_room(connected_to))
-                    self.rooms.append(tunnel)
+                    if connection:
+                        #dig tunnel if successful and make rooms
+                        for pos in tunnel_positions:
+                            self.get_tile(*pos).make_floor()
+                            #self.get_tile(*pos).color = libtcod.blue #DEBUG
+                        tunnel = Tunnel(self.get_next_room_id())
+                        tunnel.tile_positions = tunnel_positions
+                        tunnel.add_connection(self.get_room(start_room_id))
+                        tunnel.add_connection(self.get_room(connected_to))
+                        self.rooms.append(tunnel)
+
+                        #remove start cell from possible starts, so we don't
+                        #try to make a tunnel where we already have one
+                        possible_starts.remove(start_cell)
 
     def remove_isolated_caves(self):
         """finds largest cave network and removes other caves.
