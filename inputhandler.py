@@ -44,7 +44,10 @@ class InputHandler:
             elif key_char == 'p': #print pos to term
                 game.g.message("Player at: " + str(self.owner.physics_comp.pos),C_DEBUG_MSG)
                 #print self.owner.physics_comp.pos
-            elif key_char == 'e': #explore level
+            elif key_char == 'e':
+                game.g.game_map.levels[game.g.cur_level].explore_explorable()
+                game.g.message("Level explored",C_DEBUG_MSG)
+            elif key_char == 'a': #explore level
                 game.g.game_map.levels[game.g.cur_level].explore_all()
                 game.g.message("Level explored",C_DEBUG_MSG)
             elif key_char == 'r': #print room id
