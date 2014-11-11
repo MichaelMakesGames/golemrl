@@ -72,6 +72,10 @@ class Level:
     def is_in_level(self,x,y):
         return x in range(self.w) and y in range(self.h)
 
+    def is_in_bounds(self,x,y):
+        return ( x > 0 and x < MAP_W-1 and
+                 y > 0 and y < MAP_H-1 )
+
     @property
     def caves(self):
         return filter(lambda room: room.__class__.__name__ == 'Cave',
@@ -108,7 +112,7 @@ class Level:
         room = self.get_room(room_id)
         for pos in room.tile_positions:
             self.get_tile(*pos).make_wall()
-            self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
+            #self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
         self.rooms.remove(room)
 
     def get_start_pos(self):
@@ -135,26 +139,29 @@ class Level:
                        grow=7, starve=9, wither=5,
                        num_visits=2500):
         """Automata cave generation based on Evil Science's method"""
-        for col in self.tiles[1:-1]:
-            for tile in col[1:-1]:
-                if libtcod.random_get_float(self.rng,0,1) < init_chance:
-                    tile.make_floor()
+        for x in range(MAP_W)[1:-1]:
+            for y in range(MAP_H)[1:-1]:
+                if (self.is_in_bounds(x,y) and
+                    libtcod.random_get_float(self.rng,0,1) < init_chance):
+                    self.get_tile(x,y).make_floor()
 
         for i in range(num_visits):
             x = libtcod.random_get_int(self.rng,1,self.w-2)
             y = libtcod.random_get_int(self.rng,1,self.h-2)
-            neighbors = self.get_neighbors(x,y)
-            num_neighbor_floors = 0
-            for neighbor in neighbors:
-                if neighbor.is_floor():
-                    num_neighbor_floors += 1
-
-            if self.get_tile(x,y).is_floor():
-                if num_neighbor_floors >= starve or num_neighbor_floors <= wither:
-                    self.get_tile(x,y).make_wall()
-            else:
-                if num_neighbor_floors >= grow:
-                    self.get_tile(x,y).make_floor()
+            
+            if self.is_in_bounds(x,y):
+                neighbors = self.get_neighbors(x,y)
+                num_neighbor_floors = 0
+                for neighbor in neighbors:
+                    if neighbor.is_floor():
+                        num_neighbor_floors += 1
+                        
+                if self.get_tile(x,y).is_floor():
+                    if num_neighbor_floors >= starve or num_neighbor_floors <= wither:
+                        self.get_tile(x,y).make_wall()
+                else: #is wall
+                    if num_neighbor_floors >= grow:
+                        self.get_tile(x,y).make_floor()
 
     def smooth_caves(self, remove=5, fill=3):
         """final pass over all cellular automata to smoothen caves"""
@@ -164,19 +171,20 @@ class Level:
         tmp_level.y_offset = self.y_offset
         for x in range(1, self.w-1):
             for y in range(1, self.h-1):
-                neighbors = self.get_neighbors(x,y)
-                num_neighbor_floors = 0
-                for n in neighbors:
-                    if n.is_floor():
-                        num_neighbor_floors += 1
+                if self.is_in_bounds(x,y):
+                    neighbors = self.get_neighbors(x,y)
+                    num_neighbor_floors = 0
+                    for n in neighbors:
+                        if n.is_floor():
+                            num_neighbor_floors += 1
                 
-                if self.get_tile(x,y).is_floor():
-                    if num_neighbor_floors <= fill:
-                        tmp_level.get_tile(x,y).make_wall()
+                    if self.get_tile(x,y).is_floor():
+                        if num_neighbor_floors <= fill:
+                            tmp_level.get_tile(x,y).make_wall()
 
-                else:
-                    if num_neighbor_floors >= remove:
-                        tmp_level.get_tile(x,y).make_floor()
+                    else:
+                        if num_neighbor_floors >= remove:
+                            tmp_level.get_tile(x,y).make_floor()
 
         self.tiles = tmp_level.tiles
 
@@ -222,7 +230,7 @@ class Level:
             self.remove_room(cave)
 
     def connect_caves(self,tries_per_room=16,
-                      max_turns=2,min_length=6,max_length=10):
+                      max_turns=3,min_length=4,max_length=8):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
         for cave in self.caves:
@@ -270,8 +278,8 @@ class Level:
                                 cur_x -= 1
 
                             if not connection and not abandon:
-                                if not self.is_in_level(cur_x,cur_y):
-                                    #abandon if tunnel runs of edge of map
+                                if not self.is_in_bounds(cur_x,cur_y):
+                                    #abandon if tunnel goes out of bounds
                                     abandon = True
                                 elif self.is_room(cur_x,cur_y): #found room
                                     connected_to = self.which_room(cur_x,cur_y)
