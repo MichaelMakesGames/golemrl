@@ -30,6 +30,8 @@ class GameMap:
             self.levels[0].remove_isolated_caves()
             if len(self.levels[0].rooms) >= 15:
                 passed = True
+                if EXPERIMENTAL_WALLS:
+                    self.levels[0].mark_explorable()
             attempt_num += 1
 
         for level in self.levels:
@@ -107,5 +109,49 @@ class GameMap:
                             color = tile.color_unseen
                             bkgnd = tile.bkgnd_unseen
 
+                        ### experimental wall rendering ###
+                        if EXPERIMENTAL_WALLS and char == '#':
+                            try:
+                                four = [level.get_tile(map_x,map_y-1),
+                                        level.get_tile(map_x,map_y+1),
+                                        level.get_tile(map_x+1,map_y),
+                                        level.get_tile(map_x-1,map_y)]
+                                unexplored = False
+                                for i in range(4):
+                                    if four[i].explored:
+                                        four[i] = four[i].char
+                                    else:
+                                        unexplored = True
+                                        if ((four[i].char == '#' and not four[i].explorable and not four[i].explored) or
+                                            (four[i].char == '.' and not four[i].explored)):
+                                            four[i] = '?'
+                                        else:
+                                            four[i] = four[i].char
+                                            
+                                if four.count('#') == 2:
+                                    change = False
+                                    if four[0] == '#' and four[2] == '#':# == ['#','.','#','.']: #NE
+                                        char = 227
+                                        change = True
+                                    elif four[0] == '#' and four[3] == '#':# == ['#','.','.','#']: #NW
+                                        char = 226
+                                        change = True
+                                    elif four[1] == '#' and four[2] == '#':# == ['.','#','#','.']: #SE
+                                        char = 229
+                                        change = True
+                                    elif four[1] == '#' and four[3] == '#':# == ['.','#','.','#']: #SW
+                                        char = 232
+                                        change = True
+                                    if change:
+                                        color = bkgnd
+                                        if visible:
+                                            bkgnd = C_FLOOR_BKGND
+                                        else:
+                                            bkgnd = C_FLOOR_BKGND_UNSEEN
+                                        if four.count('?') > 1:
+                                            bkgnd = libtcod.black
+                            except:
+                                pass
+                        ### end experiment wall rendering ###
                 con.put_char_ex(x,y,char,color,bkgnd)
 

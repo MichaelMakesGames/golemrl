@@ -66,6 +66,15 @@ class Level:
                         pass
         return neighbors
 
+    def mark_explorable(self):
+        for x in range(LEVEL_W):
+            for y in range(LEVEL_H):
+                explorable = False
+                for neighbor in self.get_neighbors(x,y):
+                    if neighbor.is_floor():
+                        explorable = True
+                self.get_tile(x,y).explorable = explorable
+
     def __call__(self,x,y):
         return self.get_tile(x,y)
 
@@ -73,8 +82,8 @@ class Level:
         return x in range(self.w) and y in range(self.h)
 
     def is_in_bounds(self,x,y):
-        return ( x > 0 and x < MAP_W-1 and
-                 y > 0 and y < MAP_H-1 )
+        return ( x > 0 and x < LEVEL_W-1 and
+                 y > 0 and y < LEVEL_H-1 )
 
     @property
     def caves(self):
@@ -135,12 +144,23 @@ class Level:
             for y in range(self.h):
                 self.get_tile(x,y).explored = True
 
+    def explore_explorable(self):
+        try:
+            foo = self.get_tile(0,0).explorable
+        except AttributeError:
+            self.mark_explorable()
+
+        for x in range(self.w):
+            for y in range(self.h):
+                tile = self.get_tile(x,y)
+                tile.explored = tile.explorable
+
     def generate_caves(self, init_chance=0.7,
                        grow=7, starve=9, wither=5,
                        num_visits=2500):
         """Automata cave generation based on Evil Science's method"""
-        for x in range(MAP_W)[1:-1]:
-            for y in range(MAP_H)[1:-1]:
+        for x in range(LEVEL_W)[1:-1]:
+            for y in range(LEVEL_H)[1:-1]:
                 if (self.is_in_bounds(x,y) and
                     libtcod.random_get_float(self.rng,0,1) < init_chance):
                     self.get_tile(x,y).make_floor()

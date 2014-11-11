@@ -23,6 +23,8 @@ LIMIT_FPS=30
 LEVEL_W = 50
 LEVEL_H = 50
 
+EXPERIMENTAL_WALLS = True
+
 WALL_CHAR = '#'
 C_WALL = libtcod.dark_sepia
 C_WALL_BKGND = libtcod.darker_sepia
