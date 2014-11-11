@@ -1,8 +1,3 @@
-(for emacs users, this document is best in outline-mode)
+GolemRL is a roguelike in development. The player takes control of a partially formed golem banished to the depths of a cave by its creator. The golem is tasked with climbing through the cave and ascending the tower to confront its creator, the sorcerer.
 
-GolemRL 
-by M Scott Moore
-
-* what is GolemRL?
-
-GolemRL is a roguelike in development. The player takes control of a partially formed golem banished to the depths of a cave by its creator. The golem is tasked with climbing through the cave and ascending the tower to confront its creator, the sorcerer, and demand full life.
+The game is currently very early in development, and features little more than the generation of a single cave system. Basic combat and monsters will soon be added, then progression, magic, body modification, full dungeon generation, etc. The end result will hopefully be a data-driven Python roguelike engine, which can be re-used in other projects. For more details on the plans for the game itself, consult the design the doc.
