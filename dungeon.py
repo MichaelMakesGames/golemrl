@@ -112,43 +112,59 @@ class Dungeon:
                         ### experimental wall rendering ###
                         if EXPERIMENTAL_WALLS and char == '#':
                             try:
-                                four = [level.get_tile(map_x,map_y-1),
-                                        level.get_tile(map_x,map_y+1),
-                                        level.get_tile(map_x+1,map_y),
-                                        level.get_tile(map_x-1,map_y)]
-                                unexplored = False
-                                for i in range(4):
+                                #get the four neighbors of the tile
+                                four = [level.get_tile(map_x,map_y-1), #N
+                                        level.get_tile(map_x,map_y+1), #S
+                                        level.get_tile(map_x+1,map_y), #E
+                                        level.get_tile(map_x-1,map_y)] #W
+
+                                for i in [0,1,2,3]:
                                     if four[i].explored:
                                         four[i] = four[i].char
                                     else:
-                                        unexplored = True
-                                        if ((four[i].char == '#' and not four[i].explorable and not four[i].explored) or
-                                            (four[i].char == '.' and not four[i].explored)):
+                                        if ((four[i].char == '#' and
+                                             not four[i].explorable and
+                                             not four[i].explored) or
+                                            (four[i].char == '.' and
+                                             not four[i].explored)):
+                                            #if tile is unexplorable wall
+                                            #or unexplored floor, mark as
+                                            #'?' instead of '.' or '#'
+                                            #used to determine unseen half
+                                            #of tile should be black
                                             four[i] = '?'
                                         else:
                                             four[i] = four[i].char
                                             
                                 if four.count('#') == 2:
-                                    change = False
-                                    if four[0] == '#' and four[2] == '#':# == ['#','.','#','.']: #NE
+                                    #change char to diagonal
+                                    if (four[0] == '#' and
+                                        four[2] == '#'): #NE
                                         char = 227
-                                        change = True
-                                    elif four[0] == '#' and four[3] == '#':# == ['#','.','.','#']: #NW
+                                    elif (four[0] == '#' and
+                                          four[3] == '#'): #NW
                                         char = 226
-                                        change = True
-                                    elif four[1] == '#' and four[2] == '#':# == ['.','#','#','.']: #SE
+                                    elif (four[1] == '#' and
+                                          four[2] == '#'): #SE
                                         char = 229
-                                        change = True
-                                    elif four[1] == '#' and four[3] == '#':# == ['.','#','.','#']: #SW
+                                    elif (four[1] == '#' and
+                                          four[3] == '#'): #SW
                                         char = 232
-                                        change = True
-                                    if change:
+
+                                    if char != '#':
+                                        #the character was changed
+                                        #colors need to be redone
                                         color = bkgnd
                                         if visible:
                                             bkgnd = C_FLOOR_BKGND
                                         else:
                                             bkgnd = C_FLOOR_BKGND_UNSEEN
                                         if four.count('?') > 1:
+                                            #not sure how this works
+                                            #if two or more tiles are
+                                            #unexplorable walls or
+                                            #unexplored floors, the
+                                            #background should be black
                                             bkgnd = libtcod.black
                             except:
                                 pass
