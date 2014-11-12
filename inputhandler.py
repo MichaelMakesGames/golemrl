@@ -45,12 +45,12 @@ class InputHandler:
                 game.g.message("Player at: " + str(self.owner.physics_comp.pos),C_DEBUG_MSG)
                 #print self.owner.physics_comp.pos
             elif key_char == 'e':
-                game.g.game_map.levels[game.g.cur_level].explore_explorable()
+                game.g.dungeon.levels[game.g.cur_level].explore_explorable()
                 game.g.message("Level explored",C_DEBUG_MSG)
             elif key_char == 'a': #explore level
-                game.g.game_map.levels[game.g.cur_level].explore_all()
+                game.g.dungeon.levels[game.g.cur_level].explore_all()
                 game.g.message("Level explored",C_DEBUG_MSG)
             elif key_char == 'r': #print room id
                 player_pos = self.owner.physics_comp.pos
-                room_id = game.g.game_map.levels[game.g.cur_level].which_room(*player_pos)
+                room_id = game.g.dungeon.levels[game.g.cur_level].which_room(*player_pos)
                 game.g.message("In room: " + str(room_id),C_DEBUG_MSG)

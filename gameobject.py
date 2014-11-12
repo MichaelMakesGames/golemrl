@@ -30,7 +30,7 @@ class GameObject:
         con.put_char(render_x,render_y,' ')
 
     def render(self, focus_x, focus_y, con):
-        if libtcod.map_is_in_fov(game.g.game_map.tcod_map,self.physics_comp.x,self.physics_comp.y):
+        if libtcod.map_is_in_fov(game.g.dungeon.tcod_map,self.physics_comp.x,self.physics_comp.y):
             char = color = None
             if self.creature_comp:
                 char = self.creature_comp.char

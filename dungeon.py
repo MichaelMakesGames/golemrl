@@ -8,11 +8,11 @@ import game
 
 logger = logging.getLogger('map')
 
-class GameMap:
-    """GameMap now is mostly a container for levels, and handles
+class Dungeon:
+    """Dungeon now is mostly a container for levels, and handles
     rendering"""
     def __init__(self, seed):
-        logger.info('Making game map')
+        logger.info('Making dungeon')
         self.rng = libtcod.random_new_from_seed(seed)
         self.messages = ['player_moved']
         
@@ -38,8 +38,8 @@ class GameMap:
             level.owner = self
 
         self.tcod_map = libtcod.map_new(LEVEL_W,LEVEL_H)
-        #initialize tcod_map, cannot use compute_tcod_map because game
-        #has game_map is created before game
+        #initialize tcod_map, cannot use compute_tcod_map because
+        #dungeon is created before game
         for x in range(LEVEL_W):
             for y in range(LEVEL_H):
                 tile = self.levels[0].get_tile(x,y)

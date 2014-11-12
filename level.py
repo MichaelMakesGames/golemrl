@@ -5,7 +5,7 @@ from tile import Tile
 from room import Cave, Tunnel
 
 class Level:
-    """The GameMap consists of several levels. This contains
+    """The Dungeon consists of several levels. This contains
     information on the tiles, focus, rooms, as well as functions used
     to generate maps."""
     def __init__(self,rng,w=LEVEL_W,h=LEVEL_H):

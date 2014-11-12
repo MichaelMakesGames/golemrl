@@ -33,7 +33,7 @@ class Physics:
                 self.x = new_x
                 self.y = new_y
                 if self.owner.creature_comp:
-                    game.g.game_map.send('creature_moved')
+                    game.g.dungeon.send('creature_moved')
 
     def move(self, dx, dy):
         self.move_to(self.x+dx, self.y+dy)

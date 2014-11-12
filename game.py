@@ -6,11 +6,11 @@ from gameobject import GameObject
 from inputhandler import InputHandler
 from physics import Physics
 from creature import Creature
-from gamemap import GameMap
+from dungeon import Dungeon
 from console import Console
 
 class Game:
-    def __init__(self, player, game_objects, game_map, message_log,
+    def __init__(self, player, game_objects, dungeon, message_log,
                  cur_level = 0, state = "playing"):
         self.player = player
         self.player.owner = self
@@ -20,8 +20,8 @@ class Game:
             obj.owner = self
         self.game_objects.insert(0,self.player)
 
-        self.game_map = game_map
-        self.game_map.owner = self
+        self.dungeon = dungeon
+        self.dungeon.owner = self
 
         self.message_log = message_log
 
@@ -65,10 +65,10 @@ class Game:
         player_x = self.player.physics_comp.x
         player_y = self.player.physics_comp.y
         #print player_x, player_y
-        self.game_map.render(self.cur_level,
-                             player_x,
-                             player_y,
-                             self.map_con)
+        self.dungeon.render(self.cur_level,
+                            player_x,
+                            player_y,
+                            self.map_con)
         for game_object in self.game_objects:
             if game_object != self.player:
                 game_object.render(player_x, player_y, self.map_con)
@@ -93,13 +93,13 @@ class Game:
             player_prev_pos = self.player.physics_comp.pos
             self.player.input_handler(key,mouse)
             if self.player.physics_comp.pos != player_prev_pos:
-                self.game_map.send("player_moved")
+                self.dungeon.send("player_moved")
 
             if self.state == "playing":
                 for game_object in self.game_objects:
                     game_object.update()
 
-            self.game_map.update()
+            self.dungeon.update()
 
             self.render_all()
             libtcod.console_flush()
@@ -109,18 +109,18 @@ g = None
 def new_game(seed = 0xDEADBEEF):
     global g
 
-    game_map = GameMap(seed)
-    player_x,player_y = game_map.levels[0].get_start_pos()
-    player_physics_comp = Physics(player_x, player_y, game_map.levels[0], False, True)
+    dungeon = Dungeon(seed)
+    player_x,player_y = dungeon.levels[0].get_start_pos()
+    player_physics_comp = Physics(player_x, player_y, dungeon.levels[0], False, True)
     player_creature_comp = Creature('Player','@',libtcod.white,3,10)
     player = GameObject(obj_id = 0,
                         physics_comp = player_physics_comp,
                         creature_comp = player_creature_comp)
     player.input_handler = InputHandler()
     player.input_handler.owner = player
-    g = Game(player, [], game_map, [])
+    g = Game(player, [], dungeon, [])
 
-    mon1_physics_comp = Physics(5,26,game_map.levels[0],False,True)
+    mon1_physics_comp = Physics(5,26,dungeon.levels[0],False,True)
     mon1_creature_comp = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
     mon1 = GameObject(obj_id = 1,
                       physics_comp = mon1_physics_comp,
