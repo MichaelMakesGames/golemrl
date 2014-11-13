@@ -25,10 +25,11 @@ class Creature:
         pass
 
     def take_damage(self,amount):
-        self.health -= amount
-        if self.health <= 0:
-            self.health = 0
-            self.die()
+        if self.alive:
+            self.health -= amount
+            if self.health <= 0:
+                self.health = 0
+                self.die()
 
     def attack(self,obj):
         if obj.creature_comp:
@@ -43,7 +44,6 @@ class Creature:
         self.color = C_CORPSE
         game.g.message(self.name + ' dies!',C_COMBAT_MSG)
         self.name += ' Corpse'
-        pass
 
     @property
     def alive(self):
