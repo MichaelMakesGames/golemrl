@@ -55,10 +55,11 @@ class Dungeon:
                                            tile.see_through,
                                            tile.move_through)
         for obj in game.g.game_objects:
-            x,y = obj.physics_comp.pos
-            libtcod.map_set_properties(self.tcod_map,x,y,
-                                       True,
-                                       False)
+            if obj != game.g.player:
+                x,y = obj.physics_comp.pos
+                libtcod.map_set_properties(self.tcod_map,x,y,
+                                           True,
+                                           False)
 
     def send(self, message):
         self.messages.append(message)
