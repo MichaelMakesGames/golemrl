@@ -10,27 +10,37 @@ class InputHandler:
         if key.vk == libtcod.KEY_UP or key.vk == libtcod.KEY_KP8:
             #print "up"
             self.owner.physics_comp.move(0,-1)
+            return "playing"
         elif key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
             #print "down"
             self.owner.physics_comp.move(0,1)
+            return "playing"
         elif key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
             #print "right"
             self.owner.physics_comp.move(1,0)
+            return "playing"
         elif key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
             #print "left"
             self.owner.physics_comp.move(-1,0)
+            return "playing"
         elif key.vk == libtcod.KEY_KP9:
             #print "up-right"
             self.owner.physics_comp.move(1,-1)
+            return "playing"
         elif key.vk == libtcod.KEY_KP3:
             #print "down-right"
             self.owner.physics_comp.move(1,1)
+            return "playing"
         elif key.vk == libtcod.KEY_KP1:
             #print "down-left"
             self.owner.physics_comp.move(-1,1)
+            return "playing"
         elif key.vk == libtcod.KEY_KP7:
             #print "up-left"
             self.owner.physics_comp.move(-1,-1)
+            return "playing"
+        elif key.vk == libtcod.KEY_KP5:
+            return "playing"
 
         elif key.lctrl: #Left CONTROL for debug actions
             key_char = chr(key.c)
@@ -54,3 +64,5 @@ class InputHandler:
                 player_pos = self.owner.physics_comp.pos
                 room_id = game.g.dungeon.levels[game.g.cur_level].which_room(*player_pos)
                 game.g.message("In room: " + str(room_id),C_DEBUG_MSG)
+            return "paused"
+        return "paused"

@@ -45,14 +45,13 @@ class GameObject:
                 con.put_char(render_x,render_y,char)
 
     def update(self):
-        if self.ai_comp:
-            self.ai_comp.update()
-
         if self.physics_comp:
             self.physics_comp.update()
 
         if self.creature_comp:
             self.creature_comp.update()
+            if self.creature_comp.alive and self.ai_comp:
+                self.ai_comp.update()
 
         if self.item_comp:
             self.item_comp.update()

@@ -32,11 +32,11 @@ class Creature:
 
     def attack(self,obj):
         if obj.creature_comp:
-            obj.creature_comp.take_damage(self.strength)
             game.g.message(self.name + ' hits ' +
                            obj.creature_comp.name +
                            ' for ' + str(self.strength) + ' damage.',
                            C_COMBAT_MSG)
+            obj.creature_comp.take_damage(self.strength)
 
     def die(self):
         self.char = CORPSE_CHAR

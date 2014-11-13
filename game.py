@@ -6,6 +6,7 @@ from gameobject import GameObject
 from inputhandler import InputHandler
 from physics import Physics
 from creature import Creature
+from ai import AI
 from dungeon import Dungeon
 from console import Console
 
@@ -91,13 +92,14 @@ class Game:
             self.clear_all()
 
             player_prev_pos = self.player.physics_comp.pos
-            self.player.input_handler(key,mouse)
+            self.state = self.player.input_handler(key,mouse)
             if self.player.physics_comp.pos != player_prev_pos:
                 self.dungeon.send("player_moved")
 
             if self.state == "playing":
                 for game_object in self.game_objects:
                     game_object.update()
+                self.state = "paused"
 
             self.dungeon.update()
 
@@ -120,11 +122,13 @@ def new_game(seed = 0xDEADBEEF):
     player.input_handler.owner = player
     g = Game(player, [], dungeon, [])
 
-    mon1_physics_comp = Physics(5,26,dungeon.levels[0],False,True)
-    mon1_creature_comp = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
+    mon1_physics = Physics(8,41,dungeon.levels[0],False,True)
+    mon1_creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
+    mon1_ai = AI()
     mon1 = GameObject(obj_id = 1,
-                      physics_comp = mon1_physics_comp,
-                      creature_comp = mon1_creature_comp)
+                      physics_comp = mon1_physics,
+                      creature_comp = mon1_creature,
+                      ai_comp = mon1_ai)
     g.game_objects.append(mon1)
 
 def load_game(file_name):
