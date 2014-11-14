@@ -10,27 +10,24 @@ from dungeon import Dungeon
 from console import Console
 
 class Game:
-    def __init__(self, player, game_objects, dungeon, message_log,
-                 cur_level = 0, state = "playing"):
-        self.player = player
-        self.player.owner = self
-
-        self.game_objects = game_objects
-        for obj in self.game_objects:
-            obj.owner = self
-        self.game_objects.insert(0,self.player)
-
-        self.dungeon = dungeon
-        self.dungeon.owner = self
-
-        self.message_log = message_log
+    def __init__(self):
+        self.player = None
+        self.things = []
+        self.dungeon = None
+        self.message_log = []
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
         self.log_con = Console("Message Log",LOG_X,LOG_Y,LOG_W,LOG_H)
 
-        self.cur_level = cur_level
-        self.state = state
+        self.state = "playing"
+
+    @property
+    def depth(self):
+        return self.player.depth
+    @property
+    def cur_level(self):
+        return self.player.level
 
     def message(self,message,color):
         print message
@@ -38,11 +35,15 @@ class Game:
         for line in message_lines:
             self.message_log.append((line,color))
 
+    def add_thing(self,thing):
+        thing.owner = self
+        self.things.append(thing)
+
     def clear_all(self):
-        for game_object in self.game_objects:
-            game_object.clear(self.player.x,
-                              self.player.y,
-                              self.map_con)
+        for thing in self.things:
+            thing.clear(self.player.x,
+                        self.player.y,
+                        self.map_con)
 
     def render_panel(self):
         self.panel_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
@@ -65,13 +66,10 @@ class Game:
         player_x = self.player.x
         player_y = self.player.y
 
-        self.dungeon.render(self.cur_level,
-                            player_x,
-                            player_y,
-                            self.map_con)
-        for game_object in self.game_objects:
-            if game_object != self.player:
-                game_object.render(player_x, player_y, self.map_con)
+        self.dungeon.render(player_x, player_y, self.map_con)
+        for thing in self.things:
+            if thing != self.player:
+                thing.render(player_x, player_y, self.map_con)
         self.player.render(player_x, player_y, self.map_con)
         self.map_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
         self.map_con.blit()
@@ -96,8 +94,8 @@ class Game:
                 self.dungeon.send("player_moved")
 
             if self.state == "playing":
-                for game_object in self.game_objects:
-                    game_object.update()
+                for thing in self.things:
+                    thing.update()
                 self.state = "paused"
 
             self.dungeon.update()
@@ -105,31 +103,33 @@ class Game:
             self.render_all()
             libtcod.console_flush()
 
-g = None
-
 def new_game(seed = 0xDEADBEEF):
-    global g
+    game = Game()
 
     dungeon = Dungeon(seed)
+    dungeon.owner = game
+    game.dungeon = dungeon
 
     player_x,player_y = dungeon.levels[0].get_start_pos()
     player_creature_comp = Creature('Player','@',libtcod.white,3,10)
     player = Thing(0,
-                   player_x, player_y, dungeon.levels[0],False,True,
+                   player_x, player_y, 0, False, True,
                    creature = player_creature_comp)
 
     player.input_handler = InputHandler()
     player.input_handler.owner = player
-
-    g = Game(player, [], dungeon, [])
+    game.player = player
+    game.add_thing(player)
 
     mon1_creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
     mon1_ai = AI()
     mon1 = Thing(1,
-                 8, 41, dungeon.levels[0], False, True,
+                 8, 41, 0, False, True,
                  creature = mon1_creature,
                  ai = mon1_ai)
-    g.game_objects.append(mon1)
+    game.add_thing(mon1)
+
+    return game
 
 def load_game(file_name):
     pass

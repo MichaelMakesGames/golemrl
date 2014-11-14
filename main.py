@@ -2,8 +2,7 @@
 import libtcodpy as libtcod
 import sys, logging, random
 from config import *
-import game
-#from game import new_game, load_game, g
+from game import new_game, load_game
 
 def main_menu():
     return 0
@@ -32,11 +31,11 @@ def main():
             seed = random.randrange(10000)
             print seed
             logging.info('Starting new game with seed %i' % seed)
-            game.new_game()#seed)
-            game.g.play()
+            game = new_game()#seed)
+            game.play()
         elif choice == 1:
-            load_game()
-            game.g.play()
+            game = load_game()
+            game.play()
         elif choice == 2:
             break
 

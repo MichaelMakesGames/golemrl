@@ -1,18 +1,20 @@
 import libtcodpy as libtcod
 from config import *
 import logging
-import game
 
 class AI:
     def __init__(self):
         self.state = "sleeping"
         self.last_saw_player = 0
-        self.path = libtcod.path_new_using_map(game.g.dungeon.tcod_map)
+        self.path = None
         self.player_pos = (0,0)
         
-
     def update(self):
-        tcod_map = game.g.dungeon.tcod_map
+        game = self.owner.owner
+        tcod_map = self.owner.owner.dungeon.tcod_map        
+        if not self.path:
+            self.path = libtcod.path_new_using_map(tcod_map)
+
         pos = self.owner.pos
         visible = libtcod.map_is_in_fov(tcod_map,*pos)
     
@@ -21,6 +23,8 @@ class AI:
             if self.state == "sleeping":
                 if visible:
                     self.state = "awake"
+                else:
+                    action_taken = True
 
             elif self.state == "awake":
                 if visible:
@@ -30,17 +34,16 @@ class AI:
                     if self.last_saw_player >= 5:
                         self.state = "sleeping"
 
-                new_player_pos = game.g.player.pos
+                new_player_pos = game.player.pos
                 if self.player_pos != new_player_pos:
                     self.player_pos = new_player_pos
                     libtcod.path_compute(self.path, pos[0], pos[1],
                                          self.player_pos[0],
                                          self.player_pos[1])
 
-                print libtcod.path_size(self.path), self.player_pos
                 if libtcod.path_size(self.path) > 0:
                     x,y = libtcod.path_walk(self.path,True)
                     self.owner.move_to(x,y)
                 else:
-                    self.owner.creature.attack(game.g.player)
+                    self.owner.creature.attack(game.player)
                 action_taken = True

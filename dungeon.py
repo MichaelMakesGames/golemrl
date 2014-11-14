@@ -4,7 +4,6 @@ import logging
 from tile import Tile
 from level import Level
 from room import Cave
-import game
 
 logger = logging.getLogger('map')
 
@@ -54,9 +53,9 @@ class Dungeon:
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            tile.see_through,
                                            tile.move_through)
-        for obj in game.g.game_objects:
-            if obj != game.g.player:
-                x,y = obj.pos
+        for thing in self.owner.things:
+            if thing != self.owner.player:
+                x,y = thing.pos
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            True,
                                            False)
@@ -66,12 +65,12 @@ class Dungeon:
 
     def handle(self,message):
         if message == 'player_moved':
-            player_x,player_y = game.g.player.pos
+            player_x,player_y = self.owner.player.pos
             libtcod.map_compute_fov(self.tcod_map,
                                     player_x,
                                     player_y,
                                     15, True, 0)
-            self.levels[game.g.cur_level].explore()
+            self.owner.cur_level.explore()
         elif message == 'creature_moved':
             self.compute_tcod_map()
 
@@ -82,8 +81,8 @@ class Dungeon:
         while len(self.messages):
             self.handle(self.messages[0])
 
-    def render(self, level_index, focus_x, focus_y, con):
-        level = self.levels[level_index]
+    def render(self, focus_x, focus_y, con):
+        level = self.owner.cur_level
         x_offset = 0 + focus_x - MAP_W//2
         y_offset = 0 + focus_y - MAP_H//2
         
