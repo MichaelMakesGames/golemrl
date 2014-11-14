@@ -56,7 +56,7 @@ class Dungeon:
                                            tile.move_through)
         for obj in game.g.game_objects:
             if obj != game.g.player:
-                x,y = obj.physics_comp.pos
+                x,y = obj.pos
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            True,
                                            False)
@@ -66,7 +66,7 @@ class Dungeon:
 
     def handle(self,message):
         if message == 'player_moved':
-            player_x,player_y = game.g.player.physics_comp.pos
+            player_x,player_y = game.g.player.pos
             libtcod.map_compute_fov(self.tcod_map,
                                     player_x,
                                     player_y,

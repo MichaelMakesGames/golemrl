@@ -13,14 +13,6 @@ class Creature:
         self.max_health = max_health
         self.health = max_health
 
-    def render(self, focus_x, focus_y, con):
-        level = self.owner.physics_comp.level
-        dest_x = self.owner.physics_comp.x - focus_x + MAP_W//2
-        dest_y = self.owner.physics_comp.y - focus_y + MAP_H//2
-        libtcod.console_set_default_foreground(con, self.color)
-        libtcod.console_put_char(con, dest_x, dest_y,
-                                 self.char, libtcod.BKGND_NONE)
-
     def update(self):
         pass
 
@@ -32,12 +24,12 @@ class Creature:
                 self.die()
 
     def attack(self,obj):
-        if obj.creature_comp:
+        if obj.creature:
             game.g.message(self.name + ' hits ' +
-                           obj.creature_comp.name +
+                           obj.creature.name +
                            ' for ' + str(self.strength) + ' damage.',
                            C_COMBAT_MSG)
-            obj.creature_comp.take_damage(self.strength)
+            obj.creature.take_damage(self.strength)
 
     def die(self):
         self.char = CORPSE_CHAR

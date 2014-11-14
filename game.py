@@ -2,9 +2,8 @@ import libtcodpy as libtcod
 from config import *
 import logging
 import textwrap
-from gameobject import GameObject
+from thing import Thing
 from inputhandler import InputHandler
-from physics import Physics
 from creature import Creature
 from ai import AI
 from dungeon import Dungeon
@@ -41,8 +40,8 @@ class Game:
 
     def clear_all(self):
         for game_object in self.game_objects:
-            game_object.clear(self.player.physics_comp.x,
-                              self.player.physics_comp.y,
+            game_object.clear(self.player.x,
+                              self.player.y,
                               self.map_con)
 
     def render_panel(self):
@@ -63,9 +62,9 @@ class Game:
 
 
     def render_all(self):
-        player_x = self.player.physics_comp.x
-        player_y = self.player.physics_comp.y
-        #print player_x, player_y
+        player_x = self.player.x
+        player_y = self.player.y
+
         self.dungeon.render(self.cur_level,
                             player_x,
                             player_y,
@@ -91,9 +90,9 @@ class Game:
             libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
             self.clear_all()
 
-            player_prev_pos = self.player.physics_comp.pos
+            player_prev_pos = self.player.pos
             self.state = self.player.input_handler(key,mouse)
-            if self.player.physics_comp.pos != player_prev_pos:
+            if self.player.pos != player_prev_pos:
                 self.dungeon.send("player_moved")
 
             if self.state == "playing":
@@ -112,23 +111,24 @@ def new_game(seed = 0xDEADBEEF):
     global g
 
     dungeon = Dungeon(seed)
+
     player_x,player_y = dungeon.levels[0].get_start_pos()
-    player_physics_comp = Physics(player_x, player_y, dungeon.levels[0], False, True)
     player_creature_comp = Creature('Player','@',libtcod.white,3,10)
-    player = GameObject(obj_id = 0,
-                        physics_comp = player_physics_comp,
-                        creature_comp = player_creature_comp)
+    player = Thing(0,
+                   player_x, player_y, dungeon.levels[0],False,True,
+                   creature = player_creature_comp)
+
     player.input_handler = InputHandler()
     player.input_handler.owner = player
+
     g = Game(player, [], dungeon, [])
 
-    mon1_physics = Physics(8,41,dungeon.levels[0],False,True)
     mon1_creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
     mon1_ai = AI()
-    mon1 = GameObject(obj_id = 1,
-                      physics_comp = mon1_physics,
-                      creature_comp = mon1_creature,
-                      ai_comp = mon1_ai)
+    mon1 = Thing(1,
+                 8, 41, dungeon.levels[0], False, True,
+                 creature = mon1_creature,
+                 ai = mon1_ai)
     g.game_objects.append(mon1)
 
 def load_game(file_name):
