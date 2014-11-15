@@ -55,6 +55,9 @@ class InputHandler:
             elif key_char == 'r': #print room id
                 player_pos = self.owner.pos
                 room_id = game.cur_level.which_room(*player_pos)
-                game.message("In room: " + str(room_id),C_DEBUG_MSG)
+                if room_id == -1:
+                    game.message("Not in room",C_DEBUG_MSG)
+                else:
+                    game.message("Room id: %i, role: %s" % (room_id,game.cur_level.get_room(room_id).role), C_DEBUG_MSG)
             return "paused"
         return "paused"

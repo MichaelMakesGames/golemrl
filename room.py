@@ -11,6 +11,11 @@ class Cave:
         self.room_id = room_id
         self.tile_positions = []
         self.connections = []
+        self.role = 'none'
+
+    @property
+    def kind(self):
+        return self.__class__.__name__
 
     def __iter__(self):
         return iter(self.tile_positions)

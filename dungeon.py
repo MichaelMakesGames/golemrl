@@ -31,6 +31,7 @@ class Dungeon:
                 passed = True
                 if EXPERIMENTAL_WALLS:
                     self.levels[0].mark_explorable()
+                self.levels[0].assign_room_types()
             attempt_num += 1
 
         for level in self.levels:

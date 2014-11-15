@@ -1,6 +1,7 @@
 import libtcodpy as libtcod
 from config import *
 import logging
+import networkx as nx
 from tile import Tile
 from room import Cave, Tunnel
 
@@ -87,11 +88,11 @@ class Level:
 
     @property
     def caves(self):
-        return filter(lambda room: room.__class__.__name__ == 'Cave',
+        return filter(lambda room: room.kind == 'Cave',
                       self.rooms)
     @property
     def tunnels(self):
-        return filter(lambda room: room.__class__.__name__ == 'Tunnel',
+        return filter(lambda room: room.kind == 'Tunnel',
                       self.rooms)
 
     def which_room(self,x,y):
@@ -125,12 +126,11 @@ class Level:
         self.rooms.remove(room)
 
     def get_start_pos(self):
-        """For now, just finds a location that is floor.
+        """Gets a random tile from the start room.
         Used for initializing the player"""
-        for x in range(self.w):
-            for y in range(self.h):
-                if self.is_room(x,y):
-                    return (x,y)
+        for room in self.rooms:
+            if room.role == 'start':
+                return room.tile_positions[libtcod.random_get_int(self.rng,0,len(room))]
 
     def explore(self):
         """Called when player moves to mark seen tiles as explored"""
@@ -394,7 +394,44 @@ class Level:
 
         return (connectedness >= min_connectedness and
                 floors_to_walls >= min_floors_to_walls)
-        
+
+    def assign_room_types(self):
+        graph = nx.Graph()
+        for cave in self.caves:
+            graph.add_node(cave.room_id)
+        for tunnel in self.tunnels:
+            w = len(tunnel)
+            graph.add_edge(*tunnel.connections, weight=w)
+
+        #find the two rooms that have the longest optimal path
+        #these will be the start and the end
+        longest_path = (None, None, 0)
+        for from_cave in graph.nodes():
+            #could perhaps be optimized -- calculated some path twice
+            paths = nx.single_source_dijkstra_path_length(graph,from_cave)
+            for to_cave in paths:
+                if paths[to_cave] > longest_path[2]:
+                    longest_path = (from_cave, to_cave, paths[to_cave])
+                    
+        start = libtcod.random_get_int(self.rng, 0, 1)
+        end = abs(start-1)
+        start = longest_path[start]
+        end = longest_path[end]
+        path = nx.dijkstra_path(graph,start,end)
+
+        #set the start and end rooms, then rooms between as path
+        self.get_room(path[0]).role = 'start'
+        self.get_room(path[-1]).role = 'end'
+        for room_id in path:
+            if room_id not in (start,end):
+                self.get_room(room_id).role = 'path'
+
+        #make Tunnels tunnels, and everything else off_path
+        for room in self.rooms:
+            if room.kind == 'Tunnel':
+                room.role = 'tunnel'
+            if room.role == 'none':
+                room.role = 'off_path'
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]
