@@ -27,7 +27,7 @@ class Dungeon:
             self.levels[0].remove_caves_by_size()
             self.levels[0].connect_caves()
             self.levels[0].remove_isolated_caves()
-            if len(self.levels[0].rooms) >= 15:
+            if self.levels[0].evaluate():
                 passed = True
                 if EXPERIMENTAL_WALLS:
                     self.levels[0].mark_explorable()

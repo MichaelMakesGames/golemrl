@@ -381,6 +381,18 @@ class Level:
                 for room_id in network:
                     self.remove_room(room_id)
 
+    def evaluate(self,
+                 min_connectedness = 1.25,
+                 min_floors_to_walls = 0.4):
+        connectedness = float(len(self.tunnels)) / len(self.caves)
+        num_floors = sum([len(room) for room in self.rooms])
+        floors_to_walls = (float(num_floors) /
+                           (LEVEL_W * LEVEL_H - num_floors))
+        print connectedness, floors_to_walls
+        return (connectedness >= min_connectedness and
+                floors_to_walls >= min_floors_to_walls)
+        
+
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]
         for y in range(self.h):
