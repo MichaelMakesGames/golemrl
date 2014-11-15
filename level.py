@@ -67,8 +67,8 @@ class Level:
         return neighbors
 
     def mark_explorable(self):
-        for x in range(LEVEL_W):
-            for y in range(LEVEL_H):
+        for x in range(self.w):
+            for y in range(self.h):
                 explorable = False
                 for neighbor in self.get_neighbors(x,y):
                     if neighbor.is_floor():
@@ -82,8 +82,8 @@ class Level:
         return x in range(self.w) and y in range(self.h)
 
     def is_in_bounds(self,x,y):
-        return ( x > 0 and x < LEVEL_W-1 and
-                 y > 0 and y < LEVEL_H-1 )
+        return ( x > 0 and x < self.w-1 and
+                 y > 0 and y < self.h-1 )
 
     @property
     def caves(self):
@@ -157,14 +157,15 @@ class Level:
 
     def generate_caves(self, init_chance=0.7,
                        grow=7, starve=9, wither=5,
-                       num_visits=2500):
+                       visits=1.0):
         """Automata cave generation based on Evil Science's method"""
-        for x in range(LEVEL_W)[1:-1]:
-            for y in range(LEVEL_H)[1:-1]:
+        for x in range(self.w)[1:-1]:
+            for y in range(self.h)[1:-1]:
                 if (self.is_in_bounds(x,y) and
                     libtcod.random_get_float(self.rng,0,1) < init_chance):
                     self.get_tile(x,y).make_floor()
 
+        num_visits = int(visits * self.w * self.h)
         for i in range(num_visits):
             x = libtcod.random_get_int(self.rng,1,self.w-2)
             y = libtcod.random_get_int(self.rng,1,self.h-2)
@@ -383,12 +384,14 @@ class Level:
 
     def evaluate(self,
                  min_connectedness = 1.25,
-                 min_floors_to_walls = 0.4):
+                 min_floors_to_walls = 0.38):
+        """Evaluates if a map should be kept or discarded and regenerated
+        Return True if it should be kept, False otherwise"""
         connectedness = float(len(self.tunnels)) / len(self.caves)
         num_floors = sum([len(room) for room in self.rooms])
         floors_to_walls = (float(num_floors) /
-                           (LEVEL_W * LEVEL_H - num_floors))
-        print connectedness, floors_to_walls
+                           (self.w * self.h - num_floors))
+
         return (connectedness >= min_connectedness and
                 floors_to_walls >= min_floors_to_walls)
         
