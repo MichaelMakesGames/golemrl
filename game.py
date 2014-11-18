@@ -29,6 +29,10 @@ class Game:
     def cur_level(self):
         return self.player.level
 
+    @property
+    def living_things(self):
+        return filter(lambda thing: thing.creature and thing.creature.alive, self.things)
+
     def message(self,message,color):
         print message
         logging.getLogger('message').info(message)
@@ -78,6 +82,9 @@ class Game:
 
         self.dungeon.render(player_x, player_y, self.map_con)
         for thing in self.things:
+            if thing != self.player:
+                thing.render(player_x, player_y, self.map_con)
+        for thing in self.living_things: #draw living creatures on top
             if thing != self.player:
                 thing.render(player_x, player_y, self.map_con)
         self.player.render(player_x, player_y, self.map_con)

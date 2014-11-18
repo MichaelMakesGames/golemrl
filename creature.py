@@ -38,6 +38,10 @@ class Creature:
         self.color = C_CORPSE
         self.owner.owner.message(self.name + ' dies!',C_COMBAT_MSG)
         self.name += ' Corpse'
+        self.owner.blocks_movement = False
+        libtcod.map_set_properties(self.owner.owner.dungeon.tcod_map,
+                                   self.owner.x, self.owner.y,
+                                   True, True)
 
     @property
     def alive(self):
