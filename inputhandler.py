@@ -58,6 +58,6 @@ class InputHandler:
                 if room_id == -1:
                     game.message("Not in room",C_DEBUG_MSG)
                 else:
-                    game.message("Room id: %i, role: %s" % (room_id,game.cur_level.get_room(room_id).role), C_DEBUG_MSG)
+                    game.message("Room id: %i, tags: %s" % (room_id,', '.join(game.cur_level.get_room(room_id).tags)), C_DEBUG_MSG)
             return "paused"
         return "paused"

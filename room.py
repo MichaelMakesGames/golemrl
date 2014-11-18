@@ -11,7 +11,7 @@ class Cave:
         self.room_id = room_id
         self.tile_positions = []
         self.connections = []
-        self.role = 'none'
+        self.tags = [self.kind.lower()]
 
     @property
     def kind(self):
@@ -19,7 +19,6 @@ class Cave:
 
     def __iter__(self):
         return iter(self.tile_positions)
-
 
     def __len__(self):
         return len(self.tile_positions)
@@ -87,5 +86,21 @@ class Cave:
             self.connections.append(room.room_id)
             room.connections.append(self.room_id)
 
-class Tunnel(Cave):
+    def tag(self,tag):
+        if tag not in self.tags:
+            self.tags.append(tag)
+
+    def has_tag(self,tag):
+        return tag in self.tags
+
+    def has_tags(self,*tags):
+        for tag in tags:
+            if tag not in self.tags:
+                return False
+        return True
+
+    def has_only_tags(self,*tags):
+        return has_tags(*tags) and len(tags) == len(self.tags)
+
+class Tunnel(Cave): #just a skinny cave with a different purpose
     pass

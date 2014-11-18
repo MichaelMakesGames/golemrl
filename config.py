@@ -46,3 +46,13 @@ C_CORPSE = libtcod.dark_red
 LOG_FADE = 0.75
 C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
+
+#Room tags
+TAG_CAVE = 'cave'
+TAG_TUNNEL = 'tunnel'
+TAG_SM = 'small'
+TAG_MD = 'medium'
+TAG_LG = 'large'
+TAG_START = 'start'
+TAG_END = 'end'
+TAG_PATH = 'path'

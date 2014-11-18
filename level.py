@@ -133,7 +133,7 @@ class Level:
         """Gets a random tile from the start room.
         Used for initializing the player"""
         for room in self.rooms:
-            if room.role == 'start':
+            if room.has_tag(TAG_START):
                 return room.tile_positions[libtcod.random_get_int(self.rng,0,len(room)-1)]
 
     def explore(self):
@@ -399,7 +399,7 @@ class Level:
         return (connectedness >= min_connectedness and
                 floors_to_walls >= min_floors_to_walls)
 
-    def assign_room_types(self):
+    def tag_rooms(self):
         graph = nx.MultiGraph()
         for cave in self.caves:
             graph.add_node(cave.room_id)
@@ -424,23 +424,25 @@ class Level:
         path = nx.dijkstra_path(graph,start,end)
 
         #set the start and end rooms, then rooms between as path
-        self.get_room(path[0]).role = 'start'
-        self.get_room(path[-1]).role = 'end'
+        self.get_room(start).tag(TAG_START)
+        self.get_room(end).tag(TAG_END)
         for room_id in path:
-            if room_id not in (start,end):
-                self.get_room(room_id).role = 'path'
+            self.get_room(room_id).tag(TAG_PATH)
 
         #make Tunnels tunnels, and everything else off_path
         for room in self.rooms:
-            if room.kind == 'Tunnel':
-                room.role = 'tunnel'
-            if room.role == 'none':
-                room.role = 'off_path'
+            size = len(room)
+            if size < 25:
+                room.tag(TAG_SM)
+            elif size < 75:
+                room.tag(TAG_MD)
+            else:
+                room.tag(TAG_LG)
 
     def populate_rooms(self):
         game = self.owner.owner
         for room in self.rooms:
-            if room.role != 'end' and room.role != 'start' and room.role != 'tunnel':
+            if room.has_tag(TAG_CAVE) and not room.has_tag(TAG_START):
                 tile_positions = room.tile_positions[:]
                 for i in range(libtcod.random_get_int(self.rng,2,4)):
                     pos = tile_positions[libtcod.random_get_int(self.rng,0,len(tile_positions)-1)]
