@@ -21,6 +21,7 @@ class Dungeon:
         while not passed and attempt_num < 10:
             logger.info('Generating level, attempt %i' % attempt_num)
             self.levels[0] = Level(self.rng,LEVEL_W,LEVEL_H)
+            self.levels[0].owner = self
             self.levels[0].generate_caves()
             self.levels[0].smooth_caves()
             self.levels[0].find_caves()
@@ -60,6 +61,10 @@ class Dungeon:
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            True,
                                            False)
+
+    def blocking_thing_moved(self,from_x,from_y,to_x,to_y):
+        libtcod.map_set_properties(self.tcod_map,from_x,from_y,True,True)
+        libtcod.map_set_properties(self.tcod_map,to_x,to_y,True,False)
 
     def send(self, message):
         self.messages.append(message)

@@ -9,28 +9,28 @@ class InputHandler:
         game = self.owner.owner
         #movement keys
         if key.vk == libtcod.KEY_UP or key.vk == libtcod.KEY_KP8:
-            self.owner.move(0,-1)
+            self.owner.move_or_attack(0,-1)
             return "playing"
         elif key.vk == libtcod.KEY_DOWN or key.vk == libtcod.KEY_KP2:
-            self.owner.move(0,1)
+            self.owner.move_or_attack(0,1)
             return "playing"
         elif key.vk == libtcod.KEY_RIGHT or key.vk == libtcod.KEY_KP6:
-            self.owner.move(1,0)
+            self.owner.move_or_attack(1,0)
             return "playing"
         elif key.vk == libtcod.KEY_LEFT or key.vk == libtcod.KEY_KP4:
-            self.owner.move(-1,0)
+            self.owner.move_or_attack(-1,0)
             return "playing"
         elif key.vk == libtcod.KEY_KP9:
-            self.owner.move(1,-1)
+            self.owner.move_or_attack(1,-1)
             return "playing"
         elif key.vk == libtcod.KEY_KP3:
-            self.owner.move(1,1)
+            self.owner.move_or_attack(1,1)
             return "playing"
         elif key.vk == libtcod.KEY_KP1:
-            self.owner.move(-1,1)
+            self.owner.move_or_attack(-1,1)
             return "playing"
         elif key.vk == libtcod.KEY_KP7:
-            self.owner.move(-1,-1)
+            self.owner.move_or_attack(-1,-1)
             return "playing"
         elif key.vk == libtcod.KEY_KP5:
             return "playing"

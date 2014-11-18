@@ -5,6 +5,10 @@ import networkx as nx
 from tile import Tile
 from room import Cave, Tunnel
 
+from creature import Creature
+from ai import AI
+from thing import Thing
+
 class Level:
     """The Dungeon consists of several levels. This contains
     information on the tiles, focus, rooms, as well as functions used
@@ -130,7 +134,7 @@ class Level:
         Used for initializing the player"""
         for room in self.rooms:
             if room.role == 'start':
-                return room.tile_positions[libtcod.random_get_int(self.rng,0,len(room))]
+                return room.tile_positions[libtcod.random_get_int(self.rng,0,len(room)-1)]
 
     def explore(self):
         """Called when player moves to mark seen tiles as explored"""
@@ -396,7 +400,7 @@ class Level:
                 floors_to_walls >= min_floors_to_walls)
 
     def assign_room_types(self):
-        graph = nx.Graph()
+        graph = nx.MultiGraph()
         for cave in self.caves:
             graph.add_node(cave.room_id)
         for tunnel in self.tunnels:
@@ -432,6 +436,23 @@ class Level:
                 room.role = 'tunnel'
             if room.role == 'none':
                 room.role = 'off_path'
+
+    def populate_rooms(self):
+        game = self.owner.owner
+        for room in self.rooms:
+            if room.role != 'end' and room.role != 'start' and room.role != 'tunnel':
+                tile_positions = room.tile_positions[:]
+                for i in range(libtcod.random_get_int(self.rng,2,4)):
+                    pos = tile_positions[libtcod.random_get_int(self.rng,0,len(tile_positions)-1)]
+                    self.owner.blocking_thing_moved(*(pos*2)) #block pos on tcod map (for pathfinding)
+                    tile_positions.remove(pos)
+                    creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,1)
+                    ai = AI()
+                    mon = Thing(game.next_id(),
+                                pos[0], pos[1], self.owner.levels.index(self), False, True,
+                                creature = creature,
+                                ai = ai)
+                    game.add_thing(mon)
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]

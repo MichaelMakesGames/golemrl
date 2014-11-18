@@ -31,6 +31,7 @@ class Game:
 
     def message(self,message,color):
         print message
+        logging.getLogger('message').info(message)
         message_lines = textwrap.wrap(message, self.log_con.w-2)
         for line in message_lines:
             self.message_log.append((line,color))
@@ -38,6 +39,15 @@ class Game:
     def add_thing(self,thing):
         thing.owner = self
         self.things.append(thing)
+
+    def next_id(self):
+        next_id = 0
+        id_list = [thing.obj_id for thing in self.things]
+        while True:
+            if next_id not in id_list:
+                return next_id
+            else:
+                next_id += 1
 
     def clear_all(self):
         for thing in self.things:
@@ -109,6 +119,7 @@ def new_game(seed = 0xDEADBEEF):
     dungeon = Dungeon(seed)
     dungeon.owner = game
     game.dungeon = dungeon
+    game.dungeon.levels[0].populate_rooms()
 
     player_x,player_y = dungeon.levels[0].get_start_pos()
     player_creature_comp = Creature('Player','@',libtcod.white,3,10)
@@ -120,14 +131,6 @@ def new_game(seed = 0xDEADBEEF):
     player.input_handler.owner = player
     game.player = player
     game.add_thing(player)
-
-    mon1_creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,5)
-    mon1_ai = AI()
-    mon1 = Thing(1,
-                 8, 41, 0, False, True,
-                 creature = mon1_creature,
-                 ai = mon1_ai)
-    game.add_thing(mon1)
 
     return game
 

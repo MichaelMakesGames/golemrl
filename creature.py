@@ -2,6 +2,8 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+logger = logging.getLogger('creature')
+
 class Creature:
     def __init__(self,name,char,color,
                  strength,max_health):
@@ -23,6 +25,7 @@ class Creature:
                 self.die()
 
     def attack(self,thing):
+        logger.info('Thing %i attacking thing %i'%(self.owner.obj_id,thing.obj_id))
         if thing.creature:
             self.owner.owner.message(self.name + ' hits ' +
                       thing.creature.name +

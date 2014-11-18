@@ -2,6 +2,8 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+logger = logging.getLogger('thing')
+
 class Thing:
     def __init__(self,obj_id,
                  x, y, depth, move_through, see_through,
@@ -54,7 +56,11 @@ class Thing:
                 con.set_default_foreground(color)
                 con.put_char(render_x,render_y,char)
 
+    def distance_to(self,x,y):
+        return ((self.x-x)**2 + (self.y-y)**2)**0.5
+
     def move_to(self, new_x, new_y):
+        logger.debug('Thing %i attempting move to (%i,%i)'%(self.obj_id,new_x,new_y))
         if (new_x >= self.level.first_col and
             new_x <= self.level.last_col and
             new_y >= self.level.first_row and
@@ -63,18 +69,27 @@ class Thing:
             for thing in self.owner.things:
                 if (thing.creature and thing.creature.alive and
                     thing.pos == (new_x,new_y)):
-                    self.creature.attack(thing)
-                    return
+                    #self.creature.attack(thing)
+                    return False
 
             if (self.level(new_x,new_y).move_through) or self.ghost:
+                logger.debug('Thing %i moved to (%i,%i)'%(self.obj_id,new_x,new_y))
+                if self != self.owner.player:
+                    self.owner.dungeon.blocking_thing_moved(self.x,self.y,
+                                                            new_x,new_y)
                 self.x = new_x
                 self.y = new_y
-                if self.creature:
-                    self.owner.dungeon.send('creature_moved')
+                return True
 
     def move(self, dx, dy):
-        self.move_to(self.x+dx, self.y+dy)
+        return self.move_to(self.x+dx, self.y+dy)
 
+    def move_or_attack(self, dx, dy):
+        moved = self.move(dx,dy)
+        if not moved:
+            for thing in self.owner.things:
+                if thing.pos == (self.x+dx, self.y+dy):
+                    self.creature.attack(thing)
 
     def update(self):
         if self.creature:

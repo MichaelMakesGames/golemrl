@@ -2,11 +2,14 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+logger = logging.getLogger('ai')
+
 class AI:
     def __init__(self):
         self.state = "sleeping"
         self.last_saw_player = 0
         self.path = None
+        self.path_index = 0
         self.player_pos = (0,0)
         
     def update(self):
@@ -22,28 +25,45 @@ class AI:
         while not action_taken:
             if self.state == "sleeping":
                 if visible:
+                    logger.info('Thing %i waking up'%self.owner.obj_id)
                     self.state = "awake"
                 else:
                     action_taken = True
 
             elif self.state == "awake":
-                if visible:
+                if visible: #player sees thing, so thing sees player
                     self.last_saw_player = 0
-                else:
+                else: #increase last_saw_player and fall asleep if it's been too long
                     self.last_saw_player += 1
                     if self.last_saw_player >= 5:
+                        logger.info('Thing %i falling asleep'%self.owner.obj_id)
                         self.state = "sleeping"
 
-                new_player_pos = game.player.pos
+                new_player_pos = game.player.pos #get latest player pos and recalculate path if needed
                 if self.player_pos != new_player_pos:
+                    logger.debug('Thing %i saw player at (%i,%i)'%(self.owner.obj_id,new_player_pos[0],new_player_pos[1]))
                     self.player_pos = new_player_pos
-                    libtcod.path_compute(self.path, pos[0], pos[1],
-                                         self.player_pos[0],
-                                         self.player_pos[1])
+                    self.compute_path(*self.player_pos)
 
-                if libtcod.path_size(self.path) > 0:
-                    x,y = libtcod.path_walk(self.path,True)
-                    self.owner.move_to(x,y)
-                else:
-                    self.owner.creature.attack(game.player)
-                action_taken = True
+                if self.path_index < libtcod.path_size(self.path): #walk path
+                    logger.debug('Thing %i walking path'%(self.owner.obj_id))
+                    x,y = libtcod.path_get(self.path, self.path_index)
+                    moved = self.owner.move_to(x,y)
+                    if moved: #successfully moved, increase path index
+                        self.path_index += 1
+                        action_taken = True
+                    elif self.owner.distance_to(*self.player_pos) < 2:
+                        #didn't move but can attack player
+                        self.owner.creature.attack(game.player)
+                        action_taken = True
+                    else: #didn't move or attack, try new path
+                        logger.debug('Thing %i did not move or attack'%(self.owner.obj_id))
+                        self.compute_path(*self.player_pos)
+                else: #end of path and don't know where to go now
+                    action_taken = True
+
+    def compute_path(self, x, y):
+        logger.debug('Thing %i setting path to (%i,%i)'%(self.owner.obj_id,x,y))
+        self_x,self_y = self.owner.pos
+        libtcod.path_compute(self.path, self_x, self_y, x, y)
+        self.path_index = 0
