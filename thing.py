@@ -2,12 +2,16 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from observer import Observer, Subject
+
 logger = logging.getLogger('thing')
 
-class Thing:
+class Thing(Subject):
     def __init__(self,obj_id,
                  x, y, depth, move_through, see_through,
                  creature=None, ai=None, item=None):
+        Subject.__init__(self)
+
         self.obj_id = obj_id
 
         self.x = x
@@ -74,11 +78,12 @@ class Thing:
 
             if (self.level(new_x,new_y).move_through) or self.ghost:
                 logger.debug('Thing %i moved to (%i,%i)'%(self.obj_id,new_x,new_y))
-                if self != self.owner.player:
-                    self.owner.dungeon.blocking_thing_moved(self.x,self.y,
-                                                            new_x,new_y)
                 self.x = new_x
                 self.y = new_y
+                if self.creature:
+                    self.notify('creature_moved')
+                if self == self.owner.player:
+                    self.notify('player_moved')
                 return True
 
     def move(self, dx, dy):

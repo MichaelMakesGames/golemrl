@@ -447,7 +447,6 @@ class Level:
                 tile_positions = room.tile_positions[:]
                 for i in range(libtcod.random_get_int(self.rng,2,4)):
                     pos = tile_positions[libtcod.random_get_int(self.rng,0,len(tile_positions)-1)]
-                    self.owner.blocking_thing_moved(*(pos*2)) #block pos on tcod map (for pathfinding)
                     tile_positions.remove(pos)
                     creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,1)
                     ai = AI()
@@ -455,7 +454,9 @@ class Level:
                                 pos[0], pos[1], self.owner.levels.index(self), False, True,
                                 creature = creature,
                                 ai = ai)
+                    mon.add_observer(self.owner)
                     game.add_thing(mon)
+        self.owner.on_notify('creature_created') #bit of a hack, might cause bugs in the future -- you have been warned
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]

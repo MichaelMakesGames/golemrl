@@ -105,10 +105,7 @@ class Game:
             libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
             self.clear_all()
 
-            player_prev_pos = self.player.pos
             self.state = self.player.input_handler(key,mouse)
-            if self.player.pos != player_prev_pos:
-                self.dungeon.send("player_moved")
 
             if self.state == "playing":
                 for thing in self.things:
@@ -136,6 +133,7 @@ def new_game(seed = 0xDEADBEEF):
     dungeon = Dungeon(seed)
     dungeon.owner = game
     game.dungeon = dungeon
+    player.add_observer(dungeon)
     start_pos = game.dungeon.generate_level(0)
     player.move_to(*start_pos)
 

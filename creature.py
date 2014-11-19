@@ -42,6 +42,7 @@ class Creature:
         libtcod.map_set_properties(self.owner.owner.dungeon.tcod_map,
                                    self.owner.x, self.owner.y,
                                    True, True)
+        self.owner.notify('creature_died')
 
     @property
     def alive(self):

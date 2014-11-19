@@ -1,13 +1,14 @@
 import libtcodpy as libtcod
 from config import *
 import logging
+from observer import Observer, Subject
 from tile import Tile
 from level import Level
 from room import Cave
 
 logger = logging.getLogger('map')
 
-class Dungeon:
+class Dungeon(Observer):
     """Dungeon now is mostly a container for levels, and handles
     rendering"""
     def __init__(self, seed):
@@ -17,9 +18,14 @@ class Dungeon:
         for i in range(NUM_LEVELS):
             self.levels.append(libtcod.random_get_int(self.rng,0,999999))
         libtcod.random_delete(self.rng)
-        self.messages = ['player_moved']
-
         self.tcod_map = libtcod.map_new(LEVEL_W,LEVEL_H)
+
+        #does the fov need to be refreshed (ie new level, player moved...)
+        self.refresh_fov = True
+        #does the tcod map need to be refreshed (ie terrain change)
+        self.refresh_tcod = True
+        #positions of things that block movement or sight
+        self.creature_positions = []
 
     def generate_level(self,depth):
         seed = self.levels[depth]
@@ -36,6 +42,8 @@ class Dungeon:
             self.levels[depth].remove_isolated_caves()
             if self.levels[depth].evaluate():
                 approved = True
+            else:
+                seed += 1
 
         if EXPERIMENTAL_WALLS:
             self.levels[depth].mark_explorable()
@@ -48,7 +56,6 @@ class Dungeon:
         for x in range(LEVEL_W):
             for y in range(LEVEL_H):
                 tile = self.owner.cur_level.get_tile(x,y)
-                print tile.see_through
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            tile.see_through,
                                            tile.move_through)
@@ -58,31 +65,43 @@ class Dungeon:
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            True,
                                            False)
+    def refresh_creature_positions(self):
+        for pos in self.creature_positions:
+            tile = self.owner.cur_level.get_tile(*pos)
+            libtcod.map_set_properties(self.tcod_map,
+                                       pos[0],pos[1],
+                                       tile.see_through,
+                                       tile.move_through)
+        self.creature_positions = []
+        for thing in self.owner.living_things:
+            self.creature_positions.append(thing.pos)
+            if thing != self.owner.player:
+                libtcod.map_set_properties(self.tcod_map,
+                                           thing.pos[0],thing.pos[1],
+                                           thing.see_through,
+                                           thing.move_through)
 
-    def blocking_thing_moved(self,from_x,from_y,to_x,to_y):
-        libtcod.map_set_properties(self.tcod_map,from_x,from_y,True,True)
-        libtcod.map_set_properties(self.tcod_map,to_x,to_y,True,False)
-
-    def send(self, message):
-        self.messages.append(message)
-
-    def handle(self,message):
-        if message == 'player_moved':
-            player_x,player_y = self.owner.player.pos
-            libtcod.map_compute_fov(self.tcod_map,
-                                    player_x,
-                                    player_y,
-                                    15, True, 0)
-            self.owner.cur_level.explore()
-        elif message == 'creature_moved':
-            self.compute_tcod_map()
-
-        while message in self.messages:
-            self.messages.remove(message)
+    def on_notify(self,event):
+        if event == 'creature_moved':
+            self.refresh_creature_positions()
+        elif event == 'creature_died':
+            self.refresh_creature_positions()
+        elif event == 'creature_created':
+            self.refresh_creature_positions()
+        elif event == 'player_moved':
+            self.refresh_fov = True
 
     def update(self):
-        while len(self.messages):
-            self.handle(self.messages[0])
+        if self.refresh_tcod:
+            self.compute_tcod_map()
+            self.refresh_tcod = False
+
+        if self.refresh_fov:
+            libtcod.map_compute_fov(self.tcod_map,
+                                    self.owner.player.x,
+                                    self.owner.player.y)
+            self.owner.cur_level.explore()
+            self.refresh_fov = False
 
     def render(self, focus_x, focus_y, con):
         level = self.owner.cur_level
@@ -112,7 +131,7 @@ class Dungeon:
                             color = tile.color_unseen
                             bkgnd = tile.bkgnd_unseen
 
-                        ### experimental wall rendering ###
+                        ### START OF EXPERIMENTAL WALL RENDERING ###
                         if EXPERIMENTAL_WALLS and char == '#':
                             try:
                                 #get the four neighbors of the tile
@@ -171,6 +190,6 @@ class Dungeon:
                                             bkgnd = libtcod.black
                             except:
                                 pass
-                        ### end experiment wall rendering ###
+                        ### END OF EXPERIMENTAL WALL RENDERING ###
                 con.put_char_ex(x,y,char,color,bkgnd)
 
