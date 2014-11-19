@@ -13,45 +13,42 @@ class Dungeon:
     def __init__(self, seed):
         logger.info('Making dungeon')
         self.rng = libtcod.random_new_from_seed(seed)
+        self.levels = []
+        for i in range(NUM_LEVELS):
+            self.levels.append(libtcod.random_get_int(self.rng,0,999999))
+        libtcod.random_delete(self.rng)
         self.messages = ['player_moved']
-        
-        self.levels = [None]
-        passed = False
-        attempt_num = 1
-        while not passed and attempt_num < 10:
-            logger.info('Generating level, attempt %i' % attempt_num)
-            self.levels[0] = Level(self.rng,LEVEL_W,LEVEL_H)
-            self.levels[0].owner = self
-            self.levels[0].generate_caves()
-            self.levels[0].smooth_caves()
-            self.levels[0].find_caves()
-            self.levels[0].remove_caves_by_size()
-            self.levels[0].connect_caves()
-            self.levels[0].remove_isolated_caves()
-            if self.levels[0].evaluate():
-                passed = True
-                if EXPERIMENTAL_WALLS:
-                    self.levels[0].mark_explorable()
-                self.levels[0].tag_rooms()
-            attempt_num += 1
-
-        for level in self.levels:
-            level.owner = self
 
         self.tcod_map = libtcod.map_new(LEVEL_W,LEVEL_H)
-        #initialize tcod_map, cannot use compute_tcod_map because
-        #dungeon is created before game
-        for x in range(LEVEL_W):
-            for y in range(LEVEL_H):
-                tile = self.levels[0].get_tile(x,y)
-                libtcod.map_set_properties(self.tcod_map,x,y,
-                                           tile.see_through,
-                                           tile.move_through)
+
+    def generate_level(self,depth):
+        seed = self.levels[depth]
+        approved = False
+        while not approved:
+            self.levels[depth] = Level(seed, LEVEL_W, LEVEL_H)
+            self.levels[depth].owner = self
+
+            self.levels[depth].generate_caves()
+            self.levels[depth].smooth_caves()
+            self.levels[depth].find_caves()
+            self.levels[depth].remove_caves_by_size()
+            self.levels[depth].connect_caves()
+            self.levels[depth].remove_isolated_caves()
+            if self.levels[depth].evaluate():
+                approved = True
+
+        if EXPERIMENTAL_WALLS:
+            self.levels[depth].mark_explorable()
+        self.levels[depth].tag_rooms()
+        self.levels[depth].populate_rooms()
+        self.compute_tcod_map()
+        return self.levels[depth].get_start_pos()
 
     def compute_tcod_map(self):
         for x in range(LEVEL_W):
             for y in range(LEVEL_H):
-                tile = self.levels[0].get_tile(x,y)
+                tile = self.owner.cur_level.get_tile(x,y)
+                print tile.see_through
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            tile.see_through,
                                            tile.move_through)

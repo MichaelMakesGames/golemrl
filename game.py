@@ -123,21 +123,21 @@ class Game:
 def new_game(seed = 0xDEADBEEF):
     game = Game()
 
-    dungeon = Dungeon(seed)
-    dungeon.owner = game
-    game.dungeon = dungeon
-    game.dungeon.levels[0].populate_rooms()
-
-    player_x,player_y = dungeon.levels[0].get_start_pos()
     player_creature_comp = Creature('Player','@',libtcod.white,3,10)
     player = Thing(0,
-                   player_x, player_y, 0, False, True,
+                   0, 0, 0, False, True,
                    creature = player_creature_comp)
 
     player.input_handler = InputHandler()
     player.input_handler.owner = player
     game.player = player
     game.add_thing(player)
+
+    dungeon = Dungeon(seed)
+    dungeon.owner = game
+    game.dungeon = dungeon
+    start_pos = game.dungeon.generate_level(0)
+    player.move_to(*start_pos)
 
     return game
 

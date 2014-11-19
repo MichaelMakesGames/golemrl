@@ -13,11 +13,12 @@ class Level:
     """The Dungeon consists of several levels. This contains
     information on the tiles, focus, rooms, as well as functions used
     to generate maps."""
-    def __init__(self,rng,w=LEVEL_W,h=LEVEL_H):
-        self.rng = rng
+    def __init__(self,seed,w=LEVEL_W,h=LEVEL_H):
+        if seed: #at one point a temp level is created with no rng
+            self.rng = libtcod.random_new_from_seed(seed)
 
-        self.x_offset = 0#w//2
-        self.y_offset = 0#h//2
+        self.x_offset = 0
+        self.y_offset = 0
 
         self.tiles = [ [Tile() for y in range(h) ] for x in range(w) ]
         self.rooms = []
