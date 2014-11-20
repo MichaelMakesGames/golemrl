@@ -2,46 +2,78 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from dice import Dice
+
 logger = logging.getLogger('creature')
 
 class Creature:
     def __init__(self,name,char,color,
-                 strength,max_health):
+                 health,agility,armor,perception,size,strength):
         self.name = name
         self.char = char
         self.color = color
+
+        #stats
+        self.max_health = health
+        self.health = health
+        self.armor = armor
+        self.agility = agility
+        self.perception = perception
+        self.size = size
         self.strength = strength
-        self.max_health = max_health
-        self.health = max_health
 
     def update(self):
         pass
 
-    def take_damage(self,amount):
-        if self.alive:
-            self.health -= amount
+    def defense_roll(self): #agility - size
+        roll = (Dice(self.agility,6).roll() - self.size/20)
+        print 'defense %i'%roll
+        return roll
+
+    def accuracy_roll(self): #agility + perception
+        roll = (Dice(self.agility,6).roll() +
+                Dice(self.perception/2,6).roll())
+        print 'accuracy %i'%roll
+        return roll
+
+    def damage_roll(self): #strength + size?
+        return self.strength
+
+    def take_damage(self,damage_dealt):
+        '''Rolls for armor and calculates damage received
+        Returns the damage received, and whether it died
+        Whatever attacked must call the objects .die() method if needed'''
+        if self.alive: #don't take damage if dead
+            damage_received = damage_dealt - self.armor
+            if damage_received < 0: damage_received = 0
+            self.health -= damage_received
             if self.health <= 0:
                 self.health = 0
-                self.die()
+                return (damage_received,True)
+            else:
+                return (damage_received,False)
+        else:
+            logger.warn('Something attacked dead creature (thing %i)'%(self.owner.obj_id))
+            return 0,False
 
     def attack(self,thing):
         logger.info('Thing %i attacking thing %i'%(self.owner.obj_id,thing.obj_id))
+        game = self.owner.owner
         if thing.creature:
-            self.owner.owner.message(self.name + ' hits ' +
-                      thing.creature.name +
-                      ' for ' + str(self.strength) + ' damage.',
-                      C_COMBAT_MSG)
-            thing.creature.take_damage(self.strength)
+            if self.accuracy_roll() > thing.creature.defense_roll():
+                dealt, killed = thing.creature.take_damage(self.strength)
+                game.message('%s attacked %s for %i damage'%(self.name,thing.creature.name,dealt),C_COMBAT_MSG)
+                if killed:
+                    game.message('%s killed %s!'%(self.name,thing.creature.name),C_COMBAT_MSG)
+                    thing.creature.die()
+            else:
+                game.message('%s missed %s'%(self.name,thing.creature.name),C_COMBAT_MSG)
 
     def die(self):
         self.char = CORPSE_CHAR
         self.color = C_CORPSE
-        self.owner.owner.message(self.name + ' dies!',C_COMBAT_MSG)
         self.name += ' Corpse'
         self.owner.blocks_movement = False
-        libtcod.map_set_properties(self.owner.owner.dungeon.tcod_map,
-                                   self.owner.x, self.owner.y,
-                                   True, True)
         self.owner.notify('creature_died')
 
     @property

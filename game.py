@@ -120,10 +120,16 @@ class Game:
 def new_game(seed = 0xDEADBEEF):
     game = Game()
 
-    player_creature_comp = Creature('Player','@',libtcod.white,3,10)
+    player_creature = Creature(PLAYER_NAME, PLAYER_CHAR, PLAYER_COLOR,
+                               health = PLAYER_HEALTH,
+                               agility = PLAYER_AGILITY,
+                               armor = PLAYER_ARMOR,
+                               perception = PLAYER_PERCEPTION,
+                               size = PLAYER_SIZE,
+                               strength = PLAYER_STRENGTH)
     player = Thing(0,
                    0, 0, 0, False, True,
-                   creature = player_creature_comp)
+                   creature = player_creature)
 
     player.input_handler = InputHandler()
     player.input_handler.owner = player

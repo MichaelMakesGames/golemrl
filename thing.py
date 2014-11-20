@@ -93,7 +93,8 @@ class Thing(Subject):
         moved = self.move(dx,dy)
         if not moved:
             for thing in self.owner.things:
-                if thing.pos == (self.x+dx, self.y+dy):
+                if (thing.pos == (self.x+dx, self.y+dy) and
+                    thing.creature and thing.creature.alive):
                     self.creature.attack(thing)
 
     def update(self):

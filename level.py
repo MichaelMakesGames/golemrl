@@ -155,9 +155,9 @@ class Level:
                 self.get_tile(x,y).explored = True
 
     def explore_explorable(self):
-        try:
+        try: #check if tiles have been marked as explorable or not
             foo = self.get_tile(0,0).explorable
-        except AttributeError:
+        except AttributeError: #if they haven't, mark them
             self.mark_explorable()
 
         for x in range(self.w):
@@ -453,7 +453,13 @@ class Level:
                 for i in range(libtcod.random_get_int(self.rng,2,4)):
                     pos = tile_positions[libtcod.random_get_int(self.rng,0,len(tile_positions)-1)]
                     tile_positions.remove(pos)
-                    creature = Creature('Animate Clay','c',libtcod.darkest_sepia,1,1)
+                    creature = Creature(CLAY_NAME, CLAY_CHAR, CLAY_COLOR,
+                                        health = CLAY_HEALTH,
+                                        agility = CLAY_AGILITY,
+                                        armor = CLAY_ARMOR,
+                                        perception = CLAY_PERCEPTION,
+                                        size = CLAY_SIZE,
+                                        strength = CLAY_STRENGTH)
                     ai = AI()
                     mon = Thing(game.next_id(),
                                 pos[0], pos[1], self.owner.levels.index(self), False, True,
