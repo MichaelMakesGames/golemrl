@@ -135,7 +135,12 @@ class Level:
         Used for initializing the player"""
         for room in self.rooms:
             if room.has_tag(TAG_START):
-                return room.tile_positions[libtcod.random_get_int(self.rng,0,len(room)-1)]
+                creature_positions = [thing.pos for thing
+                                      in self.owner.owner.living_things]
+                start_pos = creature_positions[0]
+                while start_pos in creature_positions:
+                    start_pos = room.tile_positions[libtcod.random_get_int(self.rng,0,len(room)-1)]
+                return start_pos
 
     def explore(self):
         """Called when player moves to mark seen tiles as explored"""
