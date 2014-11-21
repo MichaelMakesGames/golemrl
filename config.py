@@ -69,12 +69,17 @@ CLAY_PERCEPTION = 2
 CLAY_SIZE = 20
 CLAY_STRENGTH = 2
 
+#player def
 PLAYER_NAME = 'Player'
 PLAYER_CHAR = '@'
 PLAYER_COLOR = libtcod.white
-PLAYER_HEALTH = 20
 PLAYER_AGILITY = 3
-PLAYER_ARMOR = 0
 PLAYER_PERCEPTION = 3
-PLAYER_SIZE = 100
 PLAYER_STRENGTH = 3
+PLAYER_BODY_PARTS = [ {'name':'Head',     'health':5, 'size':10,'armor':0,'vital':True},
+                      {'name':'Torso',    'health':15,'size':30,'armor':1,'vital':True},
+                      {'name':'Right Arm','health':10,'size':15,'armor':0},
+                      {'name':'Left Arm', 'health':10,'size':15,'armor':0},
+                      {'name':'Right Leg','health':10,'size':15,'armor':0},
+                      {'name':'Left Leg', 'health':10,'size':15,'armor':0} ]
+

@@ -5,6 +5,7 @@ import textwrap
 from thing import Thing
 from inputhandler import InputHandler
 from creature import Creature
+from golem import Golem, BodyPart
 from ai import AI
 from dungeon import Dungeon
 from console import Console
@@ -120,13 +121,11 @@ class Game:
 def new_game(seed = 0xDEADBEEF):
     game = Game()
 
-    player_creature = Creature(PLAYER_NAME, PLAYER_CHAR, PLAYER_COLOR,
-                               health = PLAYER_HEALTH,
-                               agility = PLAYER_AGILITY,
-                               armor = PLAYER_ARMOR,
-                               perception = PLAYER_PERCEPTION,
-                               size = PLAYER_SIZE,
-                               strength = PLAYER_STRENGTH)
+    player_creature = Golem(PLAYER_NAME, PLAYER_CHAR, PLAYER_COLOR,
+                            agility = PLAYER_AGILITY,
+                            perception = PLAYER_PERCEPTION,
+                            strength = PLAYER_STRENGTH,
+                            body_parts = [BodyPart(**part) for part in PLAYER_BODY_PARTS])
     player = Thing(0,
                    0, 0, 0, False, True,
                    creature = player_creature)
