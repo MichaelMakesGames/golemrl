@@ -76,8 +76,3 @@ class Golem(Creature):
             size += self.body_parts[part].size
             if n < size:
                 return self.body_parts[part].take_damage(damage_dealt)
-
-    def update(self):
-        for name in self.body_parts:
-            part = self.body_parts[name]
-            print '%s: %i/%i'%(part.name,part.health,part.max_health)

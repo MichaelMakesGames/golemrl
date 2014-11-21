@@ -4,14 +4,14 @@ SCREEN_W=80
 SCREEN_H=50
 
 MAP_X=0
-MAP_Y=5
+MAP_Y=7
 MAP_W=50
-MAP_H=45
+MAP_H=43
 
 LOG_X=0
 LOG_Y=0
 LOG_W=50
-LOG_H=5
+LOG_H=7
 
 PANEL_X=50
 PANEL_Y=0
@@ -76,10 +76,10 @@ PLAYER_COLOR = libtcod.white
 PLAYER_AGILITY = 3
 PLAYER_PERCEPTION = 3
 PLAYER_STRENGTH = 3
-PLAYER_BODY_PARTS = [ {'name':'Head',     'health':5, 'size':10,'armor':0,'vital':True},
-                      {'name':'Torso',    'health':15,'size':30,'armor':1,'vital':True},
-                      {'name':'Right Arm','health':10,'size':15,'armor':0},
-                      {'name':'Left Arm', 'health':10,'size':15,'armor':0},
-                      {'name':'Right Leg','health':10,'size':15,'armor':0},
-                      {'name':'Left Leg', 'health':10,'size':15,'armor':0} ]
+PLAYER_BODY_PARTS = [ {'name':'Head', 'health':5, 'size':10,'armor':0,'vital':True},
+                      {'name':'Torso','health':15,'size':30,'armor':1,'vital':True},
+                      {'name':'R Arm','health':10,'size':15,'armor':0},
+                      {'name':'L Arm','health':10,'size':15,'armor':0},
+                      {'name':'R Leg','health':10,'size':15,'armor':0},
+                      {'name':'L Leg','health':10,'size':15,'armor':0} ]
 
