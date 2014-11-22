@@ -1,0 +1,21 @@
+Animate Clay:
+  name: Animate Clay
+  char: c
+  color: darkest sepia
+  health: 5
+  agility: 2
+  armor: 0
+  perception: 2
+  size: 20
+  strength: 2
+
+Eroded Golem:
+  name: Eroded Golem
+  char: e
+  color: darkest sepia
+  health: 10
+  agility: 2
+  armor: 0
+  perception: 3
+  size: 80
+  strength: 3

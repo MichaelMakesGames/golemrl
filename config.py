@@ -58,17 +58,6 @@ TAG_START = 'start'
 TAG_END = 'end'
 TAG_PATH = 'path'
 
-#Creature defs
-CLAY_NAME = 'Animate Clay'
-CLAY_CHAR = 'c'
-CLAY_COLOR = libtcod.darkest_sepia
-CLAY_HEALTH = 5
-CLAY_AGILITY = 2
-CLAY_ARMOR = 0
-CLAY_PERCEPTION = 2
-CLAY_SIZE = 20
-CLAY_STRENGTH = 2
-
 #player def
 PLAYER_NAME = 'Player'
 PLAYER_CHAR = '@'

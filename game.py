@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging
 import textwrap
+import yaml
 from thing import Thing
 from inputhandler import InputHandler
 from creature import Creature
@@ -57,13 +58,13 @@ class Game:
                 next_id += 1
 
     def load_breeds(self):
-        self.breeds[CLAY_NAME] = Breed(CLAY_NAME, CLAY_CHAR, CLAY_COLOR,
-                                       CLAY_HEALTH,
-                                       CLAY_AGILITY,
-                                       CLAY_ARMOR,
-                                       CLAY_PERCEPTION,
-                                       CLAY_SIZE,
-                                       CLAY_STRENGTH)
+        breeds_file = open('data/breeds.yaml')
+        self.breeds = yaml.load(breeds_file)
+        breeds_file.close()
+        for breed_name in self.breeds:
+            color = 'libtcod.' + self.breeds[breed_name]['color'].strip().replace(' ','_')
+            self.breeds[breed_name]['color'] = eval(color)
+            self.breeds[breed_name] = Breed(**self.breeds[breed_name])
 
     def clear_all(self):
         for thing in self.things:
