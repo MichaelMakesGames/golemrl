@@ -148,10 +148,8 @@ def new_game(seed = 0xDEADBEEF):
     game.load_breeds()
 
     player_creature = Golem(PLAYER_NAME, PLAYER_CHAR, PLAYER_COLOR,
-                            agility = PLAYER_AGILITY,
-                            perception = PLAYER_PERCEPTION,
-                            strength = PLAYER_STRENGTH,
-                            body_parts = [BodyPart(**part) for part in PLAYER_BODY_PARTS])
+                            body_parts = [BodyPart(**part)
+                                          for part in PLAYER_BODY_PARTS])
     player = Thing(0,
                    0, 0, 0, False, True,
                    creature = player_creature)
