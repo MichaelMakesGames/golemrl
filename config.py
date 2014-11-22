@@ -57,22 +57,3 @@ TAG_LG = 'large'
 TAG_START = 'start'
 TAG_END = 'end'
 TAG_PATH = 'path'
-
-#player def
-PLAYER_NAME = 'Player'
-PLAYER_CHAR = '@'
-PLAYER_COLOR = libtcod.white
-PLAYER_BODY_PARTS = [ {'name':'Head', 'health':5, 'size':10,'armor':0,
-                       'agility':0,'perception':2,'strength':0,'vital':True},
-            
-                      {'name':'Torso','health':15,'size':30,'armor':0,
-                       'agility':0,'perception':0,'strength':1,'vital':True},
-                      {'name':'R Arm','health':10,'size':15,'armor':0,
-                       'agility':1,'perception':0,'strength':1},
-                      {'name':'L Arm','health':10,'size':15,'armor':0,
-                       'agility':1,'perception':0,'strength':1},
-                      {'name':'R Leg','health':10,'size':15,'armor':0,
-                       'agility':1,'perception':0,'strength':0},
-                      {'name':'L Leg','health':10,'size':15,'armor':0,
-                       'agility':1,'perception':0,'strength':0} ]
-

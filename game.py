@@ -64,7 +64,8 @@ class Game:
         for breed_name in self.breeds:
             color = 'libtcod.' + self.breeds[breed_name]['color'].strip().replace(' ','_')
             self.breeds[breed_name]['color'] = eval(color)
-            self.breeds[breed_name] = Breed(**self.breeds[breed_name])
+            self.breeds[breed_name] = Breed(breed_name,
+                                            **self.breeds[breed_name])
 
     def clear_all(self):
         for thing in self.things:
@@ -147,9 +148,17 @@ def new_game(seed = 0xDEADBEEF):
     game = Game()
     game.load_breeds()
 
-    player_creature = Golem(PLAYER_NAME, PLAYER_CHAR, PLAYER_COLOR,
-                            body_parts = [BodyPart(**part)
-                                          for part in PLAYER_BODY_PARTS])
+    player_file = open('data/player.yaml')
+    player_data = yaml.load(player_file)
+    player_name = player_data.keys()[0]
+    player_data = player_data[player_name]
+    player_file.close()
+    player_data['color'] = eval('libtcod.%s' % player_data['color'])
+    for part_name in player_data['body_parts']:
+        player_data['body_parts'][part_name] = BodyPart(part_name,**player_data['body_parts'][part_name])
+
+    player_creature = Golem(player_name,**player_data)
+
     player = Thing(0,
                    0, 0, 0, False, True,
                    creature = player_creature)

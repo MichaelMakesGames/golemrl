@@ -87,7 +87,8 @@ class Golem(Creature):
 
 
     def take_damage(self,damage_dealt):
-        n = libtcod.random_get_int(0,0,self.size-1)
+        intact_size = sum([part.size for part in self.intact_parts])
+        n = libtcod.random_get_int(0,0,intact_size)
         size = 0
         for part in sorted(self.intact_parts):
             size += part.size

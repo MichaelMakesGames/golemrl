@@ -1,0 +1,48 @@
+Player:
+  char: '@' #quotes needed for some symbols
+  color: white
+  body_parts:
+    Head:
+      health: 5
+      vital: true
+      size: 10
+      armor: 0
+      agility: 0
+      perception: 2
+      strength: 0
+    Torso:
+      health: 15
+      vital: true
+      size: 30
+      armor: 0
+      agility: 0
+      perception: 0
+      strength: 1
+    L Arm:
+      health: 10
+      size: 30
+      armor: 0
+      agility: 1
+      perception: 0
+      strength: 1
+    R Arm:
+      health: 10
+      size: 30
+      armor: 0
+      agility: 1
+      perception: 0
+      strength: 1
+    L Leg:
+      health: 10
+      size: 30
+      armor: 0
+      agility: 1
+      perception: 0
+      strength: 0
+    R Leg:
+      health: 10
+      size: 30
+      armor: 0
+      agility: 1
+      perception: 0
+      strength: 0

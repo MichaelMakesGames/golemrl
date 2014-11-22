@@ -1,5 +1,4 @@
 Animate Clay:
-  name: Animate Clay
   char: c
   color: darkest sepia
   health: 5
@@ -10,7 +9,6 @@ Animate Clay:
   strength: 2
 
 Eroded Golem:
-  name: Eroded Golem
   char: e
   color: darkest sepia
   health: 10
