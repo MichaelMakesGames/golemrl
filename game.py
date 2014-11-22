@@ -5,6 +5,7 @@ import textwrap
 from thing import Thing
 from inputhandler import InputHandler
 from creature import Creature
+from breed import Breed
 from golem import Golem, BodyPart
 from ai import AI
 from dungeon import Dungeon
@@ -16,6 +17,7 @@ class Game:
         self.things = []
         self.dungeon = None
         self.message_log = []
+        self.breeds = {}
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
@@ -53,6 +55,15 @@ class Game:
                 return next_id
             else:
                 next_id += 1
+
+    def load_breeds(self):
+        self.breeds[CLAY_NAME] = Breed(CLAY_NAME, CLAY_CHAR, CLAY_COLOR,
+                                       CLAY_HEALTH,
+                                       CLAY_AGILITY,
+                                       CLAY_ARMOR,
+                                       CLAY_PERCEPTION,
+                                       CLAY_SIZE,
+                                       CLAY_STRENGTH)
 
     def clear_all(self):
         for thing in self.things:
@@ -133,6 +144,7 @@ class Game:
 
 def new_game(seed = 0xDEADBEEF):
     game = Game()
+    game.load_breeds()
 
     player_creature = Golem(PLAYER_NAME, PLAYER_CHAR, PLAYER_COLOR,
                             agility = PLAYER_AGILITY,

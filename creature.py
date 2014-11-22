@@ -7,20 +7,28 @@ from dice import Dice
 logger = logging.getLogger('creature')
 
 class Creature:
-    def __init__(self,name,char,color,
-                 health,agility,armor,perception,size,strength):
-        self.name = name
-        self.char = char
-        self.color = color
+    def __init__(self, breed):
+        self.breed = breed
+        self.health = breed.max_health
 
-        #stats
-        self.max_health = health
-        self.health = health
-        self.armor = armor
-        self.agility = agility
-        self.perception = perception
-        self.size = size
-        self.strength = strength
+    @property
+    def name(self): return self.breed.name
+    @property
+    def char(self): return self.breed.char
+    @property
+    def color(self): return self.breed.color
+    @property
+    def max_health(self): return self.breed.max_health
+    @property
+    def agility(self): return self.breed.agility
+    @property
+    def armor(self): return self.breed.armor
+    @property
+    def perception(self): return self.breed.perception
+    @property
+    def size(self): return self.breed.size
+    @property
+    def strength(self): return self.breed.strength
 
     def update(self):
         pass

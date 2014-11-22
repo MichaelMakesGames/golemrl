@@ -34,19 +34,32 @@ class BodyPart:
 class Golem(Creature):
     def __init__(self,name,char,color,
                  agility,perception,strength,body_parts):
-        self.name = name
-        self.char = char
-        self.color = color
+        self.raw_name = name
+        self.raw_char = char
+        self.raw_color = color
 
-        self.agility = agility
-        self.perception = perception
-        self.strength = strength
+        self.raw_agility = agility
+        self.raw_perception = perception
+        self.raw_strength = strength
 
         if type(body_parts) == dict:
             self.body_parts = body_parts
         elif type(body_parts) == list:
             self.body_parts = dict( [(part.name, part)
                                      for part in body_parts] )
+
+    @property
+    def name(self): return self.raw_name
+    @property
+    def char(self): return self.raw_char
+    @property
+    def color(self): return self.raw_color
+    @property
+    def agility(self): return self.raw_agility
+    @property
+    def perception(self): return self.raw_perception
+    @property
+    def strength(self): return self.raw_strength
 
     @property
     def size(self):

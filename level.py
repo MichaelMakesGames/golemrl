@@ -453,13 +453,7 @@ class Level:
                 for i in range(libtcod.random_get_int(self.rng,2,4)):
                     pos = tile_positions[libtcod.random_get_int(self.rng,0,len(tile_positions)-1)]
                     tile_positions.remove(pos)
-                    creature = Creature(CLAY_NAME, CLAY_CHAR, CLAY_COLOR,
-                                        health = CLAY_HEALTH,
-                                        agility = CLAY_AGILITY,
-                                        armor = CLAY_ARMOR,
-                                        perception = CLAY_PERCEPTION,
-                                        size = CLAY_SIZE,
-                                        strength = CLAY_STRENGTH)
+                    creature = game.breeds[CLAY_NAME].new_creature()
                     ai = AI()
                     mon = Thing(game.next_id(),
                                 pos[0], pos[1], self.owner.levels.index(self), False, True,
