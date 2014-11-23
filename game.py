@@ -11,9 +11,11 @@ from golem import Golem, BodyPart
 from ai import AI
 from dungeon import Dungeon
 from console import Console
+from rng import RNG
 
 class Game:
     def __init__(self):
+        self.rng = RNG()
         self.player = None
         self.things = []
         self.dungeon = None

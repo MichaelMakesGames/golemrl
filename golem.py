@@ -87,10 +87,7 @@ class Golem(Creature):
 
 
     def take_damage(self,damage_dealt):
-        intact_size = sum([part.size for part in self.intact_parts])
-        n = libtcod.random_get_int(0,0,intact_size)
-        size = 0
-        for part in sorted(self.intact_parts):
-            size += part.size
-            if n < size:
-                return part.take_damage(damage_dealt)
+        game = self.owner.owner
+        part = game.rng.choose_weighted(self.intact_parts,
+                                        lambda p: p.size)
+        return part.take_damage(damage_dealt)

@@ -4,6 +4,7 @@ import logging
 import networkx as nx
 from tile import Tile
 from room import Cave, Tunnel
+from rng import RNG
 
 from creature import Creature
 from ai import AI
@@ -15,7 +16,9 @@ class Level:
     to generate maps."""
     def __init__(self,seed,w=LEVEL_W,h=LEVEL_H):
         if seed: #at one point a temp level is created with no rng
-            self.rng = libtcod.random_new_from_seed(seed)
+            self.rng = RNG(seed=seed)
+        else:
+            self.rng = RNG()
 
         self.x_offset = 0
         self.y_offset = 0
@@ -139,7 +142,7 @@ class Level:
                                       in self.owner.owner.living_things]
                 start_pos = creature_positions[0]
                 while start_pos in creature_positions:
-                    start_pos = room.tile_positions[libtcod.random_get_int(self.rng,0,len(room)-1)]
+                    start_pos = self.rng.choose(room.tile_positions)
                 return start_pos
 
     def explore(self):
@@ -172,13 +175,13 @@ class Level:
         for x in range(self.w)[1:-1]:
             for y in range(self.h)[1:-1]:
                 if (self.is_in_bounds(x,y) and
-                    libtcod.random_get_float(self.rng,0,1) < init_chance):
+                    self.rng.get_float(0,1) < init_chance):
                     self.get_tile(x,y).make_floor()
 
         num_visits = int(visits * self.w * self.h)
         for i in range(num_visits):
-            x = libtcod.random_get_int(self.rng,1,self.w-2)
-            y = libtcod.random_get_int(self.rng,1,self.h-2)
+            x = self.rng.get_int(1,self.w-1)
+            y = self.rng.get_int(1,self.h-1)
             
             if self.is_in_bounds(x,y):
                 neighbors = self.get_neighbors(x,y)
@@ -269,7 +272,7 @@ class Level:
                                cave.min_y_cells + cave.max_y_cells)
             for try_num in range(tries_per_room):
                 if possible_starts:
-                    start_cell = possible_starts[libtcod.random_get_int(self.rng,0,len(possible_starts)-1)]
+                    start_cell = self.rng.choose(possible_starts)
                     cur_x,cur_y = start_cell
                     start_room_id = self.which_room(*start_cell)
                     abandon = False
@@ -287,10 +290,10 @@ class Level:
                     for turn_num in range(max_turns+1):
                         if turn_num != 0: #turn if not first segment
                             if cur_dir == 0 or cur_dir == 1: #go east/west
-                                cur_dir = libtcod.random_get_int(self.rng,2,3)
+                                cur_dir = self.rng.get_int(2,3)
                             else: #go north/south
-                                cur_dir = libtcod.random_get_int(self.rng,0,1)
-                        for i in range(libtcod.random_get_int(self.rng,min_length,max_length)):
+                                cur_dir = self.rng.get_int(0,1)
+                        for i in range(self.rng.get_int(min_length,max_length)):
                             #now go forward a randomized number of spaces
 
                             if i == 0 and turn_num != 0:
@@ -423,7 +426,7 @@ class Level:
                 if paths[to_cave] > longest_path[2]:
                     longest_path = (from_cave, to_cave, paths[to_cave])
                     
-        start = libtcod.random_get_int(self.rng, 0, 1)
+        start = self.rng.get_int(0,1)
         end = abs(start-1)
         start = longest_path[start]
         end = longest_path[end]
@@ -450,11 +453,11 @@ class Level:
         for room in self.rooms:
             if room.has_tag(TAG_CAVE) and not room.has_tag(TAG_START):
                 tile_positions = room.tile_positions[:]
-                for i in range(libtcod.random_get_int(self.rng,2,4)):
-                    pos = tile_positions[libtcod.random_get_int(self.rng,0,len(tile_positions)-1)]
+                for i in range(self.rng.get_int(2,4)):
+                    pos = self.rng.choose(tile_positions)
                     tile_positions.remove(pos)
                     breed_names = sorted(game.breeds)
-                    breed_name = breed_names[libtcod.random_get_int(self.rng,0,len(breed_names)-1)]
+                    breed_name = self.rng.choose(breed_names)
                     creature = game.breeds[breed_name].new_creature()
                     ai = AI()
                     mon = Thing(game.next_id(),

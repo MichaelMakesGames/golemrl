@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging
 from observer import Observer, Subject
+from rng import RNG
 from tile import Tile
 from level import Level
 from room import Cave
@@ -13,11 +14,11 @@ class Dungeon(Observer):
     rendering"""
     def __init__(self, seed):
         logger.info('Making dungeon')
-        self.rng = libtcod.random_new_from_seed(seed)
+        self.rng = RNG(seed=seed)
         self.levels = []
         for i in range(NUM_LEVELS):
-            self.levels.append(libtcod.random_get_int(self.rng,0,999999))
-        libtcod.random_delete(self.rng)
+            self.levels.append(self.rng.get_int(0,1000000))
+        self.rng.delete()
         self.tcod_map = libtcod.map_new(LEVEL_W,LEVEL_H)
 
         #does the fov need to be refreshed (ie new level, player moved...)

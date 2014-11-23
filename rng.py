@@ -9,6 +9,9 @@ class RNG:
         elif seed:
             self.rng = libtcod.random_new_from_seed(seed)
 
+    def get_float(self,minimum,maximum):
+        return libtcod.random_get_float(self.rng,minimum,maximum)
+
     def get_int(self,minimum,maximum):
         return libtcod.random_get_int(self.rng,minimum,maximum-1)
 
