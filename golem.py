@@ -3,7 +3,6 @@ from config import *
 import logging
 
 from creature import Creature
-from dice import Dice
 
 class BodyPart:
     def __init__(self,name,

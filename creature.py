@@ -2,8 +2,6 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
-from dice import Dice
-
 logger = logging.getLogger('creature')
 
 class Creature:
@@ -34,13 +32,13 @@ class Creature:
         pass
 
     def defense_roll(self): #agility - size
-        roll = (Dice(self.agility,6).roll() - self.size/20)
+        roll = (self.owner.owner.rng.roll(self.agility,6) - self.size/20)
         print 'defense %i'%roll
         return roll
 
     def accuracy_roll(self): #agility + perception
-        roll = (Dice(self.agility,6).roll() +
-                Dice(self.perception/2,6).roll())
+        roll = (self.owner.owner.rng.roll(self.agility,6) +
+                self.owner.owner.rng.roll(self.perception/2,6))
         print 'accuracy %i'%roll
         return roll
 
