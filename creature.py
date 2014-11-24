@@ -10,11 +10,23 @@ class Creature:
         self.health = breed.max_health
 
     @property
-    def name(self): return self.breed.name
+    def name(self):
+        if self.alive or force_living:
+            return self.breed.name
+        else:
+            return "%s Corpse"%self.breed.name
     @property
-    def char(self): return self.breed.char
+    def char(self):
+        if self.alive:
+            return self.breed.char
+        else:
+            return CORPSE_CHAR
     @property
-    def color(self): return self.breed.color
+    def color(self):
+        if self.alive:
+            return self.breed.color
+        else:
+            return C_CORPSE
     @property
     def max_health(self): return self.breed.max_health
     @property
@@ -55,6 +67,7 @@ class Creature:
             self.health -= damage_received
             if self.health <= 0:
                 self.health = 0
+                self.die()
                 return (damage_received,True)
             else:
                 return (damage_received,False)
@@ -68,18 +81,15 @@ class Creature:
         if thing.creature:
             if self.accuracy_roll() > thing.creature.defense_roll():
                 dealt, killed = thing.creature.take_damage(self.strength)
-                game.message('%s attacked %s for %i damage'%(self.name,thing.creature.name,dealt),C_COMBAT_MSG)
+                game.message('%s attacked %s for %i damage'%(self.name,thing.creature.breed.name,dealt),C_COMBAT_MSG)
                 if killed:
-                    game.message('%s killed %s!'%(self.name,thing.creature.name),C_COMBAT_MSG)
-                    thing.creature.die()
+                    game.message('%s killed %s!'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
+                    #thing.creature.die()
             else:
-                game.message('%s missed %s'%(self.name,thing.creature.name),C_COMBAT_MSG)
+                game.message('%s missed %s'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
 
     def die(self):
-        self.char = CORPSE_CHAR
-        self.color = C_CORPSE
-        self.name += ' Corpse'
-        self.owner.blocks_movement = False
+        #self.owner.move_through = True
         self.owner.notify('creature_died')
 
     @property

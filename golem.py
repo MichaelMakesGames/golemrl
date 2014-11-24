@@ -41,6 +41,7 @@ class Golem(Creature):
         self.raw_name = name
         self.raw_char = char
         self.raw_color = color
+        self.breed = self #so that code for handling other creatures works for players as well -- kinda messy...
 
         if type(body_parts) == dict:
             self.body_parts = body_parts
@@ -51,9 +52,17 @@ class Golem(Creature):
     @property
     def name(self): return self.raw_name
     @property
-    def char(self): return self.raw_char
+    def char(self):
+        if self.alive:
+            return self.raw_char
+        else:
+            return CORPSE_CHAR
     @property
-    def color(self): return self.raw_color
+    def color(self):
+        if self.alive:
+            return self.raw_color
+        else:
+            return C_CORPSE
 
     @property
     def max_health(self):
@@ -89,4 +98,6 @@ class Golem(Creature):
         game = self.owner.owner
         part = game.rng.choose_weighted(self.intact_parts,
                                         lambda p: p.size)
-        return part.take_damage(damage_dealt)
+        result = part.take_damage(damage_dealt)
+        if result[1]: self.die()
+        return result
