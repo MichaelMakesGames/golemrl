@@ -47,6 +47,7 @@ C_CORPSE = libtcod.dark_red
 LOG_FADE = 0.75
 C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
+C_HARVEST_MSG = libtcod.lighter_sepia
 
 #Room tags
 TAG_CAVE = 'cave'

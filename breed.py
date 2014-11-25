@@ -3,7 +3,7 @@ from creature import Creature
 
 class Breed:
     def __init__(self,name,char,color,
-                 health,agility,armor,perception,size,strength):
+                 health,agility,armor,perception,size,strength,materials):
         self.name = name
         self.char = char
         self.color = color
@@ -14,6 +14,7 @@ class Breed:
         self.perception = perception
         self.size = size
         self.strength = strength
+        self.materials = materials
 
     def new_creature(self):
         return Creature(self)

@@ -60,4 +60,12 @@ class InputHandler:
                 else:
                     game.message("Room id: %i, tags: %s" % (room_id,', '.join(game.cur_level.get_room(room_id).tags)), C_DEBUG_MSG)
             return "paused"
+
+        else:
+            key_char = chr(key.c)
+            if key_char == 'h':
+                self.owner.harvest_corpse()
+                game.message("Player harvested a corpse!", C_HARVEST_MSG)
+                return "paused"
+
         return "paused"

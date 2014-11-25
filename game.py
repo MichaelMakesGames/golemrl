@@ -4,6 +4,7 @@ import logging
 import textwrap
 import yaml
 from thing import Thing
+from player import Player
 from inputhandler import InputHandler
 from creature import Creature
 from breed import Breed
@@ -75,6 +76,18 @@ class Game:
                         self.player.y,
                         self.map_con)
 
+    def get_thing(self,obj_id):
+        for thing in self.things:
+            if thing.obj_id == obj_id:
+                return thing
+
+    def get_things_at(self,x,y):
+        things_at_pos = []
+        for thing in self.things:
+            if thing.pos == (x,y):
+                things_at_pos.append(thing)
+        return things_at_pos
+
     def render_panel(self):
         self.panel_con.clear()
         self.panel_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
@@ -88,6 +101,15 @@ class Game:
                 self.panel_con.put_char(x,y,char,color)
                 if char == ':':
                     color = libtcod.light_red
+                x += 1
+            y += 1
+
+        y += 1
+        for material in sorted(self.player.materials):
+            color = libtcod.white
+            x = 2
+            for char in '%s: %i'%(material,self.player.materials[material]):
+                self.panel_con.put_char(x,y,char,color)
                 x += 1
             y += 1
 
@@ -161,9 +183,9 @@ def new_game(seed = 0xDEADBEEF):
 
     player_creature = Golem(player_name,**player_data)
 
-    player = Thing(0,
-                   0, 0, 0, False, True,
-                   creature = player_creature)
+    player = Player(0,
+                    0, 0, 0, False, True,
+                    creature = player_creature)
 
     player.input_handler = InputHandler()
     player.input_handler.owner = player

@@ -39,6 +39,8 @@ class Creature:
     def size(self): return self.breed.size
     @property
     def strength(self): return self.breed.strength
+    @property
+    def materials(self): return self.breed.materials
 
     def update(self):
         pass
