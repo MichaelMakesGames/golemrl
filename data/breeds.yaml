@@ -8,7 +8,7 @@ Animate Clay:
   size: 20
   strength: 2
   materials:
-    clay: 20
+    Clay: 20
 
 Eroded Golem:
   char: e
@@ -20,5 +20,5 @@ Eroded Golem:
   size: 80
   strength: 3
   materials:
-    clay: 40
-    stone: 10
+    Clay: 40
+    Stone: 10

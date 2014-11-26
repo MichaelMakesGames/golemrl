@@ -13,6 +13,7 @@ from ai import AI
 from dungeon import Dungeon
 from console import Console
 from rng import RNG
+from material import Material
 
 class Game:
     def __init__(self):
@@ -22,6 +23,7 @@ class Game:
         self.dungeon = None
         self.message_log = []
         self.breeds = {}
+        self.materials = {}
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
@@ -60,15 +62,29 @@ class Game:
             else:
                 next_id += 1
 
+    def load_materials(self):
+        materials_file = open('data/materials.yaml')
+        self.materials = yaml.load(materials_file)
+        materials_file.close()
+        for name in self.materials:
+            self.materials[name]['color'] = eval('libtcod.' + self.materials[name]['color'])
+            self.materials[name] = Material(name,**self.materials[name])
+
     def load_breeds(self):
         breeds_file = open('data/breeds.yaml')
         self.breeds = yaml.load(breeds_file)
         breeds_file.close()
-        for breed_name in self.breeds:
-            color = 'libtcod.' + self.breeds[breed_name]['color'].strip().replace(' ','_')
-            self.breeds[breed_name]['color'] = eval(color)
-            self.breeds[breed_name] = Breed(breed_name,
-                                            **self.breeds[breed_name])
+        for name in self.breeds:
+            color = 'libtcod.' + self.breeds[name]['color'].strip().replace(' ','_')
+            self.breeds[name]['color'] = eval(color)
+
+            new_materials_dict = {}
+            for material in self.breeds[name]['materials']:
+                proper_material = self.materials[material]
+                new_materials_dict[proper_material] = self.breeds[name]['materials'][material]
+            self.breeds[name]['materials'] = new_materials_dict
+
+            self.breeds[name] = Breed(name, **self.breeds[name])
 
     def clear_all(self):
         for thing in self.things:
@@ -106,7 +122,7 @@ class Game:
 
         y += 1
         for material in sorted(self.player.materials):
-            color = libtcod.white
+            color = material.color
             x = 2
             for char in '%s: %i'%(material,self.player.materials[material]):
                 self.panel_con.put_char(x,y,char,color)
@@ -170,6 +186,7 @@ class Game:
 
 def new_game(seed = 0xDEADBEEF):
     game = Game()
+    game.load_materials()
     game.load_breeds()
 
     player_file = open('data/player.yaml')

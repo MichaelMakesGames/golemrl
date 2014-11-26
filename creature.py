@@ -26,7 +26,8 @@ class Creature:
         if self.alive:
             return self.breed.color
         else:
-            return C_CORPSE
+            return sorted(self.materials,key=lambda m: self.materials[m])[-1].color
+
     @property
     def max_health(self): return self.breed.max_health
     @property

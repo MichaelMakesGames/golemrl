@@ -1,0 +1,18 @@
+Clay:
+  color: dark_sepia
+  value: 1
+Stone:
+  color: dark_gray
+  value: 2
+Iron:
+  color: white
+  value: 5
+Coal:
+  color: black
+  value: 5
+Gem:
+  color: dark_blue
+  value: 20
+Flesh:
+  color: dark_red
+  value: 10
