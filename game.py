@@ -68,6 +68,7 @@ class Game:
         materials_file.close()
         for name in self.materials:
             self.materials[name]['color'] = eval('libtcod.' + self.materials[name]['color'])
+            self.materials[name]['written_color'] = eval('libtcod.' + self.materials[name]['written_color'])
             self.materials[name] = Material(name,**self.materials[name])
 
     def load_breeds(self):
@@ -122,7 +123,7 @@ class Game:
 
         y += 1
         for material in sorted(self.player.materials):
-            color = material.color
+            color = material.written_color
             x = 2
             for char in '%s: %i'%(material,self.player.materials[material]):
                 self.panel_con.put_char(x,y,char,color)

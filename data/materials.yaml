@@ -1,18 +1,24 @@
 Clay:
-  color: dark_sepia
+  color: darker_sepia
+  written_color: light_sepia
   value: 1
 Stone:
-  color: dark_gray
+  color: darker_gray
+  written_color: lighter_gray
   value: 2
 Iron:
-  color: white
+  color: lightest_gray
+  written_color: lightest_gray
   value: 5
 Coal:
   color: black
+  written_color: gray
   value: 5
 Gem:
-  color: dark_blue
+  color: darker_blue
+  written_color: light_blue
   value: 20
 Flesh:
-  color: dark_red
+  color: darker_red
+  written_color: light_red
   value: 10

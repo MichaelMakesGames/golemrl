@@ -1,7 +1,8 @@
 class Material:
-    def __init__(self,name,color,value):
+    def __init__(self,name,color,written_color,value):
         self.name = name
         self.color = color
+        self.written_color = written_color
         self.value = value
 
     def __str__(self):
