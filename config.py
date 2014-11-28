@@ -47,7 +47,6 @@ C_CORPSE = libtcod.dark_red
 LOG_FADE = 0.75
 C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
-C_HARVEST_MSG = libtcod.lighter_sepia
 
 #Room tags
 TAG_CAVE = 'cave'
@@ -58,3 +57,7 @@ TAG_LG = 'large'
 TAG_START = 'start'
 TAG_END = 'end'
 TAG_PATH = 'path'
+
+#Event types
+EVENT_NONE = 'none'
+EVENT_HARVEST = 'harvest'

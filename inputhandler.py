@@ -64,8 +64,12 @@ class InputHandler:
         else:
             key_char = chr(key.c)
             if key_char == 'h':
-                self.owner.harvest_corpse()
-                game.message("Player harvested a corpse!", C_HARVEST_MSG)
-                return "paused"
+                event = self.owner.harvest_corpse()
+                if event.event_type == EVENT_HARVEST:
+                    game.message("Player harvested a corpse!",
+                                 event['majority_material'].written_color)
+                    return "playing"
+                elif event.event_type == EVENT_NONE:
+                    return "paused"
 
         return "paused"

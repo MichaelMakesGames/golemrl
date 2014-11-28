@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from event import Event
 from thing import Thing
 
 logger = logging.getLogger('thing')
@@ -12,13 +13,15 @@ class Player(Thing):
         self.materials = {}
 
     def harvest_corpse(self):
-        things_harvested = []
-        for thing in self.owner.get_things_at(*self.pos):
-            if thing.creature and not thing.creature.alive:
-                self.add_materials(thing.creature.materials)
-                things_harvested.append(thing)
-        for thing in things_harvested: #remove corpses
+        """Harvests corpse at player tile, returns EVENT_HARVEST
+        If there were no corpses, returns EVENT_NONE"""
+        try:
+            thing = filter(lambda thing: thing.creature and not thing.creature.alive, self.owner.get_things_at(*self.pos))[0]
+            self.add_materials(thing.creature.materials)
             self.owner.things.remove(thing)
+            return Event(EVENT_HARVEST, majority_material=thing.creature.majority_material)
+        except IndexError:
+            return Event(EVENT_NONE)
 
     def add_materials(self,materials):
         for material in materials:
