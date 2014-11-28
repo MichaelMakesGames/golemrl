@@ -29,7 +29,7 @@ class Game:
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
         self.log_con = Console("Message Log",LOG_X,LOG_Y,LOG_W,LOG_H)
 
-        self.state = "playing"
+        self.state = STATE_PLAYING
 
     @property
     def depth(self):
@@ -175,10 +175,10 @@ class Game:
 
             self.state = self.player.input_handler(key,mouse)
 
-            if self.state == "playing":
+            if self.state == STATE_PLAYING:
                 for thing in self.things:
                     thing.update()
-                self.state = "paused"
+                self.state = STATE_PAUSED
 
             self.dungeon.update()
 

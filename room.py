@@ -11,7 +11,7 @@ class Cave:
         self.room_id = room_id
         self.tile_positions = []
         self.connections = []
-        self.tags = [self.kind.lower()]
+        self.tags = [self.kind.upper()]
 
     @property
     def kind(self):

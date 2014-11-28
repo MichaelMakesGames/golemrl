@@ -48,16 +48,20 @@ LOG_FADE = 0.75
 C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
 
+#Game states
+STATE_PLAYING = 'PLAYING'
+STATE_PAUSED = 'PAUSED'
+
 #Room tags
-TAG_CAVE = 'cave'
-TAG_TUNNEL = 'tunnel'
-TAG_SM = 'small'
-TAG_MD = 'medium'
-TAG_LG = 'large'
-TAG_START = 'start'
-TAG_END = 'end'
-TAG_PATH = 'path'
+TAG_CAVE = 'CAVE'
+TAG_TUNNEL = 'TUNNEL'
+TAG_SM = 'SMALL'
+TAG_MD = 'MEDIUM'
+TAG_LG = 'LARGE'
+TAG_START = 'START'
+TAG_END = 'END'
+TAG_PATH = 'PATH'
 
 #Event types
-EVENT_NONE = 'none'
-EVENT_HARVEST = 'harvest'
+EVENT_NONE = 'NONE'
+EVENT_HARVEST = 'HARVEST'
