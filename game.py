@@ -55,7 +55,7 @@ class Game:
 
     def next_id(self):
         next_id = 0
-        id_list = [thing.obj_id for thing in self.things]
+        id_list = [thing.thing_id for thing in self.things]
         while True:
             if next_id not in id_list:
                 return next_id
@@ -93,9 +93,9 @@ class Game:
                         self.player.y,
                         self.map_con)
 
-    def get_thing(self,obj_id):
+    def get_thing(self,thing_id):
         for thing in self.things:
-            if thing.obj_id == obj_id:
+            if thing.thing_id == thing_id:
                 return thing
 
     def get_things_at(self,x,y):

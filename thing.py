@@ -7,12 +7,12 @@ from observer import Observer, Subject
 logger = logging.getLogger('thing')
 
 class Thing(Subject):
-    def __init__(self,obj_id,
+    def __init__(self,thing_id,
                  x, y, depth, move_through, see_through,
                  creature=None, ai=None, item=None):
         Subject.__init__(self)
 
-        self.obj_id = obj_id
+        self.thing_id = thing_id
 
         self.x = x
         self.y = y
@@ -64,7 +64,7 @@ class Thing(Subject):
         return ((self.x-x)**2 + (self.y-y)**2)**0.5
 
     def move_to(self, new_x, new_y):
-        logger.debug('Thing %i attempting move to (%i,%i)'%(self.obj_id,new_x,new_y))
+        logger.debug('Thing %i attempting move to (%i,%i)'%(self.thing_id,new_x,new_y))
         if (new_x >= self.level.first_col and
             new_x <= self.level.last_col and
             new_y >= self.level.first_row and
@@ -77,7 +77,7 @@ class Thing(Subject):
                     return False
 
             if (self.level(new_x,new_y).move_through) or self.ghost:
-                logger.debug('Thing %i moved to (%i,%i)'%(self.obj_id,new_x,new_y))
+                logger.debug('Thing %i moved to (%i,%i)'%(self.thing_id,new_x,new_y))
                 self.x = new_x
                 self.y = new_y
                 if self.creature:

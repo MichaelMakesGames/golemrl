@@ -79,11 +79,11 @@ class Creature:
             else:
                 return (damage_received,False)
         else:
-            logger.warn('Something attacked dead creature (thing %i)'%(self.owner.obj_id))
+            logger.warn('Something attacked dead creature (thing %i)'%(self.owner.thing_id))
             return 0,False
 
     def attack(self,thing):
-        logger.info('Thing %i attacking thing %i'%(self.owner.obj_id,thing.obj_id))
+        logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
         game = self.owner.owner
         if thing.creature:
             if self.accuracy_roll() > thing.creature.defense_roll():
