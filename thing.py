@@ -3,6 +3,7 @@ from config import *
 import logging
 
 from observer import Observer, Subject
+from event import Event
 
 logger = logging.getLogger('thing')
 
@@ -74,7 +75,7 @@ class Thing(Subject):
                 if (thing.creature and thing.creature.alive and
                     thing.pos == (new_x,new_y)):
                     #self.creature.attack(thing)
-                    return False
+                    return Event(EVENT_NONE)
 
             if (self.level(new_x,new_y).move_through) or self.ghost:
                 logger.debug('Thing %i moved to (%i,%i)'%(self.thing_id,new_x,new_y))
@@ -84,18 +85,22 @@ class Thing(Subject):
                     self.notify('creature_moved')
                 if self == self.owner.player:
                     self.notify('player_moved')
-                return True
+                return Event(EVENT_MOVE)
+
+        return Event(EVENT_NONE)
 
     def move(self, dx, dy):
         return self.move_to(self.x+dx, self.y+dy)
 
     def move_or_attack(self, dx, dy):
-        moved = self.move(dx,dy)
-        if not moved:
+        event = self.move(dx,dy)
+        if event.event_type == EVENT_NONE:
             for thing in self.owner.things:
                 if (thing.pos == (self.x+dx, self.y+dy) and
                     thing.creature and thing.creature.alive):
                     self.creature.attack(thing)
+                    return Event(EVENT_ATTACK)
+        return event #return either move or none, if attack not already returned
 
     def update(self):
         if self.creature:

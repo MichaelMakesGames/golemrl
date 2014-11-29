@@ -45,11 +45,12 @@ class AI:
                     self.player_pos = new_player_pos
                     self.compute_path(*self.player_pos)
 
-                if self.path_index < libtcod.path_size(self.path): #walk path
+                if (self.path_index < libtcod.path_size(self.path)
+                    and game.player.creature.alive):#walk path
                     logger.debug('Thing %i walking path'%(self.owner.thing_id))
                     x,y = libtcod.path_get(self.path, self.path_index)
-                    moved = self.owner.move_to(x,y)
-                    if moved: #successfully moved, increase path index
+                    event = self.owner.move_to(x,y)
+                    if event.event_type == EVENT_MOVE: #successfully moved, increase path index
                         self.path_index += 1
                         action_taken = True
                     elif self.owner.distance_to(*self.player_pos) < 2:
