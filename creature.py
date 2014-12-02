@@ -2,6 +2,8 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from event import Event
+
 logger = logging.getLogger('creature')
 
 class Creature:
@@ -66,8 +68,7 @@ class Creature:
 
     def take_damage(self,damage_dealt):
         '''Rolls for armor and calculates damage received
-        Returns the damage received, and whether it died
-        Whatever attacked must call the objects .die() method if needed'''
+        Returns the damage received, and whether it died'''
         if self.alive: #don't take damage if dead
             damage_received = damage_dealt - self.armor
             if damage_received < 0: damage_received = 0
@@ -88,16 +89,17 @@ class Creature:
         if thing.creature:
             if self.accuracy_roll() > thing.creature.defense_roll():
                 dealt, killed = thing.creature.take_damage(self.strength)
-                game.message('%s attacked %s for %i damage'%(self.name,thing.creature.breed.name,dealt),C_COMBAT_MSG)
+                #game.message('%s attacked %s for %i damage'%(self.name,thing.creature.breed.name,dealt),C_COMBAT_MSG)
                 if killed:
-                    game.message('%s killed %s!'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
-                    #thing.creature.die()
+                    pass
+                    #game.message('%s killed %s!'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
             else:
-                game.message('%s missed %s'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
+                pass
+                #game.message('%s missed %s'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
 
     def die(self):
         #self.owner.move_through = True
-        self.owner.notify('creature_died')
+        self.owner.notify(Event(EVENT_DIE))
 
     @property
     def alive(self):

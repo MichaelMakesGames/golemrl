@@ -1,7 +1,6 @@
 import libtcodpy as libtcod
 from config import *
 import logging
-import textwrap
 import yaml
 from thing import Thing
 from player import Player
@@ -12,6 +11,7 @@ from golem import Golem, BodyPart
 from ai import AI
 from dungeon import Dungeon
 from console import Console
+from messagelog import MessageLog
 from rng import RNG
 from material import Material
 
@@ -21,7 +21,7 @@ class Game:
         self.player = None
         self.things = []
         self.dungeon = None
-        self.message_log = []
+        self.message_log = None
         self.breeds = {}
         self.materials = {}
 
@@ -41,13 +41,6 @@ class Game:
     @property
     def living_things(self):
         return filter(lambda thing: thing.creature and thing.creature.alive, self.things)
-
-    def message(self,message,color):
-        print message
-        logging.getLogger('message').info(message)
-        message_lines = textwrap.wrap(message, self.log_con.w-2)
-        for line in message_lines:
-            self.message_log.append((line,color))
 
     def add_thing(self,thing):
         thing.owner = self
@@ -130,20 +123,6 @@ class Game:
                 x += 1
             y += 1
 
-    def render_log(self):
-        self.log_con.clear()
-        for i in range(self.log_con.h-2):
-            try:
-                text, color = self.message_log[-(i+1)]
-                color = make_darker_color(color,i*LOG_FADE/(self.log_con.h-3))
-                for j in range(len(text)):
-                    self.log_con.put_char(j+1,self.log_con.h-2-i,text[j],color)
-            except:
-                pass
-        
-        self.log_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
-
-
     def render_all(self):
         player_x = self.player.x
         player_y = self.player.y
@@ -159,7 +138,7 @@ class Game:
         self.map_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
         self.map_con.blit()
 
-        self.render_log()
+        self.message_log.render(self.log_con)
         self.log_con.blit()
 
         self.render_panel()
@@ -217,6 +196,10 @@ def new_game(seed = 0xDEADBEEF):
     start_pos = game.dungeon.generate_level(0)
     player.move_to(*start_pos)
 
+    message_log = MessageLog()
+    player.add_observer(message_log)
+    game.message_log = message_log
+
     return game
 
 def load_game(file_name):
@@ -224,13 +207,3 @@ def load_game(file_name):
 
 def save_game(file_name):
     pass
-
-def make_darker_color(color,percent):
-    if type(percent) == int:
-        percent = percent/100
-    if percent > 1.0:
-        percent = 1.0
-    new_r = color['r'] - int(percent*color['r'])
-    new_g = color['g'] - int(percent*color['g'])
-    new_b = color['b'] - int(percent*color['b'])
-    return libtcod.Color(new_r,new_g,new_b)

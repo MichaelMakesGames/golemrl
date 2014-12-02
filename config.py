@@ -68,6 +68,8 @@ EVENT_HARVEST = 'HARVEST'
 EVENT_WAIT = 'WAIT'
 EVENT_MOVE = 'MOVE'
 EVENT_ATTACK = 'ATTACK'
+EVENT_DIE = 'DIE'
+EVENT_CREATE = 'CREATE'
 
 #Actions (temporary)
 ACTION_MOVE_N = 'self.owner.move_or_attack(0,-1)'

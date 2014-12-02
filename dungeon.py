@@ -83,14 +83,14 @@ class Dungeon(Observer):
                                            thing.move_through)
 
     def on_notify(self,event):
-        if event == 'creature_moved':
+        if event.event_type == EVENT_MOVE:
             self.refresh_creature_positions()
-        elif event == 'creature_died':
+            if event['actor'] == self.owner.player:
+                self.refresh_fov = True
+        elif event.event_type == EVENT_DIE:
             self.refresh_creature_positions()
-        elif event == 'creature_created':
+        elif event == EVENT_CREATE:
             self.refresh_creature_positions()
-        elif event == 'player_moved':
-            self.refresh_fov = True
 
     def update(self):
         if self.refresh_tcod:

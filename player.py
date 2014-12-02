@@ -19,7 +19,10 @@ class Player(Thing):
             thing = filter(lambda thing: thing.creature and not thing.creature.alive, self.owner.get_things_at(*self.pos))[0]
             self.add_materials(thing.creature.materials)
             self.owner.things.remove(thing)
-            return Event(EVENT_HARVEST, majority_material=thing.creature.majority_material)
+            event = Event(EVENT_HARVEST, majority_material=thing.creature.majority_material)
+            self.notify(event)
+            return event
+
         except IndexError:
             return Event(EVENT_NONE)
 

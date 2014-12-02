@@ -66,6 +66,7 @@ class Thing(Subject):
 
     def move_to(self, new_x, new_y):
         logger.debug('Thing %i attempting move to (%i,%i)'%(self.thing_id,new_x,new_y))
+        event = Event(EVENT_NONE)
         if (new_x >= self.level.first_col and
             new_x <= self.level.last_col and
             new_y >= self.level.first_row and
@@ -81,13 +82,14 @@ class Thing(Subject):
                 logger.debug('Thing %i moved to (%i,%i)'%(self.thing_id,new_x,new_y))
                 self.x = new_x
                 self.y = new_y
-                if self.creature:
-                    self.notify('creature_moved')
-                if self == self.owner.player:
-                    self.notify('player_moved')
-                return Event(EVENT_MOVE)
+                #if self.creature:
+                #    self.notify('creature_moved')
+                #if self == self.owner.player:
+                #    self.notify('player_moved')
+                event = Event(EVENT_MOVE, actor=self)
 
-        return Event(EVENT_NONE)
+        self.notify(event)
+        return event
 
     def move(self, dx, dy):
         return self.move_to(self.x+dx, self.y+dy)

@@ -1,3 +1,5 @@
+from config import *
+
 class Observer:
     def on_notify(self,event):
         pass
@@ -12,5 +14,6 @@ class Subject:
         if observer in self.observers:
             self.observers.remove(observer)
     def notify(self,event):
-        for observer in self.observers:
-            observer.on_notify(event)
+        if event.event_type != EVENT_NONE:
+            for observer in self.observers:
+                observer.on_notify(event)

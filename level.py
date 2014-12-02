@@ -9,6 +9,7 @@ from rng import RNG
 from creature import Creature
 from ai import AI
 from thing import Thing
+from event import Event
 
 class Level:
     """The Dungeon consists of several levels. This contains
@@ -466,7 +467,7 @@ class Level:
                                 ai = ai)
                     mon.add_observer(self.owner)
                     game.add_thing(mon)
-        self.owner.on_notify('creature_created') #bit of a hack, might cause bugs in the future -- you have been warned
+        self.owner.on_notify(Event(EVENT_CREATE)) #bit of a hack, might cause bugs in the future -- you have been warned
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]
