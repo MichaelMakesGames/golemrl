@@ -157,6 +157,7 @@ class Level:
         for x in range(self.w):
             for y in range(self.h):
                 self.get_tile(x,y).explored = True
+        return Event(EVENT_EXPLORE_ALL)
 
     def explore_explorable(self):
         try: #check if tiles have been marked as explorable or not
@@ -168,6 +169,7 @@ class Level:
             for y in range(self.h):
                 tile = self.get_tile(x,y)
                 tile.explored = tile.explorable
+        return Event(EVENT_EXPLORE_EXPLORABLE)
 
     def generate_caves(self, init_chance=0.7,
                        grow=7, starve=9, wither=5,

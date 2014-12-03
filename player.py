@@ -11,6 +11,7 @@ class Player(Thing):
     def __init__(self,*args,**kwargs):
         Thing.__init__(self,*args,**kwargs)
         self.materials = {}
+        self.ghost = False
 
     def harvest_corpse(self):
         """Harvests corpse at player tile, returns EVENT_HARVEST
@@ -32,3 +33,9 @@ class Player(Thing):
                 self.materials[material] += materials[material]
             else:
                 self.materials[material] = materials[material]
+
+    def toggle_ghost(self):
+        self.ghost = not self.ghost
+        event = Event(EVENT_TOGGLE_GHOST,enabled=self.ghost)
+        self.notify(event)
+        return event

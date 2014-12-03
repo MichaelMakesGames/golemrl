@@ -20,7 +20,6 @@ class Thing(Subject):
         self.depth = depth
         self.move_through = move_through
         self.see_through = see_through
-        self.ghost = False
 
         self.creature = creature
         if self.creature:

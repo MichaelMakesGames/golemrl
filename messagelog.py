@@ -18,6 +18,31 @@ class MessageLog(Observer):
         if event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
             color = event['majority_material'].written_color
+
+        elif event.event_type == EVENT_TOGGLE_GHOST:
+            message = 'Ghost mode %s' % \
+                      ('disabled','enabled')[event['enabled']]
+            color = C_DEBUG_MSG
+
+        elif event.event_type == EVENT_EXPLORE_EXPLORABLE:
+            message = 'Reachable tiles explored'
+            color = C_DEBUG_MSG
+        elif event.event_type == EVENT_EXPLORE_ALL:
+            message = 'Map explored'
+            color = C_DEBUG_MSG
+        elif event.event_type == EVENT_PRINT_POS:
+            message = 'Player at (%i,%i)' % event['thing'].pos
+            color = C_DEBUG_MSG
+        elif event.event_type == EVENT_PRINT_ROOM:
+            room_id = self.owner.cur_level.which_room(*event['pos'])
+            if room_id != -1:
+                room_tags = self.owner.cur_level.get_room(room_id).tags
+                message = 'In room %i, tags: %s' % \
+                          (room_id, ', '.join(room_tags))
+            else:
+                message = 'Not in a room'
+            color = C_DEBUG_MSG
+
         else:
             logger.warning('Failed to handle %s'%event.event_type.upper())
 
@@ -26,6 +51,7 @@ class MessageLog(Observer):
             for line in message_lines:
                 self.lines.append((message,color))
             logger.info(message)
+            print message
 
     def render(self,con):
         con.clear()

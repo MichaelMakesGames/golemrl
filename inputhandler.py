@@ -2,15 +2,23 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from observer import Subject
 from event import Event
 
-class InputHandler:
+logger = logging.getLogger('input')
+
+class InputHandler(Subject):
     def __init__(self):
-        pass
+        Subject.__init__(self)
     def __call__(self, key, mouse):
         game = self.owner.owner
         key_char = chr(key.c)
         action_dict = {('r',False): ACTION_HARVEST,
+                       ('g',True): ACTION_TOGGLE_GHOST,
+                       ('e',True): ACTION_EXPLORE_EXPLORABLE,
+                       ('a',True): ACTION_EXPLORE_ALL,
+                       ('p',True): ACTION_PRINT_POS,
+                       ('r',True): ACTION_PRINT_ROOM,
                        libtcod.KEY_UP: ACTION_MOVE_N,
                        libtcod.KEY_DOWN: ACTION_MOVE_S,
                        libtcod.KEY_RIGHT: ACTION_MOVE_E,
@@ -26,16 +34,18 @@ class InputHandler:
                        libtcod.KEY_KP9: ACTION_MOVE_NE}
 
         action = ACTION_NONE
-        if key_char != '\0':
-            try:
+        try:
+            if key_char != '\0':
                 action = action_dict[(key_char,key.lctrl)]
-            except KeyError: pass
-        else:
-            try:
+            else:
                 action = action_dict[key.vk]
-            except KeyError: pass
+        except KeyError: pass
 
         event = eval(action)
+        if event == None:
+            event = Event(EVENT_NONE)
+            logger.warn('Action %s returned None'%repr(action))
+
         event_type = event.event_type
         if event_type == EVENT_NONE:
             return STATE_PAUSED

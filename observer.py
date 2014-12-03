@@ -17,3 +17,4 @@ class Subject:
         if event.event_type != EVENT_NONE:
             for observer in self.observers:
                 observer.on_notify(event)
+        return event

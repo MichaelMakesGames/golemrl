@@ -197,7 +197,9 @@ def new_game(seed = 0xDEADBEEF):
     player.move_to(*start_pos)
 
     message_log = MessageLog()
+    message_log.owner = game
     player.add_observer(message_log)
+    player.input_handler.add_observer(message_log)
     game.message_log = message_log
 
     return game
