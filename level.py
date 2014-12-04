@@ -468,6 +468,7 @@ class Level:
                                 creature = creature,
                                 ai = ai)
                     mon.add_observer(self.owner)
+                    mon.add_observer(game.message_log)
                     game.add_thing(mon)
         self.owner.on_notify(Event(EVENT_CREATE)) #bit of a hack, might cause bugs in the future -- you have been warned
 

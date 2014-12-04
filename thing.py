@@ -79,16 +79,14 @@ class Thing(Subject):
 
             if (self.level(new_x,new_y).move_through) or self.ghost:
                 logger.debug('Thing %i moved to (%i,%i)'%(self.thing_id,new_x,new_y))
+                event = Event(EVENT_MOVE,
+                              actor=self,
+                              from_pos=self.pos,
+                              to_pos=(new_x,new_y))
                 self.x = new_x
                 self.y = new_y
-                #if self.creature:
-                #    self.notify('creature_moved')
-                #if self == self.owner.player:
-                #    self.notify('player_moved')
-                event = Event(EVENT_MOVE, actor=self)
 
-        self.notify(event)
-        return event
+        return self.notify(event)
 
     def move(self, dx, dy):
         return self.move_to(self.x+dx, self.y+dy)
@@ -99,8 +97,7 @@ class Thing(Subject):
             for thing in self.owner.things:
                 if (thing.pos == (self.x+dx, self.y+dy) and
                     thing.creature and thing.creature.alive):
-                    self.creature.attack(thing)
-                    return Event(EVENT_ATTACK)
+                    event = self.creature.attack(thing)
         return event #return either move or none, if attack not already returned
 
     def update(self):

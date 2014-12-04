@@ -15,7 +15,24 @@ class MessageLog(Observer):
     def on_notify(self,event):
         message = color = None
 
-        if event.event_type == EVENT_HARVEST:
+        if event.event_type == EVENT_ATTACK:
+            color = C_COMBAT_MSG
+            if event.hit:
+                if event.killed:
+                    message = '%s killed %s' % \
+                              (event.actor.creature.name,
+                               event.target.creature.name)
+                else:
+                    message = '%s hit %s for %i damage' % \
+                              (event.actor.creature.name,
+                               event.target.creature.name,
+                               event.dealt)
+            else:
+                message = '%s missed %s' % \
+                          (event.actor.creature.name,
+                           event.target.creature.name)
+
+        elif event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
             color = event.majority_material.written_color
 

@@ -13,7 +13,7 @@ class Creature:
 
     @property
     def name(self):
-        if self.alive or force_living:
+        if self.alive:
             return self.breed.name
         else:
             return "%s Corpse"%self.breed.name
@@ -86,20 +86,18 @@ class Creature:
     def attack(self,thing):
         logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
         game = self.owner.owner
+        event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
         if thing.creature:
             if self.accuracy_roll() > thing.creature.defense_roll():
-                dealt, killed = thing.creature.take_damage(self.strength)
-                #game.message('%s attacked %s for %i damage'%(self.name,thing.creature.breed.name,dealt),C_COMBAT_MSG)
-                if killed:
-                    pass
-                    #game.message('%s killed %s!'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
+                event.hit = True
+                event.dealt, event.killed = thing.creature.take_damage(self.strength)
             else:
-                pass
-                #game.message('%s missed %s'%(self.name,thing.creature.breed.name),C_COMBAT_MSG)
+                event.hit = False
+        return self.owner.notify(event)
 
     def die(self):
         #self.owner.move_through = True
-        self.owner.notify(Event(EVENT_DIE))
+        self.owner.notify(Event(EVENT_DIE, actor=self.owner))
 
     @property
     def alive(self):

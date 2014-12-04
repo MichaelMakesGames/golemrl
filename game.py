@@ -189,18 +189,18 @@ def new_game(seed = 0xDEADBEEF):
     game.player = player
     game.add_thing(player)
 
+    message_log = MessageLog()
+    message_log.owner = game
+    player.add_observer(message_log)
+    player.input_handler.add_observer(message_log)
+    game.message_log = message_log
+
     dungeon = Dungeon(seed)
     dungeon.owner = game
     game.dungeon = dungeon
     player.add_observer(dungeon)
     start_pos = game.dungeon.generate_level(0)
     player.move_to(*start_pos)
-
-    message_log = MessageLog()
-    message_log.owner = game
-    player.add_observer(message_log)
-    player.input_handler.add_observer(message_log)
-    game.message_log = message_log
 
     return game
 
