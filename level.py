@@ -459,17 +459,12 @@ class Level:
                 for i in range(self.rng.get_int(2,4)):
                     pos = self.rng.choose(tile_positions)
                     tile_positions.remove(pos)
+                    x, y = pos
+                    depth = self.owner.levels.index(self)
                     breed_names = sorted(game.breeds)
                     breed_name = self.rng.choose(breed_names)
-                    creature = game.breeds[breed_name].new_creature()
-                    ai = AI()
-                    mon = Thing(game.next_id(),
-                                pos[0], pos[1], self.owner.levels.index(self), False, True,
-                                creature = creature,
-                                ai = ai)
-                    mon.add_observer(self.owner)
-                    mon.add_observer(game.message_log)
-                    game.add_thing(mon)
+                    thing = game.breeds[breed_name].new(x,y,depth)
+                    game.add_thing(thing)
         self.owner.on_notify(Event(EVENT_CREATE)) #bit of a hack, might cause bugs in the future -- you have been warned
 
     def __repr__(self):

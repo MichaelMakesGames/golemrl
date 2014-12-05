@@ -79,6 +79,7 @@ class Game:
             self.breeds[name]['materials'] = new_materials_dict
 
             self.breeds[name] = Breed(name, **self.breeds[name])
+            self.breeds[name].owner = self
 
     def clear_all(self):
         for thing in self.things:

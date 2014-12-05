@@ -1,5 +1,8 @@
 import logging
+
+from thing import Thing
 from creature import Creature
+from ai import AI
 
 class Breed:
     def __init__(self,name,char,color,
@@ -16,5 +19,11 @@ class Breed:
         self.strength = strength
         self.materials = materials
 
-    def new_creature(self):
-        return Creature(self)
+    def new(self,x,y,depth):
+        thing = Thing(self.owner.next_id(),
+                      x, y, depth, False, True,
+                      creature = Creature(self),
+                      ai = AI() )
+        thing.add_observer(self.owner.dungeon)
+        thing.add_observer(self.owner.message_log)
+        return thing
