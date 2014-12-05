@@ -22,6 +22,7 @@ class Game:
         self.things = []
         self.dungeon = None
         self.message_log = None
+        self.menu = None
         self.breeds = {}
         self.materials = {}
 
@@ -137,6 +138,9 @@ class Game:
                 thing.render(player_x, player_y, self.map_con)
         self.player.render(player_x, player_y, self.map_con)
         self.map_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
+        #self.map_con.blit()
+        if self.menu:
+            self.menu.render(self.map_con)
         self.map_con.blit()
 
         self.message_log.render(self.log_con)
@@ -153,7 +157,9 @@ class Game:
             libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
             self.clear_all()
 
-            self.state = self.player.input_handler(key,mouse)
+            self.state = self.player.input_handler(key,mouse,self.menu)
+            if self.menu and self.state != STATE_MENU:
+                self.menu = None
 
             if self.state == STATE_PLAYING:
                 for thing in self.things:

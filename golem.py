@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from event import Event
 from creature import Creature
 
 class BodyPart:
@@ -22,6 +23,9 @@ class BodyPart:
     @property
     def intact(self):
         return self.health > 0
+    @property
+    def damaged(self):
+        return self.health < self.max_health
 
     def take_damage(self,damage_dealt):
         if self.intact:
@@ -101,3 +105,22 @@ class Golem(Creature):
         result = part.take_damage(damage_dealt)
         if result[1]: self.die()
         return result
+
+    def heal(self,part_name):
+        game = self.owner.owner
+        clay = game.materials['Clay']
+
+        if (self.body_parts[part_name].damaged and
+            clay in self.owner.materials and
+            self.owner.materials[clay] >= 10):
+
+            self.owner.materials[clay] -= 10
+            self.body_parts[part_name].health += 1
+            event = Event(EVENT_HEAL,
+                          actor=self,
+                          part=self.body_parts[part_name],
+                          amount=1)
+        else:
+            event = Event(EVENT_NONE)
+        
+        return self.owner.notify(event)

@@ -457,10 +457,9 @@ class Level:
             if room.has_tag(TAG_CAVE) and not room.has_tag(TAG_START):
                 tile_positions = room.tile_positions[:]
                 for i in range(self.rng.get_int(2,4)):
-                    pos = self.rng.choose(tile_positions)
-                    tile_positions.remove(pos)
-                    x, y = pos
+                    x, y = self.rng.choose(tile_positions)
                     depth = self.owner.levels.index(self)
+                    tile_positions.remove( (x,y) )
                     breed_names = sorted(game.breeds)
                     breed_name = self.rng.choose(breed_names)
                     thing = game.breeds[breed_name].new(x,y,depth)

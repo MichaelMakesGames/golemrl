@@ -47,10 +47,34 @@ C_CORPSE = libtcod.dark_red
 LOG_FADE = 0.75
 C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
+C_EFFECT_MSG = libtcod.light_green
+
+#Menus
+MENU_HEAL = '''Menu('Heal for 10 Clay',
+                    [{'input':('1',False),
+                      'name':'Heal head',
+                      'action':'self.owner.creature.heal("Head")'},
+                     {'input':('2',False),
+                      'name':'Heal torso',
+                      'action':'self.owner.creature.heal("Torso")'},
+                     {'input':('3',False),
+                      'name':'Heal left arm',
+                      'action':'self.owner.creature.heal("L Arm")'},
+                     {'input':('4',False),
+                      'name':'Heal right arm',
+                      'action':'self.owner.creature.heal("R Arm")'},
+                     {'input':('5',False),
+                      'name':'Heal left leg',
+                      'action':'self.owner.creature.heal("L Leg")'},
+                     {'input':('6',False),
+                      'name':'Heal right leg',
+                      'action':'self.owner.creature.heal("R Leg")'}
+                    ] )'''
 
 #Game states
 STATE_PLAYING = 'PLAYING'
 STATE_PAUSED = 'PAUSED'
+STATE_MENU = 'MENU'
 
 #Room tags
 TAG_CAVE = 'CAVE'
@@ -67,6 +91,7 @@ EVENT_NONE = 'NONE'
 EVENT_HARVEST = 'HARVEST'
 EVENT_WAIT = 'WAIT'
 EVENT_MOVE = 'MOVE'
+EVENT_HEAL = 'HEAL'
 EVENT_ATTACK = 'ATTACK'
 EVENT_DIE = 'DIE'
 EVENT_CREATE = 'CREATE'
@@ -75,8 +100,11 @@ EVENT_EXPLORE_EXPLORABLE = 'EXPLORE_EXPLORABLE'
 EVENT_EXPLORE_ALL = 'EXPLORE_ALL'
 EVENT_PRINT_POS = 'PRINT_POS'
 EVENT_PRINT_ROOM = 'PRINT_ROOM'
+EVENT_MENU_OPEN = 'MENU_OPEN'
+EVENT_MENU_CANCEL = 'MENU_CANCEL'
 
 #Actions (temporary)
+ACTION_NONE = 'Event(EVENT_NONE)'
 ACTION_MOVE_N = 'self.owner.move_or_attack(0,-1)'
 ACTION_MOVE_S = 'self.owner.move_or_attack(0,1)'
 ACTION_MOVE_E = 'self.owner.move_or_attack(1,0)'
@@ -92,4 +120,5 @@ ACTION_EXPLORE_EXPLORABLE = 'self.notify(game.cur_level.explore_explorable())'
 ACTION_EXPLORE_ALL = 'self.notify(game.cur_level.explore_all())'
 ACTION_PRINT_POS = 'self.notify(Event(EVENT_PRINT_POS, thing=self.owner))'
 ACTION_PRINT_ROOM = 'self.notify(Event(EVENT_PRINT_ROOM, pos=self.owner.pos))'
-ACTION_NONE = 'Event(EVENT_NONE)'
+ACTION_OPEN_HEAL_MENU = 'self.set_menu(%s)'%MENU_HEAL
+ACTION_CANCEL_MENU = 'self.set_menu(None)'
