@@ -6,6 +6,8 @@ from observer import Subject
 from event import Event
 from menu import Menu
 
+from bodyparteffect import BodyPartEffect
+
 logger = logging.getLogger('input')
 
 class InputHandler(Subject):
@@ -20,6 +22,7 @@ class InputHandler(Subject):
         else:
             action_dict = {('r',False): ACTION_HARVEST,
                            ('h',False): ACTION_OPEN_HEAL_MENU,
+                           ('a',False): 'self.owner.creature.body_parts["Head"].add_effect(BodyPartEffect("foo",None,None,None,False,20,0,0,0,20,0))',
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,

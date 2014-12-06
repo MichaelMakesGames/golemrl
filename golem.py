@@ -5,41 +5,6 @@ import logging
 from event import Event
 from creature import Creature
 
-class BodyPart:
-    def __init__(self,name,
-                 health,agility,armor,perception,size,strength,
-                 vital=False):
-        self.name = name
-        self.max_health = health
-        self.health = health
-        self.vital = vital
-
-        self.agility = agility
-        self.armor = armor
-        self.perception = perception
-        self.size = size
-        self.strength = strength
-
-    @property
-    def intact(self):
-        return self.health > 0
-    @property
-    def damaged(self):
-        return self.health < self.max_health
-
-    def take_damage(self,damage_dealt):
-        if self.intact:
-            damage_received = damage_dealt - self.armor
-            if damage_received < 0: damage_received = 0
-            self.health -= damage_received
-            if self.health <= 0:
-                self.health = 0
-                return (damage_received, self.vital)
-            else:
-                return (damage_received, False)
-        else:
-            return (0,False)
-
 class Golem(Creature):
     def __init__(self,name,char,color,body_parts):
         self.raw_name = name

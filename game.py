@@ -7,7 +7,8 @@ from player import Player
 from inputhandler import InputHandler
 from creature import Creature
 from breed import Breed
-from golem import Golem, BodyPart
+from golem import Golem
+from bodypart import BodyPart
 from ai import AI
 from dungeon import Dungeon
 from console import Console
