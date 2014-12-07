@@ -10,7 +10,7 @@ class BodyPart:
         self.base_max_health = health
         self.health = health
         self.vital = vital
-        self.effects = []
+        self.traits = []
 
         self.base_agility = agility
         self.base_armor = armor
@@ -20,29 +20,29 @@ class BodyPart:
 
     @property
     def max_health(self):
-        return self.base_max_health + sum([effect.health_mod
-                                           for effect in self.effects])
+        return self.base_max_health + sum([trait.health_mod
+                                           for trait in self.traits])
 
     @property
     def agility(self):
-        return self.base_agility + sum([effect.agility_mod
-                                        for effect in self.effects])
+        return self.base_agility + sum([trait.agility_mod
+                                        for trait in self.traits])
     @property
     def armor(self):
-        return self.base_armor + sum([effect.armor_mod
-                                      for effect in self.effects])
+        return self.base_armor + sum([trait.armor_mod
+                                      for trait in self.traits])
     @property
     def perception(self):
-        return self.base_perception + sum([effect.perception_mod
-                                           for effect in self.effects])
+        return self.base_perception + sum([trait.perception_mod
+                                           for trait in self.traits])
     @property
     def size(self):
-        return self.base_size + sum([effect.size_mod
-                                     for effect in self.effects])
+        return self.base_size + sum([trait.size_mod
+                                     for trait in self.traits])
     @property
     def strength(self):
-        return self.base_strength + sum([effect.strength_mod
-                                         for effect in self.effects])
+        return self.base_strength + sum([trait.strength_mod
+                                         for trait in self.traits])
 
     @property
     def intact(self):
@@ -64,19 +64,19 @@ class BodyPart:
         else:
             return (0,False)
 
-    def can_add(self,effect):
-        properly_applied = effect.applied_to in self.name
-        requirements_met = (not effect.replaces or
-                            effect.replaces in self.effects)
+    def can_add(self,trait):
+        properly_applied = trait.applied_to in self.name
+        requirements_met = (not trait.replaces or
+                            trait.replaces in self.traits)
 
-        already_applied = effect in self.effects
-        for e in self.effects:
-            if e.in_replace_chain(effect):
+        already_applied = trait in self.traits
+        for t in self.traits:
+            if t.in_replace_chain(trait):
                 already_applied = True
 
         canceled = False
-        for e in self.effects:
-            if effect in e.cancels:
+        for t in self.traits:
+            if trait in t.cancels:
                 not_canceled = True
 
         return (properly_applied and
@@ -84,25 +84,25 @@ class BodyPart:
                 not already_applied and
                 not canceled)
 
-    def can_remove(self,effect):
-        return (effect in self.effects)
+    def can_remove(self,trait):
+        return (trait in self.traits)
 
-    def add_effect(self,effect,force=False):
-        print 'adding effect'
-        if force or self.can_add(effect):
-            if effect.replaces:
-                self.remove_effect(effect.replaces)
-            self.effects.append(effect)
-            self.health += effect.health_mod
-            return self.owner.owner.notify(Event(EVENT_ADD_BPEFFECT,
+    def add_trait(self,trait,force=False):
+        #print 'adding trait'
+        if force or self.can_add(trait):
+            if trait.replaces:
+                self.remove_trait(trait.replaces)
+            self.traits.append(trait)
+            self.health += trait.health_mod
+            return self.owner.owner.notify(Event(EVENT_ADD_TRAIT,
                                                  actor=self.owner.owner,
                                                  body_part=self,
-                                                 effect=effect) )
+                                                 trait=trait) )
         else: return Event(EVENT_NONE)
 
-    def remove_effect(self,effect,force=False):
-        if force or self.can_remove(effect):
-            if effect.replaces:
-                self.add_effect(effect.replaces, True)
-            self.effects.remove(effect)
-            self.health -= effect.health_mod
+    def remove_trait(self,trait,force=False):
+        if force or self.can_remove(trait):
+            if trait.replaces:
+                self.add_trait(trait.replaces, True)
+            self.traits.remove(trait)
+            self.health -= trait.health_mod

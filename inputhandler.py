@@ -20,8 +20,8 @@ class InputHandler(Subject):
         else:
             action_dict = {('r',False): ACTION_HARVEST,
                            ('h',False): ACTION_OPEN_HEAL_MENU,
-                           ('a',False): 'self.owner.creature.body_parts["R Arm"].add_effect(game.test_effect)',
-                           ('b',False): 'self.owner.creature.body_parts["R Arm"].add_effect(game.test_effect2)',
+                           ('a',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.test_trait)',
+                           ('b',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.test_trait2)',
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,

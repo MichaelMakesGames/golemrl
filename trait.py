@@ -1,10 +1,10 @@
-class BodyPartEffect:
-    def __init__(self, effect_id, name,
+class Trait:
+    def __init__(self, trait_id, name,
                  applied_to, replaces, cancels,
                  cost, removal_cost, considered,
                  health_mod, agility_mod, armor_mod,
                  perception_mod, size_mod, strength_mod):
-        self.effect_id = effect_id
+        self.trait_id = trait_id
         self.name = name
 
         self.applied_to = applied_to
@@ -26,10 +26,10 @@ class BodyPartEffect:
     def removable(self):
         return bool(self.removal_cost)
 
-    def in_replace_chain(self,effect):
+    def in_replace_chain(self,trait):
         if self.replaces == None:
             return False
-        elif self.replaces == effect:
+        elif self.replaces == trait:
             return True
         else:
-            return self.replaces.in_replace_chain(effect)
+            return self.replaces.in_replace_chain(trait)

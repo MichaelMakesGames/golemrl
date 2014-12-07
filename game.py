@@ -9,7 +9,7 @@ from creature import Creature
 from breed import Breed
 from golem import Golem
 from bodypart import BodyPart
-from bodyparteffect import BodyPartEffect
+from trait import Trait
 from ai import AI
 from dungeon import Dungeon
 from console import Console
@@ -211,14 +211,14 @@ def new_game(seed = 0xDEADBEEF):
     start_pos = game.dungeon.generate_level(0)
     player.move_to(*start_pos)
 
-    game.test_effect = BodyPartEffect("foo","foo",
-                                      "Arm",None,[],
-                                      None,None,None,
-                                      20,0,0,0,20,0)
-    game.test_effect2 = BodyPartEffect("foo","foo",
-                                       "Arm",game.test_effect,[],
-                                       None,None,None,
-                                       40,0,0,0,40,0)
+    game.test_trait = Trait("foo","foo",
+                            "Arm",None,[],
+                            None,None,None,
+                            20,0,0,0,20,0)
+    game.test_trait2 = Trait("foo","foo",
+                             "Arm",game.test_trait,[],
+                             None,None,None,
+                             40,0,0,0,40,0)
 
     return game
 
