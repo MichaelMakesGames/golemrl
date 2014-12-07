@@ -14,14 +14,14 @@ class InputHandler(Subject):
     def __call__(self, key, mouse, menu=None):
         game = self.owner.owner
         key_char = chr(key.c)
-        if key.vk != 0: print key.vk
+
         if menu:
             action_dict = menu.action_dict
         else:
             action_dict = {('r',False): ACTION_HARVEST,
                            ('h',False): ACTION_OPEN_HEAL_MENU,
-                           ('a',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.test_trait)',
-                           ('b',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.test_trait2)',
+                           ('a',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.traits["LARGE_ARM"])',
+                           ('b',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.traits["XLARGE_ARM"])',
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,

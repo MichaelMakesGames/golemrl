@@ -67,6 +67,20 @@ class Game:
             self.materials[name]['written_color'] = eval('libtcod.' + self.materials[name]['written_color'])
             self.materials[name] = Material(name,**self.materials[name])
 
+    def load_traits(self):
+        traits_file = open('data/traits.yaml')
+        self.traits = yaml.load(traits_file)
+        traits_file.close()
+        for trait_id in self.traits:
+            self.traits[trait_id] = Trait(trait_id,**self.traits[trait_id])
+        for trait_id in self.traits:
+            trait = self.traits[trait_id]
+            if trait.replaces:
+                trait.replaces = self.traits[trait.replaces]
+            if not trait.cancels: trait.cancels=[]
+            for i in range(len(trait.cancels)):
+                trait.cancels[i] = self.traits[trait.cancels[i]]
+
     def load_breeds(self):
         breeds_file = open('data/breeds.yaml')
         self.breeds = yaml.load(breeds_file)
@@ -176,6 +190,7 @@ class Game:
 def new_game(seed = 0xDEADBEEF):
     game = Game()
     game.load_materials()
+    game.load_traits()
     game.load_breeds()
 
     player_file = open('data/player.yaml')
@@ -210,15 +225,6 @@ def new_game(seed = 0xDEADBEEF):
     player.add_observer(dungeon)
     start_pos = game.dungeon.generate_level(0)
     player.move_to(*start_pos)
-
-    game.test_trait = Trait("foo","foo",
-                            "Arm",None,[],
-                            None,None,None,
-                            20,0,0,0,20,0)
-    game.test_trait2 = Trait("foo","foo",
-                             "Arm",game.test_trait,[],
-                             None,None,None,
-                             40,0,0,0,40,0)
 
     return game
 

@@ -1,0 +1,31 @@
+LARGE_ARM:
+  name: Large Arm
+  applied_to: Arm
+  replaces: ~
+  cancels: ~
+  cost: ~
+  removal_cost: ~
+  considered: good
+
+  health_mod: 10
+  agility_mod: 0
+  armor_mod: 0
+  perception_mod: 0
+  size_mod: 10
+  strength_mod: 1
+
+XLARGE_ARM:
+  name: Massive Arm
+  applied_to: Arm
+  replaces: LARGE_ARM
+  cancels: ~
+  cost: ~
+  removal_cost: ~
+  considered: good
+
+  health_mod: 20
+  agility_mod: 0
+  armor_mod: 0
+  perception_mod: 0
+  size_mod: 20
+  strength_mod: 2
