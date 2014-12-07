@@ -36,6 +36,11 @@ class MessageLog(Observer):
             message = 'Player harvested a corpse!'
             color = event.majority_material.written_color
 
+        elif event.event_type == EVENT_ADD_BPEFFECT:
+            message = 'Effect \'%s\' added to %s' % \
+                      (event.effect.name, event.body_part.name)
+            color = C_EFFECT_MSG
+
         elif event.event_type == EVENT_HEAL:
             message = 'Player healed %s' % event.part.name
             color = C_EFFECT_MSG

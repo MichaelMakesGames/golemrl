@@ -1,3 +1,7 @@
+from config import *
+
+from event import Event
+
 class BodyPart:
     def __init__(self,name,
                  health,agility,armor,perception,size,strength,
@@ -90,7 +94,11 @@ class BodyPart:
                 self.remove_effect(effect.replaces)
             self.effects.append(effect)
             self.health += effect.health_mod
-        else: print 'failed'
+            return self.owner.owner.notify(Event(EVENT_ADD_BPEFFECT,
+                                                 actor=self.owner.owner,
+                                                 body_part=self,
+                                                 effect=effect) )
+        else: return Event(EVENT_NONE)
 
     def remove_effect(self,effect,force=False):
         if force or self.can_remove(effect):

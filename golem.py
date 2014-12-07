@@ -17,6 +17,8 @@ class Golem(Creature):
         elif type(body_parts) == list:
             self.body_parts = dict( [(part.name, part)
                                      for part in body_parts] )
+        for name in self.body_parts:
+            self.body_parts[name].owner = self
 
     @property
     def name(self): return self.raw_name
