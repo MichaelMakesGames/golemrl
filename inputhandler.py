@@ -6,8 +6,6 @@ from observer import Subject
 from event import Event
 from menu import Menu
 
-from bodyparteffect import BodyPartEffect
-
 logger = logging.getLogger('input')
 
 class InputHandler(Subject):
@@ -16,13 +14,14 @@ class InputHandler(Subject):
     def __call__(self, key, mouse, menu=None):
         game = self.owner.owner
         key_char = chr(key.c)
-
+        if key.vk != 0: print key.vk
         if menu:
             action_dict = menu.action_dict
         else:
             action_dict = {('r',False): ACTION_HARVEST,
                            ('h',False): ACTION_OPEN_HEAL_MENU,
-                           ('a',False): 'self.owner.creature.body_parts["Head"].add_effect(BodyPartEffect("foo",None,None,None,False,20,0,0,0,20,0))',
+                           ('a',False): 'self.owner.creature.body_parts["R Arm"].add_effect(game.test_effect)',
+                           ('b',False): 'self.owner.creature.body_parts["R Arm"].add_effect(game.test_effect2)',
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,
@@ -45,12 +44,13 @@ class InputHandler(Subject):
             action = 'Event(EVENT_MENU_OPEN)'
         else:
             action = ACTION_NONE
+
         try:
-            if key_char != '\0':
-                action = action_dict[(key_char,key.lctrl)]
-            else:
+            action = action_dict[(key_char,key.lctrl)]
+        except KeyError:
+            try:
                 action = action_dict[key.vk]
-        except KeyError: pass #so if player hits useless key, no crash
+            except KeyError: pass
 
         try:
             event = eval(action)

@@ -60,6 +60,41 @@ class BodyPart:
         else:
             return (0,False)
 
-    def add_effect(self,effect):
-        self.effects.append(effect)
-        self.health += effect.health_mod
+    def can_add(self,effect):
+        properly_applied = effect.applied_to in self.name
+        requirements_met = (not effect.replaces or
+                            effect.replaces in self.effects)
+
+        already_applied = effect in self.effects
+        for e in self.effects:
+            if e.in_replace_chain(effect):
+                already_applied = True
+
+        canceled = False
+        for e in self.effects:
+            if effect in e.cancels:
+                not_canceled = True
+
+        return (properly_applied and
+                requirements_met and
+                not already_applied and
+                not canceled)
+
+    def can_remove(self,effect):
+        return (effect in self.effects)
+
+    def add_effect(self,effect,force=False):
+        print 'adding effect'
+        if force or self.can_add(effect):
+            if effect.replaces:
+                self.remove_effect(effect.replaces)
+            self.effects.append(effect)
+            self.health += effect.health_mod
+        else: print 'failed'
+
+    def remove_effect(self,effect,force=False):
+        if force or self.can_remove(effect):
+            if effect.replaces:
+                self.add_effect(effect.replaces, True)
+            self.effects.remove(effect)
+            self.health -= effect.health_mod

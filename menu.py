@@ -5,7 +5,7 @@ class Menu:
         self.title = title
         self.options = options #list of dicts of 'input', 'action', 'name'
 
-        self.action_dict = {('q',False): ACTION_CANCEL_MENU}
+        self.action_dict = {1: ACTION_CANCEL_MENU}
         for option in self.options:
             self.action_dict[option['input']] = option['action']
 
