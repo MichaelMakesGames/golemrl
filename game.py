@@ -72,6 +72,10 @@ class Game:
         self.traits = yaml.load(traits_file)
         traits_file.close()
         for trait_id in self.traits:
+            if 'modifiers' in self.traits[trait_id]:
+                for modifier in self.traits[trait_id]['modifiers']:
+                    self.traits[trait_id][modifier+'_mod'] = self.traits[trait_id]['modifiers'][modifier]
+                del self.traits[trait_id]['modifiers']
             self.traits[trait_id] = Trait(trait_id,**self.traits[trait_id])
         for trait_id in self.traits:
             trait = self.traits[trait_id]

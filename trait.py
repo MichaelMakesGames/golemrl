@@ -1,13 +1,17 @@
 class Trait:
-    def __init__(self, trait_id, name,
-                 applied_to, replaces, cancels,
-                 cost, removal_cost, considered,
-                 health_mod, agility_mod, armor_mod,
-                 perception_mod, size_mod, strength_mod):
+    def __init__(self, trait_id, name, applied_to,
+                 prefix=None, suffix=None,
+                 replaces=None, cancels=[],
+                 cost={}, removal_cost={}, considered='neutral',
+                 health_mod=0, agility_mod=0, armor_mod=0,
+                 perception_mod=0, size_mod=0, strength_mod=0):
         self.trait_id = trait_id
         self.name = name
-
         self.applied_to = applied_to
+
+        self.prefix = prefix
+        self.suffix = suffix
+
         self.replaces = replaces
         self.cancels = cancels
 

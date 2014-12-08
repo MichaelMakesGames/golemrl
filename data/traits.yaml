@@ -1,31 +1,30 @@
-LARGE_ARM:
-  name: Large Arm
-  applied_to: Arm
-  replaces: ~
-  cancels: ~
-  cost: ~
-  removal_cost: ~
-  considered: good
+LARGE_ARM:          #Trait id (required)
+  name: Large Arm   #String (required)
+  prefix: Large     #String (optional, defaults to none)
+  suffix: ~         #String (optional, defaults to none)
+  applied_to: Arm   #String (required)
+  replaces: ~       #Trait id (optional, defaults to none)
+  cancels: ~        #List of trait ids (optional, defaults to none)
+  cost: ~           #Material and cost dict (optional, cannot be added if none)
+  removal_cost: ~   #Material and cost dict (optional, cannot be removed if none)
+  considered: good  #'good', 'bad', or 'neutral' (optional, defaults to 'neutral')
 
-  health_mod: 10
-  agility_mod: 0
-  armor_mod: 0
-  perception_mod: 0
-  size_mod: 10
-  strength_mod: 1
+  modifiers:        #trait modifiers (optional, default to 0)
+    health: +10
+    agility: 0
+    armor: 0
+    perception: 0
+    size: +10 
+    strength: +1
 
 XLARGE_ARM:
   name: Massive Arm
+  prefix: Massive
   applied_to: Arm
   replaces: LARGE_ARM
-  cancels: ~
-  cost: ~
-  removal_cost: ~
   considered: good
 
-  health_mod: 20
-  agility_mod: 0
-  armor_mod: 0
-  perception_mod: 0
-  size_mod: 20
-  strength_mod: 2
+  modifiers:
+    health: +20
+    size: +20
+    strength: +2
