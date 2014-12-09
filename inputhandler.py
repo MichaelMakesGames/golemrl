@@ -75,14 +75,14 @@ class InputHandler(Subject):
             return STATE_PLAYING
         elif event_type == EVENT_WAIT:
             return STATE_PLAYING
+
     def set_menu(self,menu):
         self.owner.owner.menu = menu
         if menu == None:
             return Event(EVENT_MENU_CANCEL)
         else:
             return Event(EVENT_MENU_OPEN)
-    def action_print(self,string):
-        print string
+
     def manage_traits(self):
         game = self.owner.owner
         golem = self.owner.creature
@@ -97,7 +97,7 @@ class InputHandler(Subject):
             print '(%i) %s'%(option, d[option].name)
         bp = d[int(raw_input())]
         print ''
-        print '%s currently has the following traits:'%bp.name
+        print '%s currently has the following traits:'%bp.full_name
         for trait in bp.traits:
             print trait.name
         possible_traits = []

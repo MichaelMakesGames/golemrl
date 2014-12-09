@@ -45,6 +45,16 @@ class BodyPart:
                                          for trait in self.traits])
 
     @property
+    def full_name(self):
+        full_name = self.name
+        for trait in self.traits:
+            if trait.prefix:
+                full_name = trait.prefix + ' ' + full_name
+            if trait.suffix:
+                full_name = full_name + ' ' + trait.suffix
+        return full_name
+
+    @property
     def intact(self):
         return self.health > 0
     @property
