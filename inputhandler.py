@@ -20,8 +20,7 @@ class InputHandler(Subject):
         else:
             action_dict = {('r',False): ACTION_HARVEST,
                            ('h',False): ACTION_OPEN_HEAL_MENU,
-                           ('a',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.traits["LARGE_ARM"])',
-                           ('b',False): 'self.owner.creature.body_parts["R Arm"].add_trait(game.traits["XLARGE_ARM"])',
+                           ('t',False): 'self.manage_traits()',
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,
@@ -84,3 +83,33 @@ class InputHandler(Subject):
             return Event(EVENT_MENU_OPEN)
     def action_print(self,string):
         print string
+    def manage_traits(self):
+        game = self.owner.owner
+        golem = self.owner.creature
+        d = {1: golem.body_parts['Head'],
+             2: golem.body_parts['Torso'],
+             3: golem.body_parts['L Arm'],
+             4: golem.body_parts['R Arm'],
+             5: golem.body_parts['L Leg'],
+             6: golem.body_parts['R Leg']}
+        print 'Select body part:'
+        for option in d:
+            print '(%i) %s'%(option, d[option].name)
+        bp = d[int(raw_input())]
+        print ''
+        print '%s currently has the following traits:'%bp.name
+        for trait in bp.traits:
+            print trait.name
+        possible_traits = []
+        for trait_id in game.traits:
+            if bp.can_add(game.traits[trait_id]):
+                possible_traits.append(game.traits[trait_id])
+        print ''
+        print 'Can currently add the following traits:'
+        for i in range(len(possible_traits)):
+            print '(%i) %s' % (i+1, possible_traits[i].name)
+        choice = int(raw_input('Enter number to select trait or \'0\' to cancel: ')) - 1
+        if choice in range(len(possible_traits)):
+            bp.add_trait(possible_traits[choice])
+        
+        
