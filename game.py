@@ -219,6 +219,8 @@ def new_game(seed = 0xDEADBEEF):
 
     player.input_handler = InputHandler()
     player.input_handler.owner = player
+    for name in game.materials:
+        player.materials[game.materials[name]] = 0
     game.player = player
     game.add_thing(player)
 

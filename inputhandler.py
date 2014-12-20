@@ -107,9 +107,16 @@ class InputHandler(Subject):
         print ''
         print 'Can currently add the following traits:'
         for i in range(len(possible_traits)):
-            print '(%i) %s' % (i+1, possible_traits[i].name)
+            cost_str = str(possible_traits[i].cost)[1:-1]
+            print '(%i) %s (%s)' % (i+1, possible_traits[i].name, cost_str)
         choice = int(raw_input('Enter number to select trait or \'0\' to cancel: ')) - 1
         if choice in range(len(possible_traits)):
-            bp.add_trait(possible_traits[choice])
+            trait = possible_traits[choice]
+            if self.owner.can_afford(trait):
+                for material in trait.cost:
+                    self.owner.materials[material] -= trait.cost[material]
+                bp.add_trait(possible_traits[choice])
+            else:
+                print 'Can\'t afford'
         
         

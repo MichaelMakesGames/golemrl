@@ -34,6 +34,12 @@ class Player(Thing):
             else:
                 self.materials[material] = materials[material]
 
+    def can_afford(self,trait):
+        for material in trait.cost:
+            if self.materials[material] < trait.cost[material]:
+                return False
+        return True
+
     def toggle_ghost(self):
         self.ghost = not self.ghost
         event = Event(EVENT_TOGGLE_GHOST,enabled=self.ghost)
