@@ -104,10 +104,11 @@ class BodyPart:
                 self.remove_trait(trait.replaces)
             self.traits.append(trait)
             self.health += trait.health_mod
-            return self.owner.owner.notify(Event(EVENT_ADD_TRAIT,
-                                                 actor=self.owner.owner,
-                                                 body_part=self,
-                                                 trait=trait) )
+            if not force: #WARNING, this might cause trouble, but for now it seems like we're best not raising an event when we force a trait (ie player starting traits, and a trait that's added as a result of trait that replaced it being removed
+                return self.owner.owner.notify(Event(EVENT_ADD_TRAIT,
+                                                     actor=self.owner.owner,
+                                                     body_part=self,
+                                                     trait=trait) )
         else: return Event(EVENT_NONE)
 
     def remove_trait(self,trait,force=False):

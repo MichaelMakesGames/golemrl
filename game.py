@@ -227,6 +227,11 @@ def new_game(seed = 0xDEADBEEF):
     player_data['color'] = eval('libtcod.%s' % player_data['color'])
     for part_name in player_data['body_parts']:
         player_data['body_parts'][part_name] = BodyPart(part_name,**player_data['body_parts'][part_name])
+    for part_name in player_data['starting_traits']:
+        bp = player_data['body_parts'][part_name]
+        for trait_id in player_data['starting_traits'][part_name]:
+            bp.add_trait(game.traits[trait_id], force=True)
+    del player_data['starting_traits']
 
     player_creature = Golem(player_name,**player_data)
 

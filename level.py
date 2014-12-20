@@ -464,7 +464,7 @@ class Level:
                     breed_id = self.rng.choose(breed_ids)
                     thing = game.breeds[breed_id].new(x,y,depth)
                     game.add_thing(thing)
-        self.owner.on_notify(Event(EVENT_CREATE)) #bit of a hack, might cause bugs in the future -- you have been warned
+        self.owner.on_notify(Event(EVENT_CREATE)) #WARNING bit of a hack, might cause bugs in the future -- you have been warned
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]

@@ -46,3 +46,6 @@ Player:
       agility: 1
       perception: 0
       strength: 0
+  starting_traits:
+    Torso:
+      - ERODED_TORSO
