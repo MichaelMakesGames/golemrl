@@ -62,22 +62,29 @@ class Game:
         materials_file = open('data/materials.yaml')
         self.materials = yaml.load(materials_file)
         materials_file.close()
-        for name in self.materials:
-            self.materials[name]['color'] = eval('libtcod.' + self.materials[name]['color'])
-            self.materials[name]['written_color'] = eval('libtcod.' + self.materials[name]['written_color'])
-            self.materials[name] = Material(name,**self.materials[name])
+        for material_id in self.materials:
+            material = self.materials[material_id]
+            material = Material(material_id, **material)
+            self.materials[material_id] = material
+
+            material.color = eval('libtcod.' + material.color)
+            material.text_color = eval('libtcod.' + material.text_color)
 
     def load_traits(self):
         traits_file = open('data/traits.yaml')
         self.traits = yaml.load(traits_file)
         traits_file.close()
         for trait_id in self.traits:
-            if 'modifiers' in self.traits[trait_id]:
-                for modifier in self.traits[trait_id]['modifiers']:
-                    self.traits[trait_id][modifier+'_mod'] = self.traits[trait_id]['modifiers'][modifier]
-                del self.traits[trait_id]['modifiers']
-            self.traits[trait_id] = Trait(trait_id,**self.traits[trait_id])
+            trait = self.traits[trait_id]
+            if 'modifiers' in trait:
+                for modifier in trait['modifiers']:
+                    trait[modifier+'_mod'] = trait['modifiers'][modifier]
+                del trait['modifiers']
+            trait = Trait(trait_id,**self.traits[trait_id])
+            self.traits[trait_id] = trait
+
         for trait_id in self.traits:
+            #second pass needed snce traits defs include other traits
             trait = self.traits[trait_id]
             if trait.replaces:
                 trait.replaces = self.traits[trait.replaces]
@@ -101,18 +108,21 @@ class Game:
         breeds_file = open('data/breeds.yaml')
         self.breeds = yaml.load(breeds_file)
         breeds_file.close()
-        for name in self.breeds:
-            color = 'libtcod.' + self.breeds[name]['color'].strip().replace(' ','_')
-            self.breeds[name]['color'] = eval(color)
+        for breed_id in self.breeds:
+            breed = self.breeds[breed_id]
+            breed = Breed(breed_id, **breed)
+            self.breeds[breed_id] = breed
+
+            color = 'libtcod.' + breed.color.replace(' ','_')
+            breed.color = eval(color)
 
             new_materials_dict = {}
-            for material in self.breeds[name]['materials']:
-                proper_material = self.materials[material]
-                new_materials_dict[proper_material] = self.breeds[name]['materials'][material]
-            self.breeds[name]['materials'] = new_materials_dict
+            for material_id in breed.materials:
+                material = self.materials[material_id]
+                new_materials_dict[material] = breed.materials[material_id]
+            breed.materials = new_materials_dict
 
-            self.breeds[name] = Breed(name, **self.breeds[name])
-            self.breeds[name].owner = self
+            breed.owner = self
 
     def clear_all(self):
         for thing in self.things:
@@ -150,7 +160,7 @@ class Game:
 
         y += 1
         for material in sorted(self.player.materials):
-            color = material.written_color
+            color = material.text_color
             x = 2
             for char in '%s: %i'%(material,self.player.materials[material]):
                 self.panel_con.put_char(x,y,char,color)

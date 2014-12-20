@@ -6,7 +6,7 @@ LARGE_ARM:          #Trait id (required)
   replaces: ~       #Trait id (optional, defaults to none)
   cancels: ~        #List of trait ids (optional, defaults to none)
   cost:           #Material and cost dict (optional, cannot be added if none)
-    Clay: 20
+    CLAY: 20
   removal_cost: ~   #Material and cost dict (optional, cannot be removed if none)
   considered: good  #'good', 'bad', or 'neutral' (optional, defaults to 'neutral')
 
@@ -18,15 +18,15 @@ LARGE_ARM:          #Trait id (required)
     size: +10 
     strength: +1
 
-XLARGE_ARM:
+X_LARGE_ARM:
   name: Massive Arm
   prefix: Massive
   applied_to: Arm
   replaces: LARGE_ARM
   cost:
-    Clay: 20
+    CLAY: 20
   removal_cost:
-    Clay: -10
+    CLAY: -10
   considered: good
 
   modifiers:

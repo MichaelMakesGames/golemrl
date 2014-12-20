@@ -5,8 +5,9 @@ from creature import Creature
 from ai import AI
 
 class Breed:
-    def __init__(self,name,char,color,
+    def __init__(self,breed_id,name,char,color,
                  health,agility,armor,perception,size,strength,materials):
+        self.breed_id = breed_id
         self.name = name
         self.char = char
         self.color = color

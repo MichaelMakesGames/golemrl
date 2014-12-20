@@ -1,4 +1,5 @@
-Animate Clay:
+ANIMATE_CLAY:
+  name: Animate Clay
   char: c
   color: darkest sepia
   health: 5
@@ -8,9 +9,10 @@ Animate Clay:
   size: 20
   strength: 2
   materials:
-    Clay: 20
+    CLAY: 20
 
-Eroded Golem:
+ERODEN_GOLEM:
+  name: Eroded Golem
   char: e
   color: darkest sepia
   health: 10
@@ -20,5 +22,5 @@ Eroded Golem:
   size: 80
   strength: 3
   materials:
-    Clay: 40
-    Stone: 10
+    CLAY: 40
+    STONE: 10

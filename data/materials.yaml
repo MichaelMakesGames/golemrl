@@ -1,24 +1,30 @@
-Clay:
+CLAY:
+  name: Clay
   color: darker_sepia
-  written_color: light_sepia
+  text_color: light_sepia
   value: 1
-Stone:
+STONE:
+  name: Stone
   color: darker_gray
-  written_color: lighter_gray
+  text_color: lighter_gray
   value: 2
-Iron:
+IRON:
+  name: Iron
   color: lightest_gray
-  written_color: lightest_gray
+  text_color: lightest_gray
   value: 5
-Coal:
+COAL:
+  name: Coal
   color: black
-  written_color: gray
+  text_color: gray
   value: 5
-Gem:
+GEM:
+  name: Gem
   color: darker_blue
-  written_color: light_blue
+  text_color: light_blue
   value: 20
-Flesh:
+FLESH:
+  name: Flesh
   color: darker_red
-  written_color: light_red
+  text_color: light_red
   value: 10

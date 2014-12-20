@@ -460,9 +460,9 @@ class Level:
                     x, y = self.rng.choose(tile_positions)
                     depth = self.owner.levels.index(self)
                     tile_positions.remove( (x,y) )
-                    breed_names = sorted(game.breeds)
-                    breed_name = self.rng.choose(breed_names)
-                    thing = game.breeds[breed_name].new(x,y,depth)
+                    breed_ids = sorted(game.breeds)
+                    breed_id = self.rng.choose(breed_ids)
+                    thing = game.breeds[breed_id].new(x,y,depth)
                     game.add_thing(thing)
         self.owner.on_notify(Event(EVENT_CREATE)) #bit of a hack, might cause bugs in the future -- you have been warned
 

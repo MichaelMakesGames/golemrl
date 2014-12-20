@@ -75,7 +75,7 @@ class Golem(Creature):
 
     def heal(self,part_name):
         game = self.owner.owner
-        clay = game.materials['Clay']
+        clay = game.materials['CLAY']
 
         if (self.body_parts[part_name].damaged and
             clay in self.owner.materials and

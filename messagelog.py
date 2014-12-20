@@ -34,7 +34,7 @@ class MessageLog(Observer):
 
         elif event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
-            color = event.majority_material.written_color
+            color = event.majority_material.text_color
 
         elif event.event_type == EVENT_ADD_TRAIT:
             message = 'Trait \'%s\' added to %s' % \
