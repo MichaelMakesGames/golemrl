@@ -98,25 +98,39 @@ class InputHandler(Subject):
         bp = d[int(raw_input())]
         print ''
         print '%s currently has the following traits:'%bp.full_name
+        i = 1
         for trait in bp.traits:
-            print trait.name
+            if trait.removal_cost:
+                removal_str = 'Can remove: ' + str(trait.removal_cost)[1:-1]
+            else:
+                removal_str = 'Cannot remove'
+            print '(%i) %s (%s)'%(i, trait.name, removal_str)
+            i += 1
         possible_traits = []
         for trait_id in game.traits:
             if bp.can_add(game.traits[trait_id]):
                 possible_traits.append(game.traits[trait_id])
         print ''
         print 'Can currently add the following traits:'
-        for i in range(len(possible_traits)):
-            cost_str = str(possible_traits[i].cost)[1:-1]
-            print '(%i) %s (%s)' % (i+1, possible_traits[i].name, cost_str)
+        for trait in possible_traits:
+            cost_str = str(trait.cost)[1:-1]
+            print '(%i) %s (%s)' % (i, trait.name, cost_str)
+            i += 1
         choice = int(raw_input('Enter number to select trait or \'0\' to cancel: ')) - 1
-        if choice in range(len(possible_traits)):
-            trait = possible_traits[choice]
+        if choice >= 0 and choice < len(bp.traits):
+            trait = bp.traits[choice]
+            if self.owner.can_afford_removal(trait):
+                for material in trait.cost:
+                    self.owner.materials[material] -= trait.removal_cost[material]
+                bp.remove_trait(trait)
+            else:
+                print 'Cannot afford'
+        elif choice-len(bp.traits) in range(len(possible_traits)):
+            trait = possible_traits[choice-len(bp.traits)]
             if self.owner.can_afford(trait):
                 for material in trait.cost:
                     self.owner.materials[material] -= trait.cost[material]
-                bp.add_trait(possible_traits[choice])
+                bp.add_trait(trait)
             else:
                 print 'Can\'t afford'
-        
-        
+        print 'DONE'

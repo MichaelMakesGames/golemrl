@@ -35,8 +35,18 @@ class Player(Thing):
                 self.materials[material] = materials[material]
 
     def can_afford(self,trait):
+        if not trait.cost:
+            return False
         for material in trait.cost:
             if self.materials[material] < trait.cost[material]:
+                return False
+        return True
+
+    def can_afford_removal(self,trait):
+        if not trait.removal_cost:
+            return False
+        for material in trait.removal_cost:
+            if self.materials[material] < trait.removal_cost[material]:
                 return False
         return True
 
