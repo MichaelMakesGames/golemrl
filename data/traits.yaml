@@ -25,6 +25,8 @@ XLARGE_ARM:
   replaces: LARGE_ARM
   cost:
     Clay: 20
+  removal_cost:
+    Clay: -10
   considered: good
 
   modifiers:

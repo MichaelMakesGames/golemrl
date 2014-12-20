@@ -85,11 +85,18 @@ class Game:
             for i in range(len(trait.cancels)):
                 trait.cancels[i] = self.traits[trait.cancels[i]]
 
-            new_cost = {}
-            for material in trait.cost:
-                new_cost[self.materials[material]] = trait.cost[material]
-            trait.cost = new_cost
+            if trait.cost:
+                new_cost = {}
+                for material in trait.cost:
+                    new_cost[self.materials[material]] = trait.cost[material]
+                trait.cost = new_cost
 
+            if trait.removal_cost:
+                new_removal_cost = {}
+                for material in trait.removal_cost:
+                    new_removal_cost[self.materials[material]] = trait.removal_cost[material]
+                trait.removal_cost = new_removal_cost
+                
     def load_breeds(self):
         breeds_file = open('data/breeds.yaml')
         self.breeds = yaml.load(breeds_file)
