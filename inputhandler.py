@@ -119,17 +119,15 @@ class InputHandler(Subject):
         choice = int(raw_input('Enter number to select trait or \'0\' to cancel: ')) - 1
         if choice >= 0 and choice < len(bp.traits):
             trait = bp.traits[choice]
-            if self.owner.can_afford_removal(trait):
-                for material in trait.cost:
-                    self.owner.materials[material] -= trait.removal_cost[material]
+            if self.owner.can_afford(trait.removal_cost):
+                self.owner.pay(trait.removal_cost)
                 bp.remove_trait(trait)
             else:
                 print 'Cannot afford'
         elif choice-len(bp.traits) in range(len(possible_traits)):
             trait = possible_traits[choice-len(bp.traits)]
-            if self.owner.can_afford(trait):
-                for material in trait.cost:
-                    self.owner.materials[material] -= trait.cost[material]
+            if self.owner.can_afford(trait.cost):
+                self.owner.pay(trait.cost)
                 bp.add_trait(trait)
             else:
                 print 'Can\'t afford'

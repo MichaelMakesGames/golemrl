@@ -34,21 +34,17 @@ class Player(Thing):
             else:
                 self.materials[material] = materials[material]
 
-    def can_afford(self,trait):
-        if not trait.cost:
+    def can_afford(self,cost):
+        if cost == None:
             return False
-        for material in trait.cost:
-            if self.materials[material] < trait.cost[material]:
+        for material in cost:
+            if self.materials[material] < cost[material]:
                 return False
         return True
 
-    def can_afford_removal(self,trait):
-        if not trait.removal_cost:
-            return False
-        for material in trait.removal_cost:
-            if self.materials[material] < trait.removal_cost[material]:
-                return False
-        return True
+    def pay(self,cost):
+        for material in cost:
+            self.materials[material] -= cost[material]
 
     def toggle_ghost(self):
         self.ghost = not self.ghost
