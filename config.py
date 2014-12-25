@@ -1,5 +1,9 @@
 import libtcodpy as libtcod
 
+FOCUS_PLAYER = 'PLAYER'
+FOCUS_FIXED = 'FIXED'
+FOCUS = FOCUS_FIXED
+
 SCREEN_W=106
 SCREEN_H=70
 

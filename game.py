@@ -208,15 +208,21 @@ class Game:
     def render_all(self):
         player_x = self.player.x
         player_y = self.player.y
+        if FOCUS == FOCUS_PLAYER:
+            focus_x = player_x
+            focus_y = player_y
+        elif FOCUS == FOCUS_FIXED:
+            focus_x = LEVEL_W//2
+            focus_y = LEVEL_H//2
 
-        self.dungeon.render(player_x, player_y, self.map_con)
+        self.dungeon.render(focus_x, focus_y, self.map_con)
         for thing in self.things:
             if thing != self.player:
-                thing.render(player_x, player_y, self.map_con)
+                thing.render(focus_x, focus_y, self.map_con)
         for thing in self.living_things: #draw living creatures on top
             if thing != self.player:
-                thing.render(player_x, player_y, self.map_con)
-        self.player.render(player_x, player_y, self.map_con)
+                thing.render(focus_x, focus_y, self.map_con)
+        self.player.render(focus_x, focus_y, self.map_con)
         self.map_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
         #self.map_con.blit()
         if self.menu:
