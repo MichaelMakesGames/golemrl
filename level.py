@@ -92,8 +92,8 @@ class Level:
         return x in range(self.w) and y in range(self.h)
 
     def is_in_bounds(self,x,y):
-        return ( x > 0 and x < self.w-1 and
-                 y > 0 and y < self.h-1 )
+        return ( x > 1 and x < self.w-2 and
+                 y > 1 and y < self.h-2 )
 
     @property
     def caves(self):
