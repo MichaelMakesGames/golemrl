@@ -41,6 +41,23 @@ class MessageLog(Observer):
                       (event.trait.name, event.body_part.name)
             color = C_EFFECT_MSG
 
+        elif event.event_type == EVENT_REMOVE_TRAIT:
+            message = 'Trait \'%s\' removed from %s' % \
+                      (event.trait.name, event.body_part.name)
+            color = C_EFFECT_MSG
+            
+        elif event.event_type == EVENT_INSCRIBE:
+            message = 'You feel the powers of %s %s through your %s' % \
+                      (event.word.name,
+                       event.word.verb,
+                       event.body_part.name)
+            color = event.word.text_color
+
+        elif event.event_type == EVENT_ERASE:
+            message = 'You feel the powers of %s leave your %s' % \
+                      (event.word.name, event.body_part.name)
+            color = event.word.text_color
+
         elif event.event_type == EVENT_HEAL:
             message = 'Player healed %s' % event.part.name
             color = C_EFFECT_MSG

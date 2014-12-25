@@ -3,15 +3,18 @@ LIFE:
   char: L
   color: white
   text_color: white
+  verb: surge
 
 FIRE:
   name: Fire
   char: F
   color: dark red
   text_color: light red
+  verb: burn
 
 WATER:
   name: Water
   char: W
   color: dark blue
   text_color: light blue
+  verb: flow

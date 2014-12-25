@@ -81,11 +81,23 @@ class BodyPart:
             self.health += amount
 
     def inscribe(self,word):
+        player = self.owner.owner
         if word not in self.words and None in self.words:
             self.words[self.words.index(None)] = word
+            return player.notify(Event(EVENT_INSCRIBE,
+                                       actor = self.owner.owner,
+                                       body_part = self,
+                                       word = word))
+
     def erase(self,word):
+        player = self.owner.owner
         if word in self.words:
             self.words[self.words.index(word)] = None
+            return player.notify(Event(EVENT_ERASE,
+                                       actor = self.owner.owner,
+                                       body_part = self,
+                                       word = word))
+
     def has_word(self,word):
         return word in self.words
 
@@ -127,8 +139,14 @@ class BodyPart:
         else: return Event(EVENT_NONE)
 
     def remove_trait(self,trait,force=False):
+        player = self.owner.owner
         if force or self.can_remove(trait):
             if trait.replaces:
                 self.add_trait(trait.replaces, True)
             self.traits.remove(trait)
             self.health -= trait.health_mod
+            if not force:
+                return player.notify(Event(EVENT_REMOVE_TRAIT,
+                                           actor = player,
+                                           body_part = self,
+                                           trait = trait))
