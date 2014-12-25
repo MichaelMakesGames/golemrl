@@ -70,3 +70,27 @@ class Player(Thing):
         if self.can_cast(spell) and self.can_afford(spell.cost) or force:
             self.pay(spell.cost)
             spell.cast(self)
+
+    def add_trait(self,bp,trait):
+        if type(bp) == str:
+            bp = self.creature.body_parts[bp]
+        if type(trait) == str:
+            trait = self.owner.traits[trait]
+
+        if bp.can_add(trait) and self.can_afford(trait.cost):
+            self.pay(trait.cost)
+            return bp.add_trait(trait)
+        else:
+            return Event(EVENT_NONE)
+
+    def remove_trait(self,bp,trait):
+        if type(bp) == str:
+            bp = self.creature.body_parts[bp]
+        if type(trait) == str:
+            trait = self.owner.traits[trait]
+    
+        if bp.can_remove(trait) and self.can_afford(trait.removal_cost):
+            self.pay(trait.removal_cost)
+            return bp.remove_trait(trait)
+        else:
+            return Event(EVENT_NONE)

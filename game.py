@@ -293,7 +293,6 @@ def new_game(seed = 0xDEADBEEF):
         player.spells.append(game.spells[spell_id])
     for word_id in game.words:
         player.words.append(game.words[word_id])
-    player.creature.body_parts['L Arm'].inscribe(game.words['LIFE'])
     game.player = player
     game.add_thing(player)
 

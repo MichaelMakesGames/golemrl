@@ -14,12 +14,14 @@ class Menu:
         con.draw_border(True,C_BORDER,C_BORDER_BKGND)
         
         y = 2
-        x = 2
-        for char in self.title:
-            con.put_char(x,y,char,libtcod.white)
-            x += 1
+        for line in self.title.split('\n'):
+            x = 2
+            for char in line:
+                con.put_char(x,y,char,libtcod.white)
+                x += 1
+            y += 1
 
-        y = 4
+        y +=2
         for option in self.options:
             x = 2
             option_str = '%s: %s'%(option['input'][0], option['name'])

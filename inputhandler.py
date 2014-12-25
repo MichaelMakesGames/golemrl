@@ -20,7 +20,7 @@ class InputHandler(Subject):
         else:
             action_dict = {('r',False): ACTION_HARVEST,
                            ('s',False): ACTION_OPEN_SPELL_MENU,
-                           ('t',False): 'self.manage_traits()',
+                           ('t',False): ACTION_OPEN_BODY_MENU,
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,
@@ -97,52 +97,78 @@ class InputHandler(Subject):
         menu = Menu('Select spell',menu_options)
         return self.set_menu(menu)
 
-    def manage_traits(self):
+    def open_body_menu(self):
+        menu_options = []
+        bp_names = ['Head','Torso','L Arm','R Arm','L Leg','R Leg']
+        for name in bp_names:
+            menu_options.append( {'input':(str(bp_names.index(name)+1),False),
+                                  'name': name,
+                                  'action': 'self.open_bp_menu(%s)'%repr(name)})
+        menu = Menu('Select body part',menu_options)
+        return self.set_menu(menu)
+
+    def open_bp_menu(self,bp_name):
         game = self.owner.owner
-        golem = self.owner.creature
-        d = {1: golem.body_parts['Head'],
-             2: golem.body_parts['Torso'],
-             3: golem.body_parts['L Arm'],
-             4: golem.body_parts['R Arm'],
-             5: golem.body_parts['L Leg'],
-             6: golem.body_parts['R Leg']}
-        print 'Select body part:'
-        for option in d:
-            print '(%i) %s'%(option, d[option].name)
-        bp = d[int(raw_input())]
-        print ''
-        print '%s currently has the following traits:'%bp.full_name
-        i = 1
-        for trait in bp.traits:
-            if trait.removal_cost:
-                removal_str = 'Can remove: ' + str(trait.removal_cost)[1:-1]
-            else:
-                removal_str = 'Cannot remove'
-            print '(%i) %s (%s)'%(i, trait.name, removal_str)
-            i += 1
-        possible_traits = []
-        for trait_id in game.traits:
-            if bp.can_add(game.traits[trait_id]):
-                possible_traits.append(game.traits[trait_id])
-        print ''
-        print 'Can currently add the following traits:'
+        menu_options = [ {'input':('w',False),
+                          'name': 'Inscribe word',
+                          'action': 'self.open_inscribe_menu(%s)'%repr(bp_name)},
+                         {'input':('e',False),
+                          'name': 'Erase word',
+                          'action':'self.open_erase_menu(%s)'%repr(bp_name)},
+                         {'input':('t',False),
+                          'name': 'Add trait',
+                          'action':'self.open_add_trait_menu(%s)'%repr(bp_name)},
+                         {'input':('r',False),
+                          'name': 'Remove trait',
+                          'action': 'self.open_remove_trait_menu(%s)'%repr(bp_name)} ]
+        bp = self.owner.creature.body_parts[bp_name]
+        words_text = '%s currently has %i blank inscription slots,\nand the following words inscribed: %s'%(bp.name, bp.words.count(None),str([w.name for w in bp.words if w])[1:-1])
+        traits_text = '%s currently has the following traits: %s\n%s can currently add the following traits: %s'%(bp.name,str([t.name for t in bp.traits])[1:-1],bp.name,str([game.traits[t].name for t in game.traits if bp.can_add(game.traits[t])])[1:-1])
+        menu_text = '\n\n'.join([bp.name,words_text,traits_text])
+        menu = Menu(menu_text,menu_options)
+        return self.set_menu(menu)        
+
+    def open_inscribe_menu(self,bp_name):
+        menu_options = []
+        for word in self.owner.words:
+            if not self.owner.creature.body_parts[bp_name].has_word(word):
+                menu_options.append({'input':(word.char.lower(),False),
+                                     'name': word.name,
+                                     'action': 'self.owner.creature.body_parts[%s].inscribe(game.words[%s])'%(repr(bp_name),repr(word.word_id))})
+        menu = Menu('Choose word to inscribe on %s'%bp_name,
+                    menu_options)
+        return self.set_menu(menu)
+
+    def open_erase_menu(self,bp_name):
+        menu_options = []
+        for word in self.owner.creature.body_parts[bp_name].words:
+            if word != None:
+                menu_options.append({'input':(word.char.lower(),False),
+                                     'name': word.name,
+                                     'action': 'self.owner.creature.body_parts[%s].erase(game.words[%s])'%(repr(bp_name),repr(word.word_id))})
+        menu = Menu('Choose word to erase from %s'%bp_name,menu_options)
+        return self.set_menu(menu)
+
+    def open_add_trait_menu(self,bp_name):
+        menu_options = []
+        game = self.owner.owner
+        bp = self.owner.creature.body_parts[bp_name]
+        possible_traits = [game.traits[t] for t in game.traits if bp.can_add(game.traits[t])]
         for trait in possible_traits:
-            cost_str = str(trait.cost)[1:-1]
-            print '(%i) %s (%s)' % (i, trait.name, cost_str)
-            i += 1
-        choice = int(raw_input('Enter number to select trait or \'0\' to cancel: ')) - 1
-        if choice >= 0 and choice < len(bp.traits):
-            trait = bp.traits[choice]
-            if self.owner.can_afford(trait.removal_cost):
-                self.owner.pay(trait.removal_cost)
-                bp.remove_trait(trait)
-            else:
-                print 'Cannot afford'
-        elif choice-len(bp.traits) in range(len(possible_traits)):
-            trait = possible_traits[choice-len(bp.traits)]
-            if self.owner.can_afford(trait.cost):
-                self.owner.pay(trait.cost)
-                bp.add_trait(trait)
-            else:
-                print 'Can\'t afford'
-        print 'DONE'
+            menu_options.append({'input':(str(possible_traits.index(trait)+1),False),
+                                 'name':'%s (%s)'%(trait.name,repr(trait.cost)[1:-1]),
+                                 'action':'self.owner.add_trait(%s,%s)'%(repr(bp_name),repr(trait.trait_id))})
+        menu = Menu('Choose trait to add to %s'%bp_name,menu_options)
+        return self.set_menu(menu)
+
+    def open_remove_trait_menu(self,bp_name):
+        menu_options = []
+        game = self.owner.owner
+        bp = self.owner.creature.body_parts[bp_name]
+        possible_traits = [trait for trait in bp.traits if bp.can_remove(trait)]
+        for trait in possible_traits:
+            menu_options.append({'input':(str(possible_traits.index(trait)+1),False),
+                                 'name':'%s (%s)'%(trait.name,repr(trait.removal_cost)[1:-1]),
+                                 'action':'self.owner.remove_trait(%s,%s)'%(repr(bp_name),repr(trait.trait_id))})
+        menu = Menu('Choose trait to remove from %s'%bp_name,menu_options)
+        return self.set_menu(menu)
