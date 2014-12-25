@@ -6,3 +6,11 @@ HEAL:
   cost:
     CLAY: 10
   func: heal
+
+DEATH_TOUCH:
+  name: Death Touch
+  targeting: touch
+  desc: Kill!
+  requires: [Arm, LIFE]
+  cost: {}
+  func: death_touch

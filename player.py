@@ -13,6 +13,7 @@ class Player(Thing):
         self.materials = {}
         self.spells = []
         self.words = []
+        self.casting = None
         self.ghost = False
 
     def harvest_corpse(self):
@@ -66,10 +67,23 @@ class Player(Thing):
     def can_cast(self,spell):
         return spell.can_cast(self)
 
-    def cast(self,spell,force=False):
-        if self.can_cast(spell) and self.can_afford(spell.cost) or force:
-            self.pay(spell.cost)
-            spell.cast(self)
+    def cast(self,spell):
+        if self.can_cast(spell) and self.can_afford(spell.cost):
+            if spell.targeting == 'self':
+                self.pay(spell.cost)
+                return spell.cast(self)
+            elif spell.targeting == 'touch':
+                self.casting = spell
+                return Event(EVENT_NONE)
+
+    def complete_spell(self,direction):
+        spell = self.casting
+        self.casting = None
+        return (spell.cast(self,direction))
+
+    def cancel_spell(self):
+        self.casting = None
+        return Event(EVENT_NONE)
 
     def add_trait(self,bp,trait):
         if type(bp) == str:

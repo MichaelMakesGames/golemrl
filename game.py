@@ -243,7 +243,9 @@ class Game:
             libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
             self.clear_all()
 
-            self.state = self.player.input_handler(key,mouse,self.menu)
+            self.state = self.player.input_handler(key,mouse,
+                                                   self.menu,
+                                                   self.player.casting)
             if self.menu and self.state != STATE_MENU:
                 self.menu = None
 
