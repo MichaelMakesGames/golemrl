@@ -10,6 +10,7 @@ Player:
       agility: 0
       perception: 2
       strength: 0
+      word_slots: 1
     Torso:
       health: 15
       vital: true
@@ -18,6 +19,7 @@ Player:
       agility: 0
       perception: 0
       strength: 1
+      word_slots: 3
     L Arm:
       health: 10
       size: 30
@@ -25,6 +27,7 @@ Player:
       agility: 1
       perception: 0
       strength: 1
+      word_slots: 2
     R Arm:
       health: 10
       size: 30
@@ -32,6 +35,7 @@ Player:
       agility: 1
       perception: 0
       strength: 1
+      word_slots: 2
     L Leg:
       health: 10
       size: 30
@@ -39,6 +43,7 @@ Player:
       agility: 1
       perception: 0
       strength: 0
+      word_slots: 2
     R Leg:
       health: 10
       size: 30
@@ -46,6 +51,7 @@ Player:
       agility: 1
       perception: 0
       strength: 0
+      word_slots: 2
   starting_traits:
     Torso:
       - ERODED_TORSO

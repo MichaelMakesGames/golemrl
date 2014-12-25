@@ -4,6 +4,7 @@ from event import Event
 
 class BodyPart:
     def __init__(self,name,
+                 word_slots,
                  health,agility,armor,perception,size,strength,
                  vital=False):
         self.name = name
@@ -11,6 +12,7 @@ class BodyPart:
         self.health = health
         self.vital = vital
         self.traits = []
+        self.words = [None for i in range(word_slots)]
 
         self.base_agility = agility
         self.base_armor = armor
@@ -73,6 +75,19 @@ class BodyPart:
                 return (damage_received, False)
         else:
             return (0,False)
+
+    def heal(self,amount):
+        if self.health+amount <= self.max_health:
+            self.health += amount
+
+    def inscribe(self,word):
+        if word not in self.words and None in self.words:
+            self.words[self.words.index(None)] = word
+    def erase(self,word):
+        if word in self.words:
+            self.words[self.words.index(word)] = None
+    def has_word(self,word):
+        return word in self.words
 
     def can_add(self,trait):
         properly_applied = trait.applied_to in self.name

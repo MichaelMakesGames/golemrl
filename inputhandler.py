@@ -19,7 +19,7 @@ class InputHandler(Subject):
             action_dict = menu.action_dict
         else:
             action_dict = {('r',False): ACTION_HARVEST,
-                           ('h',False): ACTION_OPEN_HEAL_MENU,
+                           ('s',False): ACTION_OPEN_SPELL_MENU,
                            ('t',False): 'self.manage_traits()',
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
@@ -51,9 +51,9 @@ class InputHandler(Subject):
                 action = action_dict[key.vk]
             except KeyError: pass
 
-        try:
+        if type(action) == str:
             event = eval(action)
-        except TypeError:
+        else:
             event = action()
 
         if event == None:
@@ -82,6 +82,18 @@ class InputHandler(Subject):
             return Event(EVENT_MENU_CANCEL)
         else:
             return Event(EVENT_MENU_OPEN)
+
+    def open_spell_menu(self):
+        menu_options = []
+        i = 1
+        for spell in self.owner.spells:
+            menu_options.append( {'input':(str(i),False),
+                                  'name': spell.name,
+                                  'action': 'self.owner.spells[%i].cast(self.owner)'%(i-1)} )
+            if not self.owner.can_cast(spell):
+                menu_options[-1]['name'] += ' (Cannot cast)'
+        menu = Menu('Select spell',menu_options)
+        return self.set_menu(menu)
 
     def manage_traits(self):
         game = self.owner.owner

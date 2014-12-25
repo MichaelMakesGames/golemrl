@@ -1,0 +1,8 @@
+HEAL:
+  name: Heal
+  targeting: self #one of 'self', 'touch', or 'ranged'
+  desc: Heals yourself
+  requires: [Arm, LIFE]
+  cost:
+    CLAY: 10
+  func: heal

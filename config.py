@@ -49,28 +49,6 @@ C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
 C_EFFECT_MSG = libtcod.light_green
 
-#Menus
-MENU_HEAL = '''Menu('Heal for 10 Clay',
-                    [{'input':('1',False),
-                      'name':'Heal head',
-                      'action':'self.owner.creature.heal("Head")'},
-                     {'input':('2',False),
-                      'name':'Heal torso',
-                      'action':'self.owner.creature.heal("Torso")'},
-                     {'input':('3',False),
-                      'name':'Heal left arm',
-                      'action':'self.owner.creature.heal("L Arm")'},
-                     {'input':('4',False),
-                      'name':'Heal right arm',
-                      'action':'self.owner.creature.heal("R Arm")'},
-                     {'input':('5',False),
-                      'name':'Heal left leg',
-                      'action':'self.owner.creature.heal("L Leg")'},
-                     {'input':('6',False),
-                      'name':'Heal right leg',
-                      'action':'self.owner.creature.heal("R Leg")'}
-                    ] )'''
-
 #Game states
 STATE_PLAYING = 'PLAYING'
 STATE_PAUSED = 'PAUSED'
@@ -121,5 +99,5 @@ ACTION_EXPLORE_EXPLORABLE = 'self.notify(game.cur_level.explore_explorable())'
 ACTION_EXPLORE_ALL = 'self.notify(game.cur_level.explore_all())'
 ACTION_PRINT_POS = 'self.notify(Event(EVENT_PRINT_POS, thing=self.owner))'
 ACTION_PRINT_ROOM = 'self.notify(Event(EVENT_PRINT_ROOM, pos=self.owner.pos))'
-ACTION_OPEN_HEAL_MENU = 'self.set_menu(%s)'%MENU_HEAL
 ACTION_CANCEL_MENU = 'self.set_menu(None)'
+ACTION_OPEN_SPELL_MENU = 'self.open_spell_menu()'

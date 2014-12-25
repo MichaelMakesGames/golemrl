@@ -11,6 +11,8 @@ class Player(Thing):
     def __init__(self,*args,**kwargs):
         Thing.__init__(self,*args,**kwargs)
         self.materials = {}
+        self.spells = []
+        self.words = []
         self.ghost = False
 
     def harvest_corpse(self):
@@ -51,3 +53,15 @@ class Player(Thing):
         event = Event(EVENT_TOGGLE_GHOST,enabled=self.ghost)
         self.notify(event)
         return event
+
+    def knows_word(self,word):
+        if word in self.words:
+            return True
+        else:
+            return False
+    def learn_word(self,word):
+        if word not in self.words:
+            self.append(word)
+
+    def can_cast(self,spell):
+        return spell.can_cast(self)

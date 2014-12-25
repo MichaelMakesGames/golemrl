@@ -2,6 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging
 import yaml
+import spellfunctions
 from thing import Thing
 from player import Player
 from inputhandler import InputHandler
@@ -10,6 +11,8 @@ from breed import Breed
 from golem import Golem
 from bodypart import BodyPart
 from trait import Trait
+from word import Word
+from spell import Spell
 from ai import AI
 from dungeon import Dungeon
 from console import Console
@@ -27,6 +30,8 @@ class Game:
         self.menu = None
         self.breeds = {}
         self.materials = {}
+        self.spells = {}
+        self.words = {}
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
@@ -84,7 +89,7 @@ class Game:
             self.traits[trait_id] = trait
 
         for trait_id in self.traits:
-            #second pass needed snce traits defs include other traits
+            #second pass needed since traits defs include other traits
             trait = self.traits[trait_id]
             if trait.replaces:
                 trait.replaces = self.traits[trait.replaces]
@@ -103,7 +108,40 @@ class Game:
                 for material in trait.removal_cost:
                     new_removal_cost[self.materials[material]] = trait.removal_cost[material]
                 trait.removal_cost = new_removal_cost
-                
+
+    def load_words(self):
+        words_file = open('data/words.yaml')
+        self.words = yaml.load(words_file)
+        words_file.close()
+        for word_id in self.words:
+            word = self.words[word_id]
+            word = Word(word_id, **word)
+            self.words[word_id] = word
+
+            word.color = eval('libtcod.%s'%word.color.replace(' ','_'))
+            word.text_color = eval('libtcod.%s'%word.text_color.replace(' ','_'))
+
+    def load_spells(self):
+        spells_file = open('data/spells.yaml')
+        self.spells = yaml.load(spells_file)
+        spells_file.close()
+        for spell_id in self.spells:
+            spell = self.spells[spell_id]
+            spell = Spell(spell_id, **spell)
+            self.spells[spell_id] = spell
+
+            new_cost_dict = {}
+            for material_id in spell.cost:
+                new_cost_dict[self.materials[material_id]] = spell.cost[material_id]
+            spell.cost = new_cost_dict
+
+            if spell.requires == None:
+                spell.requires = [None,None]
+            else:
+                spell.requires[1] = self.words[spell.requires[1]]
+            spell.func = eval('spellfunctions.%s'%spell.func)
+            spell.owner = self
+
     def load_breeds(self):
         breeds_file = open('data/breeds.yaml')
         self.breeds = yaml.load(breeds_file)
@@ -217,6 +255,8 @@ def new_game(seed = 0xDEADBEEF):
     game = Game()
     game.load_materials()
     game.load_traits()
+    game.load_words()
+    game.load_spells()
     game.load_breeds()
 
     player_file = open('data/player.yaml')
@@ -243,6 +283,10 @@ def new_game(seed = 0xDEADBEEF):
     player.input_handler.owner = player
     for name in game.materials:
         player.materials[game.materials[name]] = 0
+    for spell_id in game.spells:
+        player.spells.append(game.spells[spell_id])
+    for word_id in game.words:
+        player.words.append(game.words[word_id])
     game.player = player
     game.add_thing(player)
 
