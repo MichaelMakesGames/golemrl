@@ -89,9 +89,11 @@ class InputHandler(Subject):
         for spell in self.owner.spells:
             menu_options.append( {'input':(str(i),False),
                                   'name': spell.name,
-                                  'action': 'self.owner.spells[%i].cast(self.owner)'%(i-1)} )
+                                  'action': 'self.owner.cast(self.owner.spells[%i])'%(i-1)} )
             if not self.owner.can_cast(spell):
                 menu_options[-1]['name'] += ' (Cannot cast)'
+            else:
+                menu_options[-1]['name'] += ' (%s)'%str(spell.cost)[1:-1]
         menu = Menu('Select spell',menu_options)
         return self.set_menu(menu)
 

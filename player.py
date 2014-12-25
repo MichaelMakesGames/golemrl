@@ -65,3 +65,8 @@ class Player(Thing):
 
     def can_cast(self,spell):
         return spell.can_cast(self)
+
+    def cast(self,spell,force=False):
+        if self.can_cast(spell) and self.can_afford(spell.cost) or force:
+            self.pay(spell.cost)
+            spell.cast(self)
