@@ -14,3 +14,11 @@ DEATH_TOUCH:
   requires: [Arm, LIFE]
   cost: {}
   func: death_touch
+
+DEATH_RAY:
+  name: Death Ray
+  targeting: ranged
+  desc: Kill from a distance!
+  requires: [Arm, LIFE]
+  cost: {}
+  func: death_ray

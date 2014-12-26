@@ -72,7 +72,7 @@ class Player(Thing):
             if spell.targeting == 'self':
                 self.pay(spell.cost)
                 return spell.cast(self)
-            elif spell.targeting == 'touch':
+            elif spell.targeting == 'touch' or spell.targeting == 'ranged':
                 self.casting = spell
                 return Event(EVENT_NONE)
 

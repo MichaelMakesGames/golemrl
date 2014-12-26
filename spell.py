@@ -17,7 +17,7 @@ class Spell:
     def cast(self,caster,direction=None):
         if self.targeting == 'self':
             self.func(self.owner,caster)
-        if self.targeting == 'touch':
+        if self.targeting == 'touch' or self.targeting == 'ranged':
             self.func(self.owner,caster,direction)
 
     def can_cast(self,caster):

@@ -16,7 +16,7 @@ class InputHandler(Subject):
         key_char = chr(key.c)
 
         if casting:
-            if casting.targeting == 'touch':
+            if casting.targeting=='touch' or casting.targeting=='ranged':
                 action_dict = {libtcod.KEY_ESCAPE: ACTION_CANCEL_SPELL,
                                libtcod.KEY_UP: ACTION_CAST_N,
                                libtcod.KEY_DOWN: ACTION_CAST_S,
