@@ -12,12 +12,13 @@ class Menu:
     def render(self,con):
         con.clear()
         con.draw_border(True,C_BORDER,C_BORDER_BKGND)
-        
+        con.set_default_foreground(C_MENU)
+
         y = 2
         for line in self.title.split('\n'):
             x = 2
             for char in line:
-                con.put_char(x,y,char,libtcod.white)
+                con.put_char(x,y,char)
                 x += 1
             y += 1
 
@@ -26,6 +27,6 @@ class Menu:
             x = 2
             option_str = '%s: %s'%(option['input'][0], option['name'])
             for char in option_str:
-                con.put_char(x,y,char,libtcod.white)
+                con.put_char(x,y,char)
                 x += 1
             y += 1

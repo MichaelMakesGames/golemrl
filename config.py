@@ -42,8 +42,9 @@ C_FLOOR_BKGND = libtcod.light_sepia
 C_FLOOR_UNSEEN = libtcod.gray
 C_FLOOR_BKGND_UNSEEN = libtcod.light_gray
 
-C_BORDER = libtcod.light_gray
+C_BORDER = libtcod.lighter_gray
 C_BORDER_BKGND = libtcod.black
+C_MENU = libtcod.lightest_gray
 
 CORPSE_CHAR = '%'
 C_CORPSE = libtcod.dark_red

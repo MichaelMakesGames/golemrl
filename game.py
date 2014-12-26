@@ -188,7 +188,7 @@ class Game:
         for part_name in ['Head','Torso','L Arm','R Arm','L Leg','R Leg']:
             part = self.player.creature.body_parts[part_name]
             x = 2
-            color = libtcod.white
+            color = C_MENU
             for char in '%s: %i/%i'%(part.name,part.health,part.max_health):
                 self.panel_con.put_char(x,y,char,color)
                 if char == ':':
