@@ -1,5 +1,7 @@
 from config import *
 
+from event import Event
+
 class Spell:
     def __init__(self, spell_id, name, func, targeting='self', desc='', cost={}, requires=[None,None]):
         self.spell_id = spell_id
@@ -15,10 +17,16 @@ class Spell:
         return self.requires[1]
 
     def cast(self,caster,direction=None):
+        #Notify event first so message about spell
+        #is printed before messages about the outcome
+        event = caster.notify(Event(EVENT_CAST_SPELL,
+                                    actor = caster,
+                                    spell = self))
         if self.targeting == 'self':
             self.func(self.owner,caster)
         if self.targeting == 'touch' or self.targeting == 'ranged':
             self.func(self.owner,caster,direction)
+        return event
 
     def can_cast(self,caster):
         if self.requires[0] == None:

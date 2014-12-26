@@ -74,7 +74,9 @@ class Player(Thing):
                 return spell.cast(self)
             elif spell.targeting == 'touch' or spell.targeting == 'ranged':
                 self.casting = spell
-                return Event(EVENT_NONE)
+                return self.notify(Event(EVENT_START_SPELL,
+                                         actor = self,
+                                         spell = spell))
 
     def complete_spell(self,direction):
         spell = self.casting
@@ -82,8 +84,11 @@ class Player(Thing):
         return (spell.cast(self,direction))
 
     def cancel_spell(self):
+        spell = self.casting
         self.casting = None
-        return Event(EVENT_NONE)
+        return self.notify(Event(EVENT_CANCEL_SPELL,
+                                 actor=self,
+                                 spell=spell))
 
     def add_trait(self,bp,trait):
         if type(bp) == str:
