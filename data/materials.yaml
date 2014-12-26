@@ -1,7 +1,7 @@
 CLAY:
   name: Clay
   color: darker_sepia
-  text_color: light_sepia
+  text_color: lighter_sepia
   value: 1
 STONE:
   name: Stone
