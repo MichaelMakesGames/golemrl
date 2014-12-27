@@ -22,7 +22,7 @@ class MessageLog(Observer):
                 if event.killed:
                     message = '%s killed %s' % \
                               (event.actor.creature.name,
-                               event.target.creature.name)
+                               event.target.creature.breed.name)
                 else:
                     message = '%s hit %s for %i damage' % \
                               (event.actor.creature.name,
