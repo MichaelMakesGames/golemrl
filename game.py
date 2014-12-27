@@ -205,6 +205,15 @@ class Game:
                 x += 1
             y += 1
 
+        y += 1
+        for word in sorted(self.player.words):
+            color = word.text_color
+            x = 2
+            for char in word.name:
+                self.panel_con.put_char(x,y,char,color)
+                x += 1
+            y += 1
+
     def render_all(self):
         player_x = self.player.x
         player_y = self.player.y
