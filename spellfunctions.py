@@ -1,44 +1,57 @@
 from config import *
 from event import Event
 
-def heal(game, caster):
-    if caster == game.player:
-        for bp_name in caster.creature.body_parts:
-            caster.creature.body_parts[bp_name].heal(1)
-    else:
-        caster.creature.heal(1)
+def get_target_touch(game,caster,direction):
+    x = caster.x + direction[0]
+    y = caster.y + direction[1]
+    targets = game.get_things_at(x,y)
+    for t in targets:
+        if t.creature and t.creature.alive:
+            return t
+    return False
 
-def death_touch(game, caster, direction):
-    target_x = caster.x + direction[0]
-    target_y = caster.y + direction[1]
-    targets = game.get_things_at(target_x,target_y)
-    for target in targets:
-        if target.creature and target.creature.alive:
-            damage_dealt, killed = target.creature.take_damage(100)
-            return caster.notify(Event(EVENT_ATTACK,
-                                       actor=caster,
-                                       target=target,
-                                       hit = True,
-                                       dealt = damage_dealt,
-                                       killed = killed))
-
-def death_ray(game, caster, direction):
-    hit_something = False
-    x,y = caster.x, caster.y
-    while not hit_something:
+def get_target_ranged(game,caster,direction):
+    hit = False
+    x = caster.x
+    y = caster.y
+    while not hit:
         x += direction[0]
         y += direction[1]
         targets = game.get_things_at(x,y)
-        print 'checking tile',x,y,game.cur_level.get_tile(x,y).move_through
-        for target in targets:
-            if target.creature and target.creature.alive:
-                hit_something = True
-                damage_dealt, killed = target.creature.take_damage(100)
-                return caster.notify(Event(EVENT_ATTACK,
-                                           actor=caster,
-                                           target=target,
-                                           hit = True,
-                                           dealt = damage_dealt,
-                                           killed = killed))
+        for t in targets:
+            if t.creature and t.creature.alive:
+                hit = True
+                return t
         if not game.cur_level.get_tile(x,y).move_through:
-            hit_something = True
+            hit = True
+    return False
+
+def heal(game, caster):
+    for bp_name in caster.creature.body_parts:
+        return caster.creature.body_parts[bp_name].heal(1)
+
+def death_touch(game, caster, direction):
+    target = get_target_touch(game, caster, direction)
+    if target:
+        damage_dealt, killed = target.creature.take_damage(100)
+        return caster.notify(Event(EVENT_ATTACK,
+                                   actor=caster,
+                                   target=target,
+                                   hit = True,
+                                   dealt = damage_dealt,
+                                   killed = killed))
+    else:
+        return event(EVENT_NONE)
+
+def death_ray(game, caster, direction):
+    target = get_target_ranged(game,caster, direction)
+    if target:
+        damage_dealt, killed = target.creature.take_damage(100)
+        return caster.notify(Event(EVENT_ATTACK,
+                                   actor=caster,
+                                   target=target,
+                                   hit = True,
+                                   dealt = damage_dealt,
+                                   killed = killed))
+    else:
+        return Event(EVENT_NONE)
