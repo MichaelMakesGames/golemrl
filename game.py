@@ -53,7 +53,6 @@ class Game:
         return filter(lambda thing: thing.creature and thing.creature.alive, self.things)
 
     def add_thing(self,thing):
-        thing.owner = self
         self.things.append(thing)
 
     def next_id(self):
@@ -143,7 +142,7 @@ class Game:
         spells_file.close()
         for spell_id in self.spells:
             spell = self.spells[spell_id]
-            spell = Spell(spell_id, **spell)
+            spell = Spell(self, spell_id, **spell)
             self.spells[spell_id] = spell
 
             new_cost_dict = {}
@@ -156,7 +155,6 @@ class Game:
             else:
                 spell.requires[1] = self.words[spell.requires[1]]
             spell.func = eval('spellfunctions.%s'%spell.func)
-            spell.owner = self
 
     def load_breeds(self):
         breeds_file = open('data/breeds.yaml')
@@ -164,7 +162,7 @@ class Game:
         breeds_file.close()
         for breed_id in self.breeds:
             breed = self.breeds[breed_id]
-            breed = Breed(breed_id, **breed)
+            breed = Breed(self, breed_id, **breed)
             self.breeds[breed_id] = breed
 
             color = 'libtcod.' + breed.color.replace(' ','_')
@@ -175,8 +173,6 @@ class Game:
                 material = self.materials[material_id]
                 new_materials_dict[material] = breed.materials[material_id]
             breed.materials = new_materials_dict
-
-            breed.owner = self
 
     def clear_all(self):
         for thing in self.things:
@@ -297,18 +293,27 @@ def new_game(seed = 0xDEADBEEF):
     player_name = player_data.keys()[0]
     player_data = player_data[player_name]
     player_file.close()
-    player_data['color'] = eval('libtcod.%s' % player_data['color'])
+    '''player_data['color'] = eval('libtcod.%s' % player_data['color'])
     for part_name in player_data['body_parts']:
         player_data['body_parts'][part_name] = BodyPart(part_name,**player_data['body_parts'][part_name])
     for part_name in player_data['starting_traits']:
         bp = player_data['body_parts'][part_name]
         for trait_id in player_data['starting_traits'][part_name]:
             bp.add_trait(game.traits[trait_id], force=True)
-    del player_data['starting_traits']
+    del player_data['starting_traits']'''
 
     player_creature = Golem(player_name,**player_data)
+    player_creature.raw_color = eval('libtcod.%s'%player_creature.raw_color.replace(' ','_'))
+    for bp_name in player_creature.body_parts:
+        bp = player_creature.body_parts[bp_name]
+        bp = BodyPart(player_creature,bp_name,**bp)
+        player_creature.body_parts[bp_name] = bp
+        starting_trait_ids = bp.traits
+        bp.traits = []
+        for trait_id in starting_trait_ids:
+            bp.add_trait(game.traits[trait_id],force=True)
 
-    player = Player(0,
+    player = Player(game, game.next_id(),
                     0, 0, 0, False, True,
                     creature = player_creature)
 
@@ -323,8 +328,7 @@ def new_game(seed = 0xDEADBEEF):
     game.player = player
     game.add_thing(player)
 
-    message_log = MessageLog()
-    message_log.owner = game
+    message_log = MessageLog(game)
     player.add_observer(message_log)
     player.input_handler.add_observer(message_log)
     game.message_log = message_log

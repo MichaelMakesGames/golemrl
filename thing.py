@@ -8,11 +8,12 @@ from event import Event
 logger = logging.getLogger('thing')
 
 class Thing(Subject):
-    def __init__(self,thing_id,
+    def __init__(self,game,thing_id,
                  x, y, depth, move_through, see_through,
                  creature=None, ai=None, item=None):
         Subject.__init__(self)
 
+        self.game = game
         self.thing_id = thing_id
 
         self.x = x
@@ -35,7 +36,7 @@ class Thing(Subject):
 
     @property
     def level(self):
-        return self.owner.dungeon.levels[self.depth]
+        return self.game.dungeon.levels[self.depth]
     @property
     def pos(self):
         return (self.x,self.y)
@@ -46,7 +47,7 @@ class Thing(Subject):
         con.put_char(render_x,render_y,' ')
 
     def render(self, focus_x, focus_y, con):
-        if libtcod.map_is_in_fov(self.owner.dungeon.tcod_map,self.x,self.y):
+        if libtcod.map_is_in_fov(self.game.dungeon.tcod_map,self.x,self.y):
             char = color = None
             if self.creature:
                 char = self.creature.char
@@ -71,7 +72,7 @@ class Thing(Subject):
             new_y >= self.level.first_row and
             new_y <= self.level.last_row):
 
-            for thing in self.owner.things:
+            for thing in self.game.things:
                 if (thing.creature and thing.creature.alive and
                     thing.pos == (new_x,new_y)):
                     #self.creature.attack(thing)
@@ -94,7 +95,7 @@ class Thing(Subject):
     def move_or_attack(self, dx, dy):
         event = self.move(dx,dy)
         if event.event_type == EVENT_NONE:
-            for thing in self.owner.things:
+            for thing in self.game.things:
                 if (thing.pos == (self.x+dx, self.y+dy) and
                     thing.creature and thing.creature.alive):
                     event = self.creature.attack(thing)

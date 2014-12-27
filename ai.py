@@ -11,10 +11,11 @@ class AI:
         self.path = None
         self.path_index = 0
         self.player_pos = (0,0)
-        
+    @property
+    def game(self):
+        return self.owner.game
     def update(self):
-        game = self.owner.owner
-        tcod_map = self.owner.owner.dungeon.tcod_map        
+        tcod_map = self.game.dungeon.tcod_map        
         if not self.path:
             self.path = libtcod.path_new_using_map(tcod_map)
 
@@ -39,14 +40,14 @@ class AI:
                         logger.info('Thing %i falling asleep'%self.owner.thing_id)
                         self.state = "sleeping"
 
-                new_player_pos = game.player.pos #get latest player pos and recalculate path if needed
+                new_player_pos = self.game.player.pos #get latest player pos and recalculate path if needed
                 if self.player_pos != new_player_pos:
                     logger.debug('Thing %i saw player at (%i,%i)'%(self.owner.thing_id,new_player_pos[0],new_player_pos[1]))
                     self.player_pos = new_player_pos
                     self.compute_path(*self.player_pos)
 
                 if (self.path_index < libtcod.path_size(self.path)
-                    and game.player.creature.alive):#walk path
+                    and self.game.player.creature.alive):#walk path
                     logger.debug('Thing %i walking path'%(self.owner.thing_id))
                     x,y = libtcod.path_get(self.path, self.path_index)
                     event = self.owner.move_to(x,y)
@@ -55,7 +56,7 @@ class AI:
                         action_taken = True
                     elif self.owner.distance_to(*self.player_pos) < 2:
                         #didn't move but can attack player
-                        self.owner.creature.attack(game.player)
+                        self.owner.creature.attack(self.game.player)
                         action_taken = True
                     else: #didn't move or attack, try new path
                         logger.debug('Thing %i did not move or attack'%(self.owner.thing_id))

@@ -20,6 +20,8 @@ Player:
       perception: 0
       strength: 1
       word_slots: 3
+      traits:
+        - ERODED_TORSO
     L Arm:
       health: 10
       size: 30
@@ -52,6 +54,3 @@ Player:
       perception: 0
       strength: 0
       word_slots: 2
-  starting_traits:
-    Torso:
-      - ERODED_TORSO

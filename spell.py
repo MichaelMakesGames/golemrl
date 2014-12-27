@@ -3,7 +3,8 @@ from config import *
 from event import Event
 
 class Spell:
-    def __init__(self, spell_id, name, func, targeting='self', desc='', cost={}, requires=[None,None]):
+    def __init__(self, game, spell_id, name, func, targeting='self', desc='', cost={}, requires=[None,None]):
+        self.game = game
         self.spell_id = spell_id
         self.name = name
         self.targeting = targeting
@@ -23,9 +24,9 @@ class Spell:
                                     actor = caster,
                                     spell = self))
         if self.targeting == 'self':
-            self.func(self.owner,caster)
+            self.func(self.game,caster)
         if self.targeting == 'touch' or self.targeting == 'ranged':
-            self.func(self.owner,caster,direction)
+            self.func(self.game,caster,direction)
         return event
 
     def can_cast(self,caster):

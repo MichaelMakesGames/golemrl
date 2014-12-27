@@ -11,8 +11,10 @@ logger = logging.getLogger('input')
 class InputHandler(Subject):
     def __init__(self):
         Subject.__init__(self)
+    @property
+    def game(self):
+        return self.owner.game
     def __call__(self, key, mouse, menu=None, casting=None):
-        game = self.owner.owner
         key_char = chr(key.c)
 
         if casting:
@@ -93,7 +95,7 @@ class InputHandler(Subject):
             return STATE_PLAYING
 
     def set_menu(self,menu):
-        self.owner.owner.menu = menu
+        self.game.menu = menu
         if menu == None:
             return Event(EVENT_MENU_CANCEL)
         else:
@@ -125,7 +127,6 @@ class InputHandler(Subject):
         return self.set_menu(menu)
 
     def open_bp_menu(self,bp_name):
-        game = self.owner.owner
         menu_options = [ {'input':('w',False),
                           'name': 'Inscribe word',
                           'action': 'self.open_inscribe_menu(%s)'%repr(bp_name)},
@@ -140,7 +141,7 @@ class InputHandler(Subject):
                           'action': 'self.open_remove_trait_menu(%s)'%repr(bp_name)} ]
         bp = self.owner.creature.body_parts[bp_name]
         words_text = '%s currently has %i blank inscription slots,\nand the following words inscribed: %s'%(bp.name, bp.words.count(None),str([w.name for w in bp.words if w])[1:-1])
-        traits_text = '%s currently has the following traits: %s\n%s can currently add the following traits: %s'%(bp.name,str([t.name for t in bp.traits])[1:-1],bp.name,str([game.traits[t].name for t in game.traits if bp.can_add(game.traits[t])])[1:-1])
+        traits_text = '%s currently has the following traits: %s\n%s can currently add the following traits: %s'%(bp.name,str([t.name for t in bp.traits])[1:-1],bp.name,str([self.game.traits[t].name for t in self.game.traits if bp.can_add(self.game.traits[t])])[1:-1])
         menu_text = '\n\n'.join([bp.name,words_text,traits_text])
         menu = Menu(menu_text,menu_options)
         return self.set_menu(menu)        
@@ -151,7 +152,7 @@ class InputHandler(Subject):
             if not self.owner.creature.body_parts[bp_name].has_word(word):
                 menu_options.append({'input':(word.char.lower(),False),
                                      'name': word.name,
-                                     'action': 'self.owner.creature.body_parts[%s].inscribe(game.words[%s])'%(repr(bp_name),repr(word.word_id))})
+                                     'action': 'self.owner.creature.body_parts[%s].inscribe(self.game.words[%s])'%(repr(bp_name),repr(word.word_id))})
         menu = Menu('Choose word to inscribe on %s'%bp_name,
                     menu_options)
         return self.set_menu(menu)
@@ -162,15 +163,14 @@ class InputHandler(Subject):
             if word != None:
                 menu_options.append({'input':(word.char.lower(),False),
                                      'name': word.name,
-                                     'action': 'self.owner.creature.body_parts[%s].erase(game.words[%s])'%(repr(bp_name),repr(word.word_id))})
+                                     'action': 'self.owner.creature.body_parts[%s].erase(self.game.words[%s])'%(repr(bp_name),repr(word.word_id))})
         menu = Menu('Choose word to erase from %s'%bp_name,menu_options)
         return self.set_menu(menu)
 
     def open_add_trait_menu(self,bp_name):
         menu_options = []
-        game = self.owner.owner
         bp = self.owner.creature.body_parts[bp_name]
-        possible_traits = [game.traits[t] for t in game.traits if bp.can_add(game.traits[t])]
+        possible_traits = [self.game.traits[t] for t in self.game.traits if bp.can_add(self.game.traits[t])]
         for trait in possible_traits:
             menu_options.append({'input':(str(possible_traits.index(trait)+1),False),
                                  'name':'%s (%s)'%(trait.name,repr(trait.cost)[1:-1]),
@@ -180,7 +180,6 @@ class InputHandler(Subject):
 
     def open_remove_trait_menu(self,bp_name):
         menu_options = []
-        game = self.owner.owner
         bp = self.owner.creature.body_parts[bp_name]
         possible_traits = [trait for trait in bp.traits if bp.can_remove(trait)]
         for trait in possible_traits:

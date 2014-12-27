@@ -20,9 +20,9 @@ class Player(Thing):
         """Harvests corpse at player tile, returns EVENT_HARVEST
         If there were no corpses, returns EVENT_NONE"""
         try:
-            thing = filter(lambda thing: thing.creature and not thing.creature.alive, self.owner.get_things_at(*self.pos))[0]
+            thing = filter(lambda thing: thing.creature and not thing.creature.alive, self.game.get_things_at(*self.pos))[0]
             self.add_materials(thing.creature.materials)
-            self.owner.things.remove(thing)
+            self.game.things.remove(thing)
             event = Event(EVENT_HARVEST, majority_material=thing.creature.majority_material)
             self.notify(event)
             return event
@@ -94,7 +94,7 @@ class Player(Thing):
         if type(bp) == str:
             bp = self.creature.body_parts[bp]
         if type(trait) == str:
-            trait = self.owner.traits[trait]
+            trait = self.game.traits[trait]
 
         if bp.can_add(trait) and self.can_afford(trait.cost):
             self.pay(trait.cost)
@@ -106,7 +106,7 @@ class Player(Thing):
         if type(bp) == str:
             bp = self.creature.body_parts[bp]
         if type(trait) == str:
-            trait = self.owner.traits[trait]
+            trait = self.game.traits[trait]
     
         if bp.can_remove(trait) and self.can_afford(trait.removal_cost):
             self.pay(trait.removal_cost)

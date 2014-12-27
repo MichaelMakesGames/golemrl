@@ -10,6 +10,9 @@ class Creature:
     def __init__(self, breed):
         self.breed = breed
         self.health = breed.max_health
+    @property
+    def game(self):
+        return self.owner.game
 
     @property
     def name(self):
@@ -53,13 +56,13 @@ class Creature:
         pass
 
     def defense_roll(self): #agility - size
-        roll = (self.owner.owner.rng.roll(self.agility,6) - self.size/20)
+        roll = (self.game.rng.roll(self.agility,6) - self.size/20)
         print 'defense %i'%roll
         return roll
 
     def accuracy_roll(self): #agility + perception
-        roll = (self.owner.owner.rng.roll(self.agility,6) +
-                self.owner.owner.rng.roll(self.perception/2,6))
+        roll = (self.game.rng.roll(self.agility,6) +
+                self.game.rng.roll(self.perception/2,6))
         print 'accuracy %i'%roll
         return roll
 
@@ -85,7 +88,6 @@ class Creature:
 
     def attack(self,thing):
         logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
-        game = self.owner.owner
         event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
         if thing.creature:
             if self.accuracy_roll() > thing.creature.defense_roll():

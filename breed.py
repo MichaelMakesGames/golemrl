@@ -5,8 +5,9 @@ from creature import Creature
 from ai import AI
 
 class Breed:
-    def __init__(self,breed_id,name,char,color,
+    def __init__(self,game,breed_id,name,char,color,
                  health,agility,armor,perception,size,strength,materials):
+        self.game = game
         self.breed_id = breed_id
         self.name = name
         self.char = char
@@ -21,10 +22,10 @@ class Breed:
         self.materials = materials
 
     def new(self,x,y,depth):
-        thing = Thing(self.owner.next_id(),
+        thing = Thing(self.game,self.game.next_id(),
                       x, y, depth, False, True,
                       creature = Creature(self),
                       ai = AI() )
-        thing.add_observer(self.owner.dungeon)
-        thing.add_observer(self.owner.message_log)
+        thing.add_observer(self.game.dungeon)
+        thing.add_observer(self.game.message_log)
         return thing
