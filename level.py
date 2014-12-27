@@ -15,7 +15,9 @@ class Level:
     """The Dungeon consists of several levels. This contains
     information on the tiles, focus, rooms, as well as functions used
     to generate maps."""
-    def __init__(self,seed,w=LEVEL_W,h=LEVEL_H):
+    def __init__(self,game,seed,w=LEVEL_W,h=LEVEL_H):
+        self.game = game
+        self.dungeon = game.dungeon
         if seed: #at one point a temp level is created with no rng
             self.rng = RNG(seed=seed)
         else:
@@ -24,7 +26,7 @@ class Level:
         self.x_offset = 0
         self.y_offset = 0
 
-        self.tiles = [ [Tile() for y in range(h) ] for x in range(w) ]
+        self.tiles = [ [Tile(game.tile_types[WALL_ID]) for y in range(h) ] for x in range(w) ]
         self.rooms = []
 
     @property
@@ -52,7 +54,7 @@ class Level:
         n = 0
         for col in self.tiles:
             for tile in col:
-                if tile.is_floor():
+                if tile.tile_type == self.game.tile_types[FLOOR_ID]:
                     n += 1
         return n
 
@@ -61,7 +63,7 @@ class Level:
             try:
                 return self.tiles[x][y]
             except:
-                return Tile()
+                return Tile(self.game.tile_types[WALL_ID])
         else:
             return self.tiles[x][y]
 
@@ -81,7 +83,7 @@ class Level:
             for y in range(self.h):
                 explorable = False
                 for neighbor in self.get_neighbors(x,y):
-                    if neighbor.is_floor():
+                    if neighbor.tile_type == self.game.tile_types[FLOOR_ID]:
                         explorable = True
                 self.get_tile(x,y).explorable = explorable
 
@@ -130,7 +132,7 @@ class Level:
     def remove_room(self,room_id):
         room = self.get_room(room_id)
         for pos in room.tile_positions:
-            self.get_tile(*pos).make_wall()
+            self.get_tile(*pos).tile_type = self.game.tile_types[WALL_ID]
             #self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
         self.rooms.remove(room)
 
@@ -140,7 +142,7 @@ class Level:
         for room in self.rooms:
             if room.has_tag(TAG_START):
                 creature_positions = [thing.pos for thing
-                                      in self.owner.owner.living_things]
+                                      in self.game.living_things]
                 start_pos = creature_positions[0]
                 while start_pos in creature_positions:
                     start_pos = self.rng.choose(room.tile_positions)
@@ -150,7 +152,7 @@ class Level:
         """Called when player moves to mark seen tiles as explored"""
         for x in range(self.w):
             for y in range(self.h):
-                if libtcod.map_is_in_fov(self.owner.tcod_map,x,y):
+                if libtcod.map_is_in_fov(self.dungeon.tcod_map,x,y):
                     self.get_tile(x,y).explored = True
 
     def explore_all(self):
@@ -179,7 +181,7 @@ class Level:
             for y in range(self.h)[1:-1]:
                 if (self.is_in_bounds(x,y) and
                     self.rng.get_float(0,1) < init_chance):
-                    self.get_tile(x,y).make_floor()
+                    self.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
 
         num_visits = int(visits * self.w * self.h)
         for i in range(num_visits):
@@ -190,19 +192,19 @@ class Level:
                 neighbors = self.get_neighbors(x,y)
                 num_neighbor_floors = 0
                 for neighbor in neighbors:
-                    if neighbor.is_floor():
+                    if neighbor.tile_type == self.game.tile_types[FLOOR_ID]:
                         num_neighbor_floors += 1
-                        
-                if self.get_tile(x,y).is_floor():
+
+                if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID]:
                     if num_neighbor_floors >= starve or num_neighbor_floors <= wither:
-                        self.get_tile(x,y).make_wall()
+                        self.get_tile(x,y).tile_type = self.game.tile_types[WALL_ID]
                 else: #is wall
                     if num_neighbor_floors >= grow:
-                        self.get_tile(x,y).make_floor()
+                        self.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
 
     def smooth_caves(self, remove=5, fill=3):
         """final pass over all cellular automata to smoothen caves"""
-        tmp_level = Level(None)
+        tmp_level = Level(self.game,None)
         tmp_level.tiles = [ [tile.clone() for tile in col] for col in self.tiles]
         tmp_level.x_offset = self.x_offset
         tmp_level.y_offset = self.y_offset
@@ -212,16 +214,16 @@ class Level:
                     neighbors = self.get_neighbors(x,y)
                     num_neighbor_floors = 0
                     for n in neighbors:
-                        if n.is_floor():
+                        if n.tile_type == self.game.tile_types[FLOOR_ID]:
                             num_neighbor_floors += 1
                 
-                    if self.get_tile(x,y).is_floor():
+                    if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID]:
                         if num_neighbor_floors <= fill:
-                            tmp_level.get_tile(x,y).make_wall()
+                            tmp_level.get_tile(x,y).tile_type = self.game.tile_types[WALL_ID]
 
                     else:
                         if num_neighbor_floors >= remove:
-                            tmp_level.get_tile(x,y).make_floor()
+                            tmp_level.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
 
         self.tiles = tmp_level.tiles
 
@@ -229,7 +231,7 @@ class Level:
         """go through all tiles and used floodfill to find caves"""
         for x in range(1, self.w-1):
             for y in range(1, self.h-1):
-                if self.get_tile(x,y).is_floor() and not self.is_room(x,y):
+                if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID] and not self.is_room(x,y):
                     self.flood_fill_add_cave(x,y)
 
     def flood_fill_add_cave(self,x,y):
@@ -242,7 +244,7 @@ class Level:
         while len(q) > 0:
             n = q[-1]
             q = q[:-1]
-            if self.get_tile(*n).is_floor() and n not in q:
+            if self.get_tile(*n).tile_type == self.game.tile_types[FLOOR_ID] and n not in q:
                 tile_positions.append(n)
                 if (n[0]-1,n[1]) not in tile_positions and self.is_in_level(n[0]-1,n[1]):
                     q.append((n[0]-1,n[1]))
@@ -302,7 +304,7 @@ class Level:
                             if i == 0 and turn_num != 0:
                                 #just turned, check corner to avoid following:   .###
                                 for neighbor in self.get_neighbors(cur_x,cur_y): #...
-                                    if neighbor.is_floor():                      #.##
+                                    if neighbor.tile_type == self.game.tile_types[FLOOR_ID]:
                                         abandon = True                           #.##
 
                             if cur_dir == 0: #north/up
@@ -326,14 +328,14 @@ class Level:
                                         abandon = True
                                     else:
                                         connection = True
-                                elif self.get_tile(cur_x,cur_y).is_floor():
+                                elif self.get_tile(cur_x,cur_y).tile_type == self.game.tile_types[FLOOR_ID]:
                                     #not room but is floor
                                     #intersecting other tunnel, abandon
                                     abandon = True
-                                elif ((cur_dir >= 2 and (self.get_tile(cur_x,cur_y+1,True).is_floor() or
-                                                         self.get_tile(cur_x,cur_y-1,True).is_floor())) or
-                                      (cur_dir <= 1 and (self.get_tile(cur_x+1,cur_y,True).is_floor() or
-                                                         self.get_tile(cur_x-1,cur_y,True).is_floor()))):
+                                elif ((cur_dir >= 2 and (self.get_tile(cur_x,cur_y+1,True).tile_type == self.game.tile_types[FLOOR_ID] or
+                                                         self.get_tile(cur_x,cur_y-1,True).tile_type == self.game.tile_types[FLOOR_ID])) or
+                                      (cur_dir <= 1 and (self.get_tile(cur_x+1,cur_y,True).tile_type == self.game.tile_types[FLOOR_ID] or
+                                                         self.get_tile(cur_x-1,cur_y,True).tile_type == self.game.tile_types[FLOOR_ID]))):
                                     #adjacent is floor, abandon
                                     abandon = True
                                 else:
@@ -344,7 +346,7 @@ class Level:
                     if connection:
                         #dig tunnel if successful and make rooms
                         for pos in tunnel_positions:
-                            self.get_tile(*pos).make_floor()
+                            self.get_tile(*pos).tile_type = self.game.tile_types[FLOOR_ID]
                             #self.get_tile(*pos).color = libtcod.blue #DEBUG
                         tunnel = Tunnel(self.get_next_room_id())
                         tunnel.tile_positions = tunnel_positions
@@ -452,19 +454,18 @@ class Level:
                 room.tag(TAG_LG)
 
     def populate_rooms(self):
-        game = self.owner.owner
         for room in self.rooms:
             if room.has_tag(TAG_CAVE) and not room.has_tag(TAG_START):
                 tile_positions = room.tile_positions[:]
                 for i in range(self.rng.get_int(2,4)):
                     x, y = self.rng.choose(tile_positions)
-                    depth = self.owner.levels.index(self)
+                    depth = self.dungeon.levels.index(self)
                     tile_positions.remove( (x,y) )
-                    breed_ids = sorted(game.breeds)
+                    breed_ids = sorted(self.game.breeds)
                     breed_id = self.rng.choose(breed_ids)
-                    thing = game.breeds[breed_id].new(x,y,depth)
-                    game.add_thing(thing)
-        self.owner.on_notify(Event(EVENT_CREATE)) #WARNING bit of a hack, might cause bugs in the future -- you have been warned
+                    thing = self.game.breeds[breed_id].new(x,y,depth)
+                    self.game.add_thing(thing)
+        self.dungeon.on_notify(Event(EVENT_CREATE)) #WARNING bit of a hack, might cause bugs in the future -- you have been warned
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]

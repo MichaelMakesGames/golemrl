@@ -12,8 +12,9 @@ logger = logging.getLogger('map')
 class Dungeon(Observer):
     """Dungeon now is mostly a container for levels, and handles
     rendering"""
-    def __init__(self, seed):
+    def __init__(self, game, seed):
         logger.info('Making dungeon')
+        self.game = game
         self.rng = RNG(seed=seed)
         self.levels = []
         for i in range(NUM_LEVELS):
@@ -32,8 +33,7 @@ class Dungeon(Observer):
         seed = self.levels[depth]
         approved = False
         while not approved:
-            self.levels[depth] = Level(seed, LEVEL_W, LEVEL_H)
-            self.levels[depth].owner = self
+            self.levels[depth] = Level(self.game, seed, LEVEL_W, LEVEL_H)
 
             self.levels[depth].generate_caves()
             self.levels[depth].smooth_caves()
@@ -56,27 +56,27 @@ class Dungeon(Observer):
     def compute_tcod_map(self):
         for x in range(LEVEL_W):
             for y in range(LEVEL_H):
-                tile = self.owner.cur_level.get_tile(x,y)
+                tile = self.game.cur_level.get_tile(x,y)
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            tile.see_through,
                                            tile.move_through)
-        for thing in self.owner.things:
-            if thing != self.owner.player:
+        for thing in self.game.things:
+            if thing != self.game.player:
                 x,y = thing.pos
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            True,
                                            False)
     def refresh_creature_positions(self):
         for pos in self.creature_positions:
-            tile = self.owner.cur_level.get_tile(*pos)
+            tile = self.game.cur_level.get_tile(*pos)
             libtcod.map_set_properties(self.tcod_map,
                                        pos[0],pos[1],
                                        tile.see_through,
                                        tile.move_through)
         self.creature_positions = []
-        for thing in self.owner.living_things:
+        for thing in self.game.living_things:
             self.creature_positions.append(thing.pos)
-            if thing != self.owner.player:
+            if thing != self.game.player:
                 libtcod.map_set_properties(self.tcod_map,
                                            thing.pos[0],thing.pos[1],
                                            thing.see_through,
@@ -85,7 +85,7 @@ class Dungeon(Observer):
     def on_notify(self,event):
         if event.event_type == EVENT_MOVE:
             self.refresh_creature_positions()
-            if event.actor == self.owner.player:
+            if event.actor == self.game.player:
                 self.refresh_fov = True
         elif event.event_type == EVENT_DIE:
             self.refresh_creature_positions()
@@ -99,13 +99,13 @@ class Dungeon(Observer):
 
         if self.refresh_fov:
             libtcod.map_compute_fov(self.tcod_map,
-                                    self.owner.player.x,
-                                    self.owner.player.y)
-            self.owner.cur_level.explore()
+                                    self.game.player.x,
+                                    self.game.player.y)
+            self.game.cur_level.explore()
             self.refresh_fov = False
 
     def render(self, focus_x, focus_y, con):
-        level = self.owner.cur_level
+        level = self.game.cur_level
         x_offset = 0 + focus_x - MAP_W//2
         y_offset = 0 + focus_y - MAP_H//2
         
@@ -127,10 +127,10 @@ class Dungeon(Observer):
                         visible = libtcod.map_is_in_fov(self.tcod_map,map_x,map_y)
                         if visible:
                             color = tile.color
-                            bkgnd = tile.bkgnd
+                            bkgnd = tile.background
                         else:
-                            color = tile.color_unseen
-                            bkgnd = tile.bkgnd_unseen
+                            color = tile.color_not_visible
+                            bkgnd = tile.background_not_visible
 
                         ### START OF EXPERIMENTAL WALL RENDERING ###
                         if EXPERIMENTAL_WALLS and char == '#':
@@ -179,9 +179,9 @@ class Dungeon(Observer):
                                         #colors need to be redone
                                         color = bkgnd
                                         if visible:
-                                            bkgnd = C_FLOOR_BKGND
+                                            bkgnd = self.game.tile_types[FLOOR_ID].background
                                         else:
-                                            bkgnd = C_FLOOR_BKGND_UNSEEN
+                                            bkgnd = self.game.tile_types[FLOOR_ID].background_not_visible
                                         if four.count('?') > 1:
                                             #not sure how this works
                                             #if two or more tiles are

@@ -30,17 +30,8 @@ LEVEL_H = 50
 
 EXPERIMENTAL_WALLS = True
 
-WALL_CHAR = '#'
-C_WALL = libtcod.dark_sepia
-C_WALL_BKGND = libtcod.darker_sepia
-C_WALL_UNSEEN = libtcod.dark_gray
-C_WALL_BKGND_UNSEEN = libtcod.darker_gray
-
-FLOOR_CHAR = '.'
-C_FLOOR = libtcod.sepia
-C_FLOOR_BKGND = libtcod.light_sepia
-C_FLOOR_UNSEEN = libtcod.gray
-C_FLOOR_BKGND_UNSEEN = libtcod.light_gray
+WALL_ID = 'WALL'
+FLOOR_ID = 'FLOOR'
 
 C_BORDER = libtcod.lighter_gray
 C_BORDER_BKGND = libtcod.black

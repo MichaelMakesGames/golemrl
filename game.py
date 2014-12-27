@@ -14,6 +14,7 @@ from trait import Trait
 from word import Word
 from spell import Spell
 from ai import AI
+from tiletype import TileType
 from dungeon import Dungeon
 from console import Console
 from messagelog import MessageLog
@@ -28,6 +29,7 @@ class Game:
         self.dungeon = None
         self.message_log = None
         self.menu = None
+        self.tile_types = {}
         self.breeds = {}
         self.materials = {}
         self.spells = {}
@@ -62,6 +64,20 @@ class Game:
                 return next_id
             else:
                 next_id += 1
+
+    def load_tile_types(self):
+        tile_types_file = open('data/tiletypes.yaml')
+        self.tile_types = yaml.load(tile_types_file)
+        tile_types_file.close()
+        for tile_type_id in self.tile_types:
+            tile_type = self.tile_types[tile_type_id]
+            tile_type = TileType(tile_type_id,**tile_type)
+            self.tile_types[tile_type_id] = tile_type
+
+            tile_type.color = eval('libtcod.%s'%tile_type.color.replace(' ','_'))
+            tile_type.color_not_visible = eval('libtcod.%s'%tile_type.color_not_visible.replace(' ','_'))
+            tile_type.background = eval('libtcod.%s'%tile_type.background.replace(' ','_'))
+            tile_type.background_not_visible = eval('libtcod.%s'%tile_type.background_not_visible.replace(' ','_'))
 
     def load_materials(self):
         materials_file = open('data/materials.yaml')
@@ -269,6 +285,7 @@ class Game:
 
 def new_game(seed = 0xDEADBEEF):
     game = Game()
+    game.load_tile_types()
     game.load_materials()
     game.load_traits()
     game.load_words()
@@ -312,8 +329,7 @@ def new_game(seed = 0xDEADBEEF):
     player.input_handler.add_observer(message_log)
     game.message_log = message_log
 
-    dungeon = Dungeon(seed)
-    dungeon.owner = game
+    dungeon = Dungeon(game, seed)
     game.dungeon = dungeon
     player.add_observer(dungeon)
     start_pos = game.dungeon.generate_level(0)

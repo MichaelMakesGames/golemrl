@@ -10,7 +10,7 @@ class Golem(Creature):
         self.raw_name = name
         self.raw_char = char
         self.raw_color = color
-        self.breed = self #so that code for handling other creatures works for players as well -- kinda messy...
+        self.breed = self #WARNING so that code for handling other creatures works for players as well -- kinda messy...
 
         if type(body_parts) == dict:
             self.body_parts = body_parts
