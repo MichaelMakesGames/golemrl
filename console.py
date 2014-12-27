@@ -33,6 +33,20 @@ class Console:
     def put_char_ex(self,x,y,char,color,bkgnd):
         libtcod.console_put_char_ex(self.con,x,y,char,color,bkgnd)
 
+    def get_background_flag(self):
+        return libtcod.console_get_background_flag(self.con)
+    def set_alignment(self, alignment):
+        libtcod.console_set_alignment(self.con, alignment)
+    def get_alignment(self, alignment):
+        return libtcod.console_get_alignment(self.con)
+    def print_string(self, x, y, s, alignment=None, bkgnd_flag=None):
+        if alignment or bkgnd_flag:
+            if not alignment: alignment = self.get_alignment()
+            if not bkgnd_flag: bkgnd_flag = self.get_background_flag()
+            libtcod.console_print_ex(self.con,x,y,bkgnd_flag,alignment,s)
+        else:
+            libtcod.console_print(self.con,x,y,s)
+
     def blit(self):
         libtcod.console_blit(self.con,0,0,self.w,self.h,0,self.x,self.y)
 

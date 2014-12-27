@@ -117,8 +117,10 @@ class MessageLog(Observer):
             try:
                 text, color = self.lines[-(i+1)]
                 color = self.make_darker_color(color,i*LOG_FADE/(con.h-3))
-                for j in range(len(text)):
-                    con.put_char(j+1,con.h-2-i,text[j],color)
+                con.set_default_foreground(color)
+                con.print_string(1,con.h-2-i,text)
+                #for j in range(len(text)):
+                #    con.put_char(j+1,con.h-2-i,text[j],color)
             except IndexError:
                 pass
 

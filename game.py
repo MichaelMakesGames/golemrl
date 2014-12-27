@@ -187,31 +187,30 @@ class Game:
         y = 2
         for part_name in ['Head','Torso','L Arm','R Arm','L Leg','R Leg']:
             part = self.player.creature.body_parts[part_name]
+            part_name = '%s:'%part.name
+            part_health = '%i/%i'%(part.health,part.max_health)
             x = 2
-            color = C_MENU
-            for char in '%s: %i/%i'%(part.name,part.health,part.max_health):
-                self.panel_con.put_char(x,y,char,color)
-                if char == ':':
-                    color = libtcod.light_red
-                x += 1
+            self.panel_con.set_default_foreground(C_MENU)
+            self.panel_con.print_string(x,y,part_name)
+            x = 9
+            self.panel_con.set_default_foreground(libtcod.light_red)
+            self.panel_con.print_string(x,y,part_health)
             y += 1
 
         y += 1
         for material in sorted(self.player.materials):
-            color = material.text_color
             x = 2
-            for char in '%s: %i'%(material,self.player.materials[material]):
-                self.panel_con.put_char(x,y,char,color)
-                x += 1
+            s = '%s: %i'%(material,self.player.materials[material])
+            self.panel_con.set_default_foreground(material.text_color)
+            self.panel_con.print_string(x,y,s)
             y += 1
 
         y += 1
         for word in sorted(self.player.words):
             color = word.text_color
             x = 2
-            for char in word.name:
-                self.panel_con.put_char(x,y,char,color)
-                x += 1
+            self.panel_con.set_default_foreground(word.text_color)
+            self.panel_con.print_string(x,y,word.name)
             y += 1
 
     def render_all(self):
