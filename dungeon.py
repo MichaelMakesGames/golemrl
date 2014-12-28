@@ -113,6 +113,10 @@ class Dungeon(Observer):
             thing = event.actor
             tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
             tile.creature = None
+            libtcod.map_set_properties(self.tcod_map,
+                                       thing.x, thing.y,
+                                       tile.see_through,
+                                       tile.move_through)
             if not tile.item:
                 tile.item = thing
             else:
@@ -130,17 +134,13 @@ class Dungeon(Observer):
                     i = 0
                     while i<len(positions) and not placed_corpse:
                         try_tile = self.levels[thing.depth].get_tile(*positions[i])
-                        if tile.move_through and not try_tile.item:
+                        if try_tile.move_through and not try_tile.item:
                             try_tile.item = thing
                             placed_corpse = True
                             thing.x = positions[i][0]
                             thing.y = positions[i][1]
                         i += 1
-
-            libtcod.map_set_properties(self.tcod_map,
-                                       thing.x, thing.y,
-                                       tile.see_through,
-                                       tile.move_through)
+                    r += 1
 
         elif event.event_type == EVENT_HARVEST:
             thing = event.corpse
