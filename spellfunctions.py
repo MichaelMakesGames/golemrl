@@ -4,10 +4,9 @@ from event import Event
 def get_target_touch(game,caster,direction):
     x = caster.x + direction[0]
     y = caster.y + direction[1]
-    targets = game.get_things_at(x,y)
-    for t in targets:
-        if t.creature and t.creature.alive:
-            return t
+    target = game.get_creature_at(x,y)
+    if target:
+        return target
     return False
 
 def get_target_ranged(game,caster,direction):
@@ -17,12 +16,11 @@ def get_target_ranged(game,caster,direction):
     while not hit:
         x += direction[0]
         y += direction[1]
-        targets = game.get_things_at(x,y)
-        for t in targets:
-            if t.creature and t.creature.alive:
-                hit = True
-                return t
-        if not game.cur_level.get_tile(x,y).move_through:
+        target = game.get_creature_at(x,y)
+        if target:
+            hit = True
+            return target
+        elif not game.cur_level.get_tile(x,y).move_through:
             hit = True
     return False
 

@@ -185,12 +185,10 @@ class Game:
             if thing.thing_id == thing_id:
                 return thing
 
-    def get_things_at(self,x,y):
-        things_at_pos = []
-        for thing in self.things:
-            if thing.pos == (x,y):
-                things_at_pos.append(thing)
-        return things_at_pos
+    def get_creature_at(self,x,y):
+        return self.cur_level.get_tile(x,y).creature
+    def get_item_at(self,x,y):
+        return self.cur_level.get_tile(x,y).item
 
     def render_panel(self):
         self.panel_con.clear()
