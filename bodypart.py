@@ -132,7 +132,6 @@ class BodyPart:
         return (trait in self.traits)
 
     def add_trait(self,trait,force=False):
-        #print 'adding trait'
         if force or self.can_add(trait):
             if trait.replaces:
                 self.remove_trait(trait.replaces)

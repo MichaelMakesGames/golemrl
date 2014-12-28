@@ -57,13 +57,11 @@ class Creature:
 
     def defense_roll(self): #agility - size
         roll = (self.game.rng.roll(self.agility,6) - self.size/20)
-        print 'defense %i'%roll
         return roll
 
     def accuracy_roll(self): #agility + perception
         roll = (self.game.rng.roll(self.agility,6) +
                 self.game.rng.roll(self.perception/2,6))
-        print 'accuracy %i'%roll
         return roll
 
     def damage_roll(self): #strength + size?
@@ -98,8 +96,7 @@ class Creature:
         return self.owner.notify(event)
 
     def die(self):
-        #self.owner.move_through = True
-        self.owner.notify(Event(EVENT_DIE, actor=self.owner))
+        return self.owner.notify(Event(EVENT_DIE, actor=self.owner))
 
     @property
     def alive(self):

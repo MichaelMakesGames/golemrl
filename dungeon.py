@@ -89,13 +89,9 @@ class Dungeon(Observer):
             to_tile = self.levels[thing.depth].get_tile(*event.to_pos)
             if thing.creature and thing.creature.alive:
                 from_tile.creature = None
-                if to_tile.creature:
-                    print 'WARNING: moving creature to where one already exists'
                 to_tile.creature = thing
             elif thing.item:
                 from_tile.item = None
-                if to_tile.item:
-                    print 'WARNING: moving item to where one already exists'
                 to_tile.item = thing
             #TODO we don't need to do a full refresh
             self.refresh_creature_positions()
@@ -105,8 +101,6 @@ class Dungeon(Observer):
             thing = event.actor
             tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
             tile.creature = None
-            if tile.item:
-                print 'WARNING: setting corpse to item where item already exists'
             tile.item = thing
             #TODO we don't need a full refresh
             self.refresh_creature_positions()
@@ -118,12 +112,8 @@ class Dungeon(Observer):
             thing = event.actor
             tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
             if thing.creature and thing.creature.alive:
-                if tile.creature:
-                    print 'WARNING: creating creature where one already exists'
                 tile.creature = thing
             elif thing.item:
-                if tile.item:
-                    print 'WARNING: creating item where one already exists'
                 tile.item = thing
             #TODO we don't need a full refresh
             self.refresh_creature_positions()
