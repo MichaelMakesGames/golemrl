@@ -23,7 +23,10 @@ class Player(Thing):
             thing = filter(lambda thing: thing.creature and not thing.creature.alive, self.game.get_things_at(*self.pos))[0]
             self.add_materials(thing.creature.materials)
             self.game.things.remove(thing)
-            event = Event(EVENT_HARVEST, majority_material=thing.creature.majority_material)
+            event = Event(EVENT_HARVEST,
+                          actor = self,
+                          corpse = thing,
+                          majority_material=thing.creature.majority_material)
             self.notify(event)
             return event
 

@@ -465,7 +465,7 @@ class Level:
                     breed_id = self.rng.choose(breed_ids)
                     thing = self.game.breeds[breed_id].new(x,y,depth)
                     self.game.add_thing(thing)
-        self.dungeon.on_notify(Event(EVENT_CREATE)) #WARNING bit of a hack, might cause bugs in the future -- you have been warned
+                    thing.notify(Event(EVENT_CREATE, actor=thing))
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]

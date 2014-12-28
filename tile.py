@@ -6,6 +6,8 @@ class Tile:
     def __init__(self,tile_type):
         self.tile_type = tile_type
         self.explored = False
+        self.item = None
+        self.creature = None
 
     @property
     def tile_type_id(self):

@@ -84,12 +84,48 @@ class Dungeon(Observer):
 
     def on_notify(self,event):
         if event.event_type == EVENT_MOVE:
+            thing = event.actor
+            from_tile = self.levels[thing.depth].get_tile(*event.from_pos)
+            to_tile = self.levels[thing.depth].get_tile(*event.to_pos)
+            if thing.creature and thing.creature.alive:
+                from_tile.creature = None
+                if to_tile.creature:
+                    print 'WARNING: moving creature to where one already exists'
+                to_tile.creature = thing
+            elif thing.item:
+                from_tile.item = None
+                if to_tile.item:
+                    print 'WARNING: moving item to where one already exists'
+                to_tile.item = thing
+            #TODO we don't need to do a full refresh
             self.refresh_creature_positions()
             if event.actor == self.game.player:
                 self.refresh_fov = True
         elif event.event_type == EVENT_DIE:
+            thing = event.actor
+            tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
+            tile.creature = None
+            if tile.item:
+                print 'WARNING: setting corpse to item where item already exists'
+            tile.item = thing
+            #TODO we don't need a full refresh
             self.refresh_creature_positions()
+        elif event == EVENT_HARVEST:
+            thing = event.corpse
+            tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
+            tile.item = None
         elif event == EVENT_CREATE:
+            thing = event.actor
+            tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
+            if thing.creature and thing.creature.alive:
+                if tile.creature:
+                    print 'WARNING: creating creature where one already exists'
+                tile.creature = thing
+            elif thing.item:
+                if tile.item:
+                    print 'WARNING: creating item where one already exists'
+                tile.item = thing
+            #TODO we don't need a full refresh
             self.refresh_creature_positions()
 
     def update(self):
