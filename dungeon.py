@@ -83,6 +83,7 @@ class Dungeon(Observer):
                                            thing.move_through)
 
     def on_notify(self,event):
+        #WARNING: assumes items don't affect tcod map
         if event.event_type == EVENT_MOVE:
             thing = event.actor
             from_tile = self.levels[thing.depth].get_tile(*event.from_pos)
@@ -90,33 +91,73 @@ class Dungeon(Observer):
             if thing.creature and thing.creature.alive:
                 from_tile.creature = None
                 to_tile.creature = thing
+                if thing != self.game.player:
+                    libtcod.map_set_properties(self.tcod_map,
+                                               event.from_pos[0],
+                                               event.from_pos[1],
+                                               from_tile.see_through,
+                                               from_tile.move_through)
+                    libtcod.map_set_properties(self.tcod_map,
+                                               event.to_pos[0],
+                                               event.to_pos[1],
+                                               thing.see_through,
+                                               thing.move_through)
+                                           
             elif thing.item:
                 from_tile.item = None
                 to_tile.item = thing
-            #TODO we don't need to do a full refresh
-            self.refresh_creature_positions()
             if event.actor == self.game.player:
                 self.refresh_fov = True
+
         elif event.event_type == EVENT_DIE:
             thing = event.actor
             tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
             tile.creature = None
-            tile.item = thing
-            #TODO we don't need a full refresh
-            self.refresh_creature_positions()
-        elif event == EVENT_HARVEST:
+            if not tile.item:
+                tile.item = thing
+            else:
+                placed_corpse = False
+                x,y = thing.pos
+                r = 1
+                while not placed_corpse:
+                    positions = []
+                    for try_x in range(thing.x-r,thing.x+r+1):
+                        positions.append((try_x,thing.y+r))
+                        positions.append((try_x,thing.y-r))
+                    for try_y in range(thing.y-r,thing.y+r+1):
+                        positions.append((thing.x+r,try_y))
+                        positions.append((thing.x-r,try_y))
+                    i = 0
+                    while i<len(positions) and not placed_corpse:
+                        try_tile = self.levels[thing.depth].get_tile(*positions[i])
+                        if tile.move_through and not try_tile.item:
+                            try_tile.item = thing
+                            placed_corpse = True
+                            thing.x = positions[i][0]
+                            thing.y = positions[i][1]
+                        i += 1
+
+            libtcod.map_set_properties(self.tcod_map,
+                                       thing.x, thing.y,
+                                       tile.see_through,
+                                       tile.move_through)
+
+        elif event.event_type == EVENT_HARVEST:
             thing = event.corpse
             tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
             tile.item = None
-        elif event == EVENT_CREATE:
+
+        elif event.event_type == EVENT_CREATE:
             thing = event.actor
             tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
             if thing.creature and thing.creature.alive:
                 tile.creature = thing
             elif thing.item:
                 tile.item = thing
-            #TODO we don't need a full refresh
-            self.refresh_creature_positions()
+            libtcod.map_set_properties(self.tcod_map,
+                                       thing.x, thing.y,
+                                       thing.see_through,
+                                       thing.move_through)
 
     def update(self):
         if self.refresh_tcod:
