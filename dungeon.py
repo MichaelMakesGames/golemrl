@@ -225,8 +225,12 @@ class Dungeon(Observer):
                                         level.get_tile(map_x,map_y+1), #S
                                         level.get_tile(map_x+1,map_y), #E
                                         level.get_tile(map_x-1,map_y)] #W
-
+                                floor_not_vis = [not libtcod.map_is_in_fov(self.tcod_map,map_x,map_y-1),
+                                                 not libtcod.map_is_in_fov(self.tcod_map,map_x,map_y+1),
+                                                 not libtcod.map_is_in_fov(self.tcod_map,map_x+1,map_y),
+                                                 not libtcod.map_is_in_fov(self.tcod_map,map_x-1,map_y)]
                                 for i in [0,1,2,3]:
+                                    if four[i].char == '#': floor_not_vis[i] = False
                                     if four[i].explored:
                                         four[i] = four[i].char
                                     else:
@@ -274,6 +278,11 @@ class Dungeon(Observer):
                                             #unexplored floors, the
                                             #background should be black
                                             bkgnd = libtcod.black
+                                        elif floor_not_vis.count(True) > 1:
+                                            #similarly, if two or more
+                                            #not visible floors, the
+                                            #background should be gray
+                                            bkgnd = libtcod.light_gray
                             except:
                                 pass
                         ### END OF EXPERIMENTAL WALL RENDERING ###
