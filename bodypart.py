@@ -16,6 +16,7 @@ class BodyPart:
         self.traits = traits
         self.words = [None for i in range(word_slots)]
 
+        self.base_word_slots = word_slots
         self.base_agility = agility
         self.base_armor = armor
         self.base_perception = perception
@@ -56,6 +57,13 @@ class BodyPart:
                                          for trait in self.traits])
 
     @property
+    def word_slots(self):
+        slots = self.base_word_slots + sum([trait.word_slots_mod
+                                            for trait in self.traits])
+        return max(0,slots)
+
+
+    @property
     def full_name(self):
         full_name = self.name
         for trait in self.traits:
@@ -88,6 +96,15 @@ class BodyPart:
     def heal(self,amount):
         if self.health+amount <= self.max_health:
             self.health += amount
+
+    def check_word_slots(self):
+        while self.word_slots > len(self.words):
+            self.words.append(None)
+        while self.word_slots < len(self.words):
+            if None in self.words:
+                self.words.remove(None)
+            else:
+                self.erase(self.game.rng.choose(self.words))
 
     def inscribe(self,word):
         if word not in self.words and None in self.words:
@@ -137,6 +154,7 @@ class BodyPart:
                 self.remove_trait(trait.replaces)
             self.traits.append(trait)
             self.health += trait.health_mod
+            self.check_word_slots()
             if not force: #WARNING, this might cause trouble, but for now it seems like we're best not raising an event when we force a trait (ie player starting traits, and a trait that's added as a result of trait that replaced it being removed
                 return self.thing.notify(Event(EVENT_ADD_TRAIT,
                                                actor=self.thing,
@@ -150,6 +168,7 @@ class BodyPart:
                 self.add_trait(trait.replaces, True)
             self.traits.remove(trait)
             self.health -= trait.health_mod
+            self.check_word_slots()
             if not force:
                 return self.thing.notify(Event(EVENT_REMOVE_TRAIT,
                                                actor = self.thing,

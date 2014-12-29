@@ -12,6 +12,7 @@ LARGE_ARM:          #Trait id (required)
 
   modifiers:        #trait modifiers (optional, default to 0)
     health: +10
+    word_slots: 0
     agility: 0
     armor: 0
     perception: 0
@@ -44,3 +45,4 @@ ERODED_TORSO:
   modifiers:
     health: -10
     strength: -1
+    word_slots: -1

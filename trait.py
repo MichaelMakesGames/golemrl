@@ -3,8 +3,9 @@ class Trait:
                  prefix=None, suffix=None,
                  replaces=None, cancels=[],
                  cost={}, removal_cost={}, considered='neutral',
-                 health_mod=0, agility_mod=0, armor_mod=0,
-                 perception_mod=0, size_mod=0, strength_mod=0):
+                 health_mod=0, word_slots_mod=0, armor_mod=0,
+                 agility_mod=0, perception_mod=0,
+                 size_mod=0, strength_mod=0):
         self.trait_id = trait_id
         self.name = name
         self.applied_to = applied_to
@@ -20,6 +21,7 @@ class Trait:
         self.considered = considered
 
         self.health_mod = health_mod
+        self.word_slots_mod = word_slots_mod
         self.agility_mod = agility_mod
         self.armor_mod = armor_mod
         self.perception_mod = perception_mod
