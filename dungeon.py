@@ -1,6 +1,6 @@
 import libtcodpy as libtcod
 from config import *
-import logging
+import logging, time
 from observer import Observer, Subject
 from rng import RNG
 from tile import Tile
@@ -33,18 +33,36 @@ class Dungeon(Observer):
         seed = self.levels[depth]
         approved = False
         while not approved:
+            start = t = time.time()
             self.levels[depth] = Level(self.game, seed, LEVEL_W, LEVEL_H)
-
+            print "Created level:    \t%s"%str(time.time()-t)
+            t = time.time()
             self.levels[depth].generate_caves()
+            print "Generated caves:  \t%s"%str(time.time()-t)
+            t = time.time()
             self.levels[depth].smooth_caves()
+            print "Smoothed caves:   \t%s"%str(time.time()-t)
+            t = time.time()
             self.levels[depth].find_caves()
+            print "Found caves:      \t%s"%str(time.time()-t)
+            t = time.time()
             self.levels[depth].remove_caves_by_size()
+            print "Removed caves (1):\t%s"%str(time.time()-t)
+            t = time.time()
             self.levels[depth].connect_caves()
+            print "Connected caves:  \t%s"%str(time.time()-t)
+            t = time.time()
             self.levels[depth].remove_isolated_caves()
+            print "Removed caves (2):\t%s"%str(time.time()-t)
+            print "Total time:       \t%s"%str(time.time()-start)
+
             if self.levels[depth].evaluate():
                 approved = True
+                print "Approved"
             else:
                 seed += 1
+                print "Rejected"
+            print ""
 
         if EXPERIMENTAL_WALLS:
             self.levels[depth].mark_explorable()

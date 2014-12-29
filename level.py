@@ -259,7 +259,7 @@ class Level:
         cave.tile_positions = tile_positions
         self.rooms.append(cave)
 
-    def remove_caves_by_size(self,min_size=12,max_size=200):
+    def remove_caves_by_size(self,min_size=12,max_size=150):
         """remove caves deemed too large or small"""
         caves_to_remove = []
         for cave in self.rooms:
@@ -268,8 +268,8 @@ class Level:
         for cave in caves_to_remove:
             self.remove_room(cave)
 
-    def connect_caves(self,tries_per_room=16,
-                      max_turns=3,min_length=4,max_length=8):
+    def connect_caves(self,tries_per_room=8,
+                      max_turns=6,min_length=3,max_length=5):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
         for cave in self.caves:
@@ -294,10 +294,16 @@ class Level:
 
                     for turn_num in range(max_turns+1):
                         if turn_num != 0: #turn if not first segment
-                            if cur_dir == 0 or cur_dir == 1: #go east/west
-                                cur_dir = self.rng.get_int(2,3)
-                            else: #go north/south
-                                cur_dir = self.rng.get_int(0,1)
+                            dirs = range(4)
+                            if cur_dir < 2:
+                                dirs.remove(abs(cur_dir-1))
+                            else:
+                                dirs.remove(cur_dir+5-cur_dir*2)
+                            cur_dir = self.rng.choose( dirs )
+                            #if cur_dir == 0 or cur_dir == 1: #go east/west
+                            #    cur_dir = self.rng.get_int(2,3)
+                            #else: #go north/south
+                            #    cur_dir = self.rng.get_int(0,1)
                         for i in range(self.rng.get_int(min_length,max_length)):
                             #now go forward a randomized number of spaces
 
@@ -401,16 +407,17 @@ class Level:
                     self.remove_room(room_id)
 
     def evaluate(self,
-                 min_connectedness = 1.25,
-                 min_floors_to_walls = 0.38):
+                 min_connectivity = 1.0,
+                 min_floors_to_walls = 0.2):
         """Evaluates if a map should be kept or discarded and regenerated
         Return True if it should be kept, False otherwise"""
-        connectedness = float(len(self.tunnels)) / len(self.caves)
+        connectivity = float(len(self.tunnels)) / len(self.caves)
         num_floors = sum([len(room) for room in self.rooms])
         floors_to_walls = (float(num_floors) /
                            (self.w * self.h - num_floors))
-
-        return (connectedness >= min_connectedness and
+        print "Connectivity: %s"%str(connectivity)
+        print "Floors/walls: %s"%str(floors_to_walls)
+        return (connectivity >= min_connectivity and
                 floors_to_walls >= min_floors_to_walls)
 
     def tag_rooms(self):
