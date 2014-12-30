@@ -1,8 +1,7 @@
 import libtcodpy as libtcod
 from config import *
-import logging
-import yaml
-import spellfunctions
+import logging, yaml
+import spellfunctions, yamlhelp
 from thing import Thing
 from player import Player
 from inputhandler import InputHandler
@@ -73,10 +72,10 @@ class Game:
             tile_type = TileType(tile_type_id,**tile_type)
             self.tile_types[tile_type_id] = tile_type
 
-            tile_type.color = eval('libtcod.%s'%tile_type.color.replace(' ','_'))
-            tile_type.color_not_visible = eval('libtcod.%s'%tile_type.color_not_visible.replace(' ','_'))
-            tile_type.background = eval('libtcod.%s'%tile_type.background.replace(' ','_'))
-            tile_type.background_not_visible = eval('libtcod.%s'%tile_type.background_not_visible.replace(' ','_'))
+            tile_type.color = yamlhelp.load_color(tile_type.color)
+            tile_type.color_not_visible = yamlhelp.load_color(tile_type.color_not_visible)
+            tile_type.background = yamlhelp.load_color(tile_type.background)
+            tile_type.background_not_visible = yamlhelp.load_color(tile_type.background_not_visible)
 
     def load_materials(self):
         materials_file = open('data/materials.yaml')
@@ -87,8 +86,8 @@ class Game:
             material = Material(material_id, **material)
             self.materials[material_id] = material
 
-            material.color = eval('libtcod.' + material.color)
-            material.text_color = eval('libtcod.' + material.text_color)
+            material.color = yamlhelp.load_color(material.color)
+            material.text_color = yamlhelp.load_color(material.text_color)
 
     def load_traits(self):
         traits_file = open('data/traits.yaml')
@@ -113,16 +112,10 @@ class Game:
                 trait.cancels[i] = self.traits[trait.cancels[i]]
 
             if trait.cost:
-                new_cost = {}
-                for material in trait.cost:
-                    new_cost[self.materials[material]] = trait.cost[material]
-                trait.cost = new_cost
+                yamlhelp.convert_keys(trait.cost,self.materials)
 
             if trait.removal_cost:
-                new_removal_cost = {}
-                for material in trait.removal_cost:
-                    new_removal_cost[self.materials[material]] = trait.removal_cost[material]
-                trait.removal_cost = new_removal_cost
+                yamlhelp.convert_keys(trait.removal_cost,self.materials)
 
     def load_words(self):
         words_file = open('data/words.yaml')
@@ -133,8 +126,8 @@ class Game:
             word = Word(word_id, **word)
             self.words[word_id] = word
 
-            word.color = eval('libtcod.%s'%word.color.replace(' ','_'))
-            word.text_color = eval('libtcod.%s'%word.text_color.replace(' ','_'))
+            word.color = yamlhelp.load_color(word.color)
+            word.text_color = yamlhelp.load_color(word.text_color)
 
     def load_spells(self):
         spells_file = open('data/spells.yaml')
@@ -145,10 +138,7 @@ class Game:
             spell = Spell(self, spell_id, **spell)
             self.spells[spell_id] = spell
 
-            new_cost_dict = {}
-            for material_id in spell.cost:
-                new_cost_dict[self.materials[material_id]] = spell.cost[material_id]
-            spell.cost = new_cost_dict
+            yamlhelp.convert_keys(spell.cost,self.materials)
 
             if spell.requires == None:
                 spell.requires = [None,None]
@@ -165,14 +155,8 @@ class Game:
             breed = Breed(self, breed_id, **breed)
             self.breeds[breed_id] = breed
 
-            color = 'libtcod.' + breed.color.replace(' ','_')
-            breed.color = eval(color)
-
-            new_materials_dict = {}
-            for material_id in breed.materials:
-                material = self.materials[material_id]
-                new_materials_dict[material] = breed.materials[material_id]
-            breed.materials = new_materials_dict
+            breed.color = yamlhelp.load_color(breed.color)
+            yamlhelp.convert_keys(breed.materials,self.materials)
 
     def clear_all(self):
         for thing in self.things:
