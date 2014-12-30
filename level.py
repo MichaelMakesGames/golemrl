@@ -173,9 +173,9 @@ class Level:
                 tile.explored = tile.explorable
         return Event(EVENT_EXPLORE_EXPLORABLE)
 
-    def generate_caves(self, init_chance=0.7,
-                       grow=7, starve=9, wither=5,
-                       visits=1.0):
+    def generate_caves(self, init_chance=0.375,
+                       grow=4, starve=9, wither=3,
+                       visits=0.5):
         """Automata cave generation based on Evil Science's method"""
         for x in range(self.w)[1:-1]:
             for y in range(self.h)[1:-1]:
