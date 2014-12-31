@@ -1,0 +1,11 @@
+ERODED_TORSO:
+  name: Eroded Torso
+  prefix: Eroded
+  applied_to: Torso
+  removal_cost:
+    CLAY: 20
+  considered: bad
+  modifiers:
+    health: -10
+    strength: -1
+    word_slots: -1

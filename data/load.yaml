@@ -1,0 +1,34 @@
+breeds:
+  directories:
+    - "data/breeds"
+  files: []
+
+materials:
+  directories:
+    - "data/materials"
+  files: []
+
+player:
+  directories: []
+  files:
+    - "data/player/player.yaml"
+
+spells:
+  directories:
+    - "data/spells"
+  files: []
+
+tiles:
+  directories:
+    - "data/tiles"
+  files: []
+
+traits:
+  directories:
+    - "data/traits"
+  files: []
+
+words:
+  directories:
+    - "data/words"
+  files: []

@@ -1,6 +1,6 @@
 import libtcodpy as libtcod
 from config import *
-import logging, yaml
+import logging, yaml, os
 import spellfunctions, yamlhelp
 from thing import Thing
 from player import Player
@@ -23,16 +23,18 @@ from material import Material
 class Game:
     def __init__(self):
         self.rng = RNG()
-        self.player = None
         self.things = []
         self.dungeon = None
         self.message_log = None
         self.menu = None
+
         self.tile_types = {}
-        self.breeds = {}
         self.materials = {}
-        self.spells = {}
         self.words = {}
+        self.traits = {}
+        self.spells = {}
+        self.breeds = {}
+        self.player = None
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
@@ -63,10 +65,38 @@ class Game:
             else:
                 next_id += 1
 
-    def load_tile_types(self):
-        tile_types_file = open('data/tiletypes.yaml')
-        self.tile_types = yaml.load(tile_types_file)
-        tile_types_file.close()
+    def load_yaml(self):
+        load_file = open('data/load.yaml')
+        load_data = yaml.load(load_file)
+        load_file.close()
+
+        load_order = [('tiles',self.load_tile_types),
+                      ('materials',self.load_materials),
+                      ('words',self.load_words),
+                      ('traits',self.load_traits),
+                      ('spells',self.load_spells),
+                      ('breeds',self.load_breeds),
+                      ('player',self.load_player)]
+
+        for category in load_order:
+            files = []
+            if 'directories' in load_data[category[0]]:
+                for directory in load_data[category[0]]['directories']:
+                    for file_name in os.listdir(directory):
+                        if file_name.endswith('.yaml'):
+                            files.append(directory.strip('/')+'/'+file_name)
+            if 'files' in load_data[category[0]]:
+                for file_name in load_data[category[0]]['files']:
+                    files.append(file_name)
+            category[1](files)
+
+    def load_tile_types(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.tile_types)
+
         for tile_type_id in self.tile_types:
             tile_type = self.tile_types[tile_type_id]
             tile_type = TileType(tile_type_id,**tile_type)
@@ -77,10 +107,13 @@ class Game:
             tile_type.background = yamlhelp.load_color(tile_type.background)
             tile_type.background_not_visible = yamlhelp.load_color(tile_type.background_not_visible)
 
-    def load_materials(self):
-        materials_file = open('data/materials.yaml')
-        self.materials = yaml.load(materials_file)
-        materials_file.close()
+    def load_materials(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.materials)
+
         for material_id in self.materials:
             material = self.materials[material_id]
             material = Material(material_id, **material)
@@ -89,10 +122,13 @@ class Game:
             material.color = yamlhelp.load_color(material.color)
             material.text_color = yamlhelp.load_color(material.text_color)
 
-    def load_traits(self):
-        traits_file = open('data/traits.yaml')
-        self.traits = yaml.load(traits_file)
-        traits_file.close()
+    def load_traits(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.traits)
+
         for trait_id in self.traits:
             trait = self.traits[trait_id]
             if 'modifiers' in trait:
@@ -117,10 +153,13 @@ class Game:
             if trait.removal_cost:
                 yamlhelp.convert_keys(trait.removal_cost,self.materials)
 
-    def load_words(self):
-        words_file = open('data/words.yaml')
-        self.words = yaml.load(words_file)
-        words_file.close()
+    def load_words(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.words)
+
         for word_id in self.words:
             word = self.words[word_id]
             word = Word(word_id, **word)
@@ -129,10 +168,13 @@ class Game:
             word.color = yamlhelp.load_color(word.color)
             word.text_color = yamlhelp.load_color(word.text_color)
 
-    def load_spells(self):
-        spells_file = open('data/spells.yaml')
-        self.spells = yaml.load(spells_file)
-        spells_file.close()
+    def load_spells(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.spells)
+
         for spell_id in self.spells:
             spell = self.spells[spell_id]
             spell = Spell(self, spell_id, **spell)
@@ -146,10 +188,13 @@ class Game:
                 spell.requires[1] = self.words[spell.requires[1]]
             spell.func = eval('spellfunctions.%s'%spell.func)
 
-    def load_breeds(self):
-        breeds_file = open('data/breeds.yaml')
-        self.breeds = yaml.load(breeds_file)
-        breeds_file.close()
+    def load_breeds(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.breeds)
+
         for breed_id in self.breeds:
             breed = self.breeds[breed_id]
             breed = Breed(self, breed_id, **breed)
@@ -157,6 +202,9 @@ class Game:
 
             breed.color = yamlhelp.load_color(breed.color)
             yamlhelp.convert_keys(breed.materials,self.materials)
+
+    def load_player(self,files):
+        pass
 
     def clear_all(self):
         for thing in self.things:
@@ -263,29 +311,16 @@ class Game:
 
 def new_game(seed = 0xDEADBEEF):
     game = Game()
-    game.load_tile_types()
-    game.load_materials()
-    game.load_traits()
-    game.load_words()
-    game.load_spells()
-    game.load_breeds()
+    game.load_yaml()
 
-    player_file = open('data/player.yaml')
+    player_file = open('data/player/player.yaml')
     player_data = yaml.load(player_file)
     player_name = player_data.keys()[0]
     player_data = player_data[player_name]
     player_file.close()
-    '''player_data['color'] = eval('libtcod.%s' % player_data['color'])
-    for part_name in player_data['body_parts']:
-        player_data['body_parts'][part_name] = BodyPart(part_name,**player_data['body_parts'][part_name])
-    for part_name in player_data['starting_traits']:
-        bp = player_data['body_parts'][part_name]
-        for trait_id in player_data['starting_traits'][part_name]:
-            bp.add_trait(game.traits[trait_id], force=True)
-    del player_data['starting_traits']'''
 
     player_creature = Golem(player_name,**player_data)
-    player_creature.raw_color = eval('libtcod.%s'%player_creature.raw_color.replace(' ','_'))
+    player_creature.raw_color = yamlhelp.load_color(player_creature.raw_color)
     for bp_name in player_creature.body_parts:
         bp = player_creature.body_parts[bp_name]
         bp = BodyPart(player_creature,bp_name,**bp)
