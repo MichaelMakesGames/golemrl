@@ -226,11 +226,10 @@ class Game:
 
         self.player = Player(self, self.next_id(),
                              0, 0, 0, False, True,
+                             input_handler = InputHandler(),
                              creature = player_creature)
         self.add_thing(self.player)
 
-        self.player.input_handler = InputHandler()
-        self.player.input_handler.owner = self.player
         for name in self.materials:
             self.player.materials[self.materials[name]] = 0
         for spell_id in self.spells:

@@ -9,7 +9,16 @@ logger = logging.getLogger('thing')
 
 class Player(Thing):
     def __init__(self,*args,**kwargs):
+        if 'input_handler' in kwargs:
+            self.input_handler = kwargs['input_handler']
+            del kwargs['input_handler']
+        else:
+            self.input_handler = None
+        if self.input_handler:
+            self.input_handler.owner = self
+
         Thing.__init__(self,*args,**kwargs)
+
         self.materials = {}
         self.spells = []
         self.words = []
