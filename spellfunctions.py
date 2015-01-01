@@ -39,7 +39,7 @@ def death_touch(game, caster, direction):
                                    dealt = damage_dealt,
                                    killed = killed))
     else:
-        return event(EVENT_NONE)
+        return Event(EVENT_NONE)
 
 def death_ray(game, caster, direction):
     target = get_target_ranged(game,caster, direction)
