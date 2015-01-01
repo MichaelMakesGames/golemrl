@@ -286,6 +286,16 @@ class Game:
             self.panel_con.print_string(x,y,word.name)
             y += 1
 
+        y += 1
+        self.panel_con.set_default_foreground(C_MENU)
+        for stat in (('Size',self.player.creature.size),
+                     ('Agility',self.player.creature.agility),
+                     ('Perception',self.player.creature.perception),
+                     ('Strength',self.player.creature.strength)):
+            x = 2
+            self.panel_con.print_string(x,y,'%s: %i'%stat)
+            y += 1
+
     def render_all(self):
         player_x = self.player.x
         player_y = self.player.y
