@@ -204,7 +204,39 @@ class Game:
             yamlhelp.convert_keys(breed.materials,self.materials)
 
     def load_player(self,files):
-        pass
+        player_data = {}
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,player_data)
+        player_name = player_data.keys()[0]
+        player_data = player_data[player_name]
+
+        player_creature = Golem(player_name,**player_data)
+        player_creature.raw_color = yamlhelp.load_color(player_creature.raw_color)
+        for bp_name in player_creature.body_parts:
+            bp = player_creature.body_parts[bp_name]
+            bp = BodyPart(player_creature,bp_name,**bp)
+            player_creature.body_parts[bp_name] = bp
+            starting_trait_ids = bp.traits
+            bp.traits = []
+            for trait_id in starting_trait_ids:
+                bp.add_trait(self.traits[trait_id],force=True)
+
+        self.player = Player(self, self.next_id(),
+                             0, 0, 0, False, True,
+                             creature = player_creature)
+        self.add_thing(self.player)
+
+        self.player.input_handler = InputHandler()
+        self.player.input_handler.owner = self.player
+        for name in self.materials:
+            self.player.materials[self.materials[name]] = 0
+        for spell_id in self.spells:
+            self.player.spells.append(self.spells[spell_id])
+        for word_id in self.words:
+            self.player.words.append(self.words[word_id])
 
     def clear_all(self):
         for thing in self.things:
@@ -313,48 +345,16 @@ def new_game(seed = 0xDEADBEEF):
     game = Game()
     game.load_yaml()
 
-    player_file = open('data/player/player.yaml')
-    player_data = yaml.load(player_file)
-    player_name = player_data.keys()[0]
-    player_data = player_data[player_name]
-    player_file.close()
-
-    player_creature = Golem(player_name,**player_data)
-    player_creature.raw_color = yamlhelp.load_color(player_creature.raw_color)
-    for bp_name in player_creature.body_parts:
-        bp = player_creature.body_parts[bp_name]
-        bp = BodyPart(player_creature,bp_name,**bp)
-        player_creature.body_parts[bp_name] = bp
-        starting_trait_ids = bp.traits
-        bp.traits = []
-        for trait_id in starting_trait_ids:
-            bp.add_trait(game.traits[trait_id],force=True)
-
-    player = Player(game, game.next_id(),
-                    0, 0, 0, False, True,
-                    creature = player_creature)
-
-    player.input_handler = InputHandler()
-    player.input_handler.owner = player
-    for name in game.materials:
-        player.materials[game.materials[name]] = 0
-    for spell_id in game.spells:
-        player.spells.append(game.spells[spell_id])
-    for word_id in game.words:
-        player.words.append(game.words[word_id])
-    game.player = player
-    game.add_thing(player)
-
     message_log = MessageLog(game)
-    player.add_observer(message_log)
-    player.input_handler.add_observer(message_log)
+    game.player.add_observer(message_log)
+    game.player.input_handler.add_observer(message_log)
     game.message_log = message_log
 
     dungeon = Dungeon(game, seed)
     game.dungeon = dungeon
-    player.add_observer(dungeon)
+    game.player.add_observer(dungeon)
     start_pos = game.dungeon.generate_level(0)
-    player.move_to(*start_pos)
+    game.player.move_to(*start_pos)
 
     return game
 
