@@ -143,10 +143,12 @@ class BodyPart:
         return (properly_applied and
                 requirements_met and
                 not already_applied and
-                not canceled)
+                not canceled and
+                trait.cost != None)
 
     def can_remove(self,trait):
-        return (trait in self.traits)
+        return (trait in self.traits and
+                trait.removal_cost != None)
 
     def add_trait(self,trait,force=False):
         if force or self.can_add(trait):

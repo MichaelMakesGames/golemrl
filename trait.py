@@ -2,7 +2,7 @@ class Trait:
     def __init__(self, trait_id, name, applied_to,
                  prefix=None, suffix=None,
                  replaces=None, cancels=[],
-                 cost={}, removal_cost={}, considered='neutral',
+                 cost=None, removal_cost=None, considered='neutral',
                  health_mod=0, word_slots_mod=0, armor_mod=0,
                  agility_mod=0, perception_mod=0,
                  size_mod=0, strength_mod=0):
