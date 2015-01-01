@@ -268,8 +268,8 @@ class Level:
         for cave in caves_to_remove:
             self.remove_room(cave)
 
-    def connect_caves(self,tries_per_room=8,
-                      max_turns=6,min_length=3,max_length=5):
+    def connect_caves(self,tries_per_room=16,
+                      max_turns=4,min_length=3,max_length=5):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
         for cave in self.caves:
@@ -294,11 +294,11 @@ class Level:
 
                     for turn_num in range(max_turns+1):
                         if turn_num != 0: #turn if not first segment
-                            dirs = range(4)
+                            dirs = []
                             if cur_dir < 2:
-                                dirs.remove(abs(cur_dir-1))
+                                dirs = [cur_dir,2,2,3,3]
                             else:
-                                dirs.remove(cur_dir+5-cur_dir*2)
+                                dirs = [cur_dir,0,0,1,1]
                             cur_dir = self.rng.choose( dirs )
                             #if cur_dir == 0 or cur_dir == 1: #go east/west
                             #    cur_dir = self.rng.get_int(2,3)
@@ -338,10 +338,10 @@ class Level:
                                     #not room but is floor
                                     #intersecting other tunnel, abandon
                                     abandon = True
-                                elif ((cur_dir >= 2 and (self.get_tile(cur_x,cur_y+1,True).tile_type == self.game.tile_types[FLOOR_ID] or
-                                                         self.get_tile(cur_x,cur_y-1,True).tile_type == self.game.tile_types[FLOOR_ID])) or
-                                      (cur_dir <= 1 and (self.get_tile(cur_x+1,cur_y,True).tile_type == self.game.tile_types[FLOOR_ID] or
-                                                         self.get_tile(cur_x-1,cur_y,True).tile_type == self.game.tile_types[FLOOR_ID]))):
+                                elif ((cur_dir >= 2 and (self.is_room(cur_x,cur_y+1) or
+                                                         self.is_room(cur_x,cur_y-1))) or
+                                      (cur_dir <= 1 and (self.is_room(cur_x+1,cur_y) or
+                                                         self.is_room(cur_x-1,cur_y)))):
                                     #adjacent is floor, abandon
                                     abandon = True
                                 else:
@@ -407,7 +407,7 @@ class Level:
                     self.remove_room(room_id)
 
     def evaluate(self,
-                 min_connectivity = 1.0,
+                 min_connectivity = 1.25,
                  min_floors_to_walls = 0.2):
         """Evaluates if a map should be kept or discarded and regenerated
         Return True if it should be kept, False otherwise"""
