@@ -248,11 +248,9 @@ class Level:
     def rect_automata_cave_gen(self):
         rects = []
         total_area = 0
-        while total_area < 1000:
-            rects = self.create_rects(50, 6,12, 5,8, False)
+        while total_area < 1100:
+            rects = self.create_rects(50, 4,12, 4,8, False)
             total_area = sum([r.w*r.h for r in rects])
-            print total_area
-        print len(rects)
         for r in rects:
             self.automata_cave_gen(r, 0.9, 7,9,5, 0.3)
 
@@ -323,7 +321,7 @@ class Level:
             self.remove_room(cave)
 
     def connect_caves(self,tries_per_room=16,
-                      max_turns=4,min_length=4,max_length=6):
+                      max_turns=6,min_length=4,max_length=6):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
         for cave in self.caves:
@@ -363,7 +361,6 @@ class Level:
                                 for neighbor in self.get_neighbors(cur_x,cur_y): #...
                                     if neighbor.tile_type.tile_type_id == FLOOR_ID:
                                         abandon = True                           #.##
-                                        print 'Abandoning tunnel due to corner'
 
                             if cur_dir == 0: #north/up
                                 cur_y -= 1
@@ -378,16 +375,26 @@ class Level:
                                 if not self.is_in_bounds(cur_x,cur_y):
                                     #abandon if tunnel goes out of bounds
                                     abandon = True
-                                connected_to = self.get_room_at(cur_x,cur_y)
+                                if (cur_x,cur_y) in tunnel_positions:
+                                    abandon = True
+                                    
+                                if not abandon:
+                                    connected_to = self.get_room_at(cur_x,cur_y)
+                                else:
+                                    connected_to = None
+
                                 if connected_to:
-                                    if (connected_to == start_room or
-                                        connected_to in self.tunnels):
+                                    if ((connected_to == start_room) or
+                                        (connected_to in self.tunnels) or
+                                        (True in [connected_to in t.connections for t in start_room.connections])):
                                         #abandon if back connected to
                                         #starting room or connected to
-                                        #other tunnel
+                                        #other tunnel or already connected
+                                        #to this room
                                         abandon = True
                                     else:
                                         connection = True
+                                        
                                 elif ((cur_dir >= 2 and (self.is_room(cur_x,cur_y+1) or
                                                          self.is_room(cur_x,cur_y-1))) or
                                       (cur_dir <= 1 and (self.is_room(cur_x+1,cur_y) or
@@ -399,7 +406,7 @@ class Level:
                                     #so append new pos to tunnel list
                                     tunnel_positions.append((cur_x,cur_y))
 
-                    if connection:
+                    if connection and not abandon:
                         #dig tunnel if successful and make rooms
                         for pos in tunnel_positions:
                             self.get_tile(*pos).tile_type = self.game.tile_types[FLOOR_ID]
@@ -457,7 +464,7 @@ class Level:
                     self.remove_room(room)
 
     def evaluate(self,
-                 min_connectivity = 1.25,
+                 min_connectivity = 1.0,
                  min_floors_to_walls = 0.2):
         """Evaluates if a map should be kept or discarded and regenerated
         Return True if it should be kept, False otherwise"""
@@ -472,11 +479,12 @@ class Level:
 
     def tag_rooms(self):
         graph = nx.MultiGraph()
-        for cave in self.caves:
-            graph.add_node(cave)
-        for tunnel in self.tunnels:
-            w = len(tunnel)
-            graph.add_edge(*tunnel.connections, weight=w)
+        for room in self.rooms:
+            graph.add_node(room)
+        for room in self.rooms:
+            for connection in room.connections:
+                w = len(room)**0.5 + len(connection)**0.5
+                graph.add_edge(room,connection, weight=w)
 
         #find the two rooms that have the longest optimal path
         #these will be the start and the end
