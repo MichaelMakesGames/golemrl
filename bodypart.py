@@ -80,9 +80,9 @@ class BodyPart:
     def damaged(self):
         return self.health < self.max_health
 
-    def take_damage(self,damage_dealt):
+    def take_damage(self,damage_dealt,degree):
         if self.intact:
-            damage_received = damage_dealt - self.armor
+            damage_received = damage_dealt*degree - self.armor
             if damage_received < 0: damage_received = 0
             self.health -= damage_received
             if self.health <= 0:

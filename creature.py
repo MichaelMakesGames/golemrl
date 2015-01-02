@@ -67,11 +67,11 @@ class Creature:
     def damage_roll(self): #strength + size?
         return self.strength
 
-    def take_damage(self,damage_dealt):
+    def take_damage(self,damage_dealt,degree):
         '''Rolls for armor and calculates damage received
         Returns the damage received, and whether it died'''
         if self.alive: #don't take damage if dead
-            damage_received = damage_dealt - self.armor
+            damage_received = damage_dealt*degree - self.armor
             if damage_received < 0: damage_received = 0
             self.health -= damage_received
             if self.health <= 0:
@@ -86,14 +86,17 @@ class Creature:
 
     def attack(self,thing):
         logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
-        event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
         if thing.creature:
-            if self.accuracy_roll() > thing.creature.defense_roll():
+            event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
+            event.degree = (self.accuracy_roll()-thing.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1
+            if event.degree:
                 event.hit = True
-                event.dealt, event.killed = thing.creature.take_damage(self.strength)
+                event.dealt, event.killed = thing.creature.take_damage(self.damage_roll(),event.degree)
             else:
                 event.hit = False
-        return self.owner.notify(event)
+            return self.owner.notify(event)
+        else:
+            return Event(EVENT_NONE)
 
     def die(self):
         return self.owner.notify(Event(EVENT_DIE, actor=self.owner))

@@ -60,10 +60,10 @@ class Golem(Creature):
                          if self.body_parts[part].vital]
 
 
-    def take_damage(self,damage_dealt):
+    def take_damage(self,damage_dealt,degree):
         part = self.game.rng.choose_weighted(self.intact_parts,
                                         lambda p: p.size)
-        result = part.take_damage(damage_dealt)
+        result = part.take_damage(damage_dealt,degree)
         if result[1]: self.die()
         return result
 

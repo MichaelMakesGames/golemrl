@@ -20,13 +20,24 @@ class MessageLog(Observer):
         if event.event_type == EVENT_ATTACK:
             color = C_COMBAT_MSG
             if event.hit:
+                if event.degree == 1:
+                    adjective = 'glancing'
+                elif event.degree == 2:
+                    adjective = 'solid'
+                elif event.degree == 3:
+                    adjective = 'well-placed'
+                else:
+                    adjective = 'critical'
+
                 if event.killed:
-                    message = '%s killed %s' % \
+                    message = '%s landed a %s hit, killing %s' % \
                               (event.actor.creature.name,
+                               adjective,
                                event.target.creature.breed.name)
                 else:
-                    message = '%s hit %s for %i damage' % \
+                    message = '%s landed a %s hit on %s, dealing %i damage' % \
                               (event.actor.creature.name,
+                               adjective,
                                event.target.creature.name,
                                event.dealt)
             else:

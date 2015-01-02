@@ -45,6 +45,9 @@ C_DEBUG_MSG = libtcod.light_blue
 C_COMBAT_MSG = libtcod.light_red
 C_EFFECT_MSG = libtcod.light_green
 
+DICE_SIDES = 6
+DEGREE_OF_SUCCESS = 5
+
 #Game states
 STATE_PLAYING = 'PLAYING'
 STATE_PAUSED = 'PAUSED'
