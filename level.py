@@ -11,6 +11,33 @@ from ai import AI
 from thing import Thing
 from event import Event
 
+class Rect:
+    def __init__(self,x,y,w,h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+    @property
+    def center_x(self):
+        return (self.x*2+self.w-1)//2
+    @property
+    def center_y(self):
+        return (self.y*2+self.w-1)//2
+    @property
+    def center(self):
+        return (self.center_x,self.center_y)
+    
+    def __contains__(self,pos):
+        x,y = pos
+        return (x >= self.x and x < self.x+self.w and
+                y >= self.y and y < self.y+self.w)
+
+    def intersects(self,other): #WARNING not well tested
+        return (self.x <= other.x+other.w and
+                self.x+self.w >= other.x and
+                self.y <= other.y+other.h and
+                self.y+self.h >= other.y)
+
 class Level:
     """The Dungeon consists of several levels. This contains
     information on the tiles, focus, rooms, as well as functions used
@@ -173,20 +200,37 @@ class Level:
                 tile.explored = tile.explorable
         return Event(EVENT_EXPLORE_EXPLORABLE)
 
-    def generate_caves(self, init_chance=0.375,
-                       grow=4, starve=9, wither=3,
-                       visits=0.5):
+    def create_rects(self,attempts,
+                     min_w,max_w,min_h,max_h,
+                     allow_intersections=False):
+        rects = []
+        for i in range(attempts):
+            w = self.rng.get_int(min_w,max_w+1)
+            h = self.rng.get_int(min_h,max_h+1)
+            x = self.rng.get_int(2,self.w-2-w)
+            y = self.rng.get_int(2,self.h-2-h)
+            new_rect = Rect(x,y,w,h)
+            if allow_intersections:
+                rects.append(new_rect)
+            elif not (True in [r.intersects(new_rect) for r in rects]):
+                rects.append(new_rect)
+        return rects
+
+    def automata_cave_gen(self,rect,
+                          init_chance=0.375,
+                          grow=4, starve=9, wither=3,
+                          visits=0.5):
         """Automata cave generation based on Evil Science's method"""
-        for x in range(self.w)[1:-1]:
-            for y in range(self.h)[1:-1]:
+        for x in range(rect.x, rect.x+rect.w):
+            for y in range(rect.y, rect.y+rect.h):
                 if (self.is_in_bounds(x,y) and
                     self.rng.get_float(0,1) < init_chance):
                     self.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
 
-        num_visits = int(visits * self.w * self.h)
+        num_visits = int(visits * rect.w * rect.h)
         for i in range(num_visits):
-            x = self.rng.get_int(1,self.w-1)
-            y = self.rng.get_int(1,self.h-1)
+            x = self.rng.get_int(rect.x, rect.x+rect.w)
+            y = self.rng.get_int(rect.y, rect.y+rect.h)
             
             if self.is_in_bounds(x,y):
                 neighbors = self.get_neighbors(x,y)
@@ -201,6 +245,17 @@ class Level:
                 else: #is wall
                     if num_neighbor_floors >= grow:
                         self.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
+
+    def rect_automata_cave_gen(self):
+        rects = []
+        total_area = 0
+        while total_area < 1000:
+            rects = self.create_rects(50, 6,12, 5,8, False)
+            total_area = sum([r.w*r.h for r in rects])
+            print total_area
+        print len(rects)
+        for r in rects:
+            self.automata_cave_gen(r, 0.9, 7,9,5, 0.3)
 
     def smooth_caves(self, remove=5, fill=3):
         """final pass over all cellular automata to smoothen caves"""
@@ -269,7 +324,7 @@ class Level:
             self.remove_room(cave)
 
     def connect_caves(self,tries_per_room=16,
-                      max_turns=4,min_length=3,max_length=5):
+                      max_turns=4,min_length=4,max_length=6):
         """connect caves by randomly growing tunnels out
         can probably be optimized"""
         for cave in self.caves:
@@ -296,9 +351,9 @@ class Level:
                         if turn_num != 0: #turn if not first segment
                             dirs = []
                             if cur_dir < 2:
-                                dirs = [cur_dir,2,2,3,3]
+                                dirs = [cur_dir,2,2,2,3,3,3]
                             else:
-                                dirs = [cur_dir,0,0,1,1]
+                                dirs = [cur_dir,0,0,0,1,1,1]
                             cur_dir = self.rng.choose( dirs )
                             #if cur_dir == 0 or cur_dir == 1: #go east/west
                             #    cur_dir = self.rng.get_int(2,3)
