@@ -201,7 +201,7 @@ class Level:
 
     def create_rects(self,attempts,
                      min_w,max_w,min_h,max_h,
-                     allow_intersections=False):
+                     overlaps_allowed=0):
         rects = []
         for i in range(attempts):
             w = self.rng.get_int(min_w,max_w+1)
@@ -209,10 +209,16 @@ class Level:
             x = self.rng.get_int(2,self.w-2-w)
             y = self.rng.get_int(2,self.h-2-h)
             new_rect = Rect(x,y,w,h)
-            if allow_intersections:
+            new_rect.overlaps = 0
+
+            overlaps = [r for r in rects if new_rect.intersects(r)]
+            if (len(overlaps) < overlaps_allowed and
+                overlaps_allowed not in [r.overlaps for r in overlaps]):
+                for r in overlaps:
+                    r.overlaps += 1
+                    new_rect.overlaps += 1
                 rects.append(new_rect)
-            elif not (True in [r.intersects(new_rect) for r in rects]):
-                rects.append(new_rect)
+
         return rects
 
     def automata_cave_gen(self,rect,
@@ -248,11 +254,12 @@ class Level:
     def rect_automata_cave_gen(self):
         rects = []
         total_area = 0
-        while total_area < 1100:
-            rects = self.create_rects(50, 4,12, 4,8, False)
+        while total_area < 1750:
+            rects = self.create_rects(100, 4,8, 4,8, 2)
             total_area = sum([r.w*r.h for r in rects])
+            print total_area
         for r in rects:
-            self.automata_cave_gen(r, 0.9, 7,9,5, 0.3)
+            self.automata_cave_gen(r, 0.9, 7,9,5, 0.4)
 
     def smooth_caves(self, remove=5, fill=3):
         """final pass over all cellular automata to smoothen caves"""
