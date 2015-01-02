@@ -83,8 +83,11 @@ class Cave:
 
     def add_connection(self,room):
         if room not in self.connections:
-            self.connections.append(room.room_id)
-            room.connections.append(self.room_id)
+            self.connections.append(room)
+            room.connections.append(self)
+
+    def connected_to(self,room):
+        return room in self.connections
 
     def tag(self,tag):
         if tag not in self.tags:

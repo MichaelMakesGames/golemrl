@@ -102,11 +102,10 @@ class MessageLog(Observer):
             message = 'Player at (%i,%i)' % event.thing.pos
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_PRINT_ROOM:
-            room_id = self.game.cur_level.which_room(*event.pos)
-            if room_id != -1:
-                room_tags = self.game.cur_level.get_room(room_id).tags
+            room = self.game.cur_level.get_room_at(*event.pos)
+            if room:
                 message = 'In room %i, tags: %s' % \
-                          (room_id, ', '.join(room_tags))
+                          (room.room_id, ', '.join(room.tags))
             else:
                 message = 'Not in a room'
             color = C_DEBUG_MSG

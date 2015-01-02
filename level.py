@@ -133,14 +133,14 @@ class Level:
         return filter(lambda room: room.kind == 'Tunnel',
                       self.rooms)
 
-    def which_room(self,x,y):
+    def get_room_at(self,x,y):
         for room in self.rooms:
             if (x,y) in room:
-                return room.room_id
-        return -1
+                return room
+        return None
 
     def is_room(self,x,y):
-        return self.which_room(x,y) != -1
+        return bool(self.get_room_at(x,y))
 
     def get_next_room_id(self):
         cur_id = 0
@@ -156,11 +156,10 @@ class Level:
             if room.room_id == room_id:
                 return room
 
-    def remove_room(self,room_id):
-        room = self.get_room(room_id)
+    def remove_room(self,room):
         for pos in room.tile_positions:
             self.get_tile(*pos).tile_type = self.game.tile_types[WALL_ID]
-            #self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
+            self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
         self.rooms.remove(room)
 
     def get_start_pos(self):
@@ -319,7 +318,7 @@ class Level:
         caves_to_remove = []
         for cave in self.rooms:
             if len(cave) < min_size or len(cave) > max_size:
-                caves_to_remove.append(cave.room_id)
+                caves_to_remove.append(cave)
         for cave in caves_to_remove:
             self.remove_room(cave)
 
@@ -334,7 +333,8 @@ class Level:
                 if possible_starts:
                     start_cell = self.rng.choose(possible_starts)
                     cur_x,cur_y = start_cell
-                    start_room_id = self.which_room(*start_cell)
+                    start_room = self.get_room_at(*start_cell)
+                    
                     abandon = False
                     connection = False
                     tunnel_positions = []
@@ -355,18 +355,15 @@ class Level:
                             else:
                                 dirs = [cur_dir,0,0,0,1,1,1]
                             cur_dir = self.rng.choose( dirs )
-                            #if cur_dir == 0 or cur_dir == 1: #go east/west
-                            #    cur_dir = self.rng.get_int(2,3)
-                            #else: #go north/south
-                            #    cur_dir = self.rng.get_int(0,1)
                         for i in range(self.rng.get_int(min_length,max_length)):
                             #now go forward a randomized number of spaces
 
                             if i == 0 and turn_num != 0:
                                 #just turned, check corner to avoid following:   .###
                                 for neighbor in self.get_neighbors(cur_x,cur_y): #...
-                                    if neighbor.tile_type == self.game.tile_types[FLOOR_ID]:
+                                    if neighbor.tile_type.tile_type_id == FLOOR_ID:
                                         abandon = True                           #.##
+                                        print 'Abandoning tunnel due to corner'
 
                             if cur_dir == 0: #north/up
                                 cur_y -= 1
@@ -381,23 +378,21 @@ class Level:
                                 if not self.is_in_bounds(cur_x,cur_y):
                                     #abandon if tunnel goes out of bounds
                                     abandon = True
-                                elif self.is_room(cur_x,cur_y): #found room
-                                    connected_to = self.which_room(cur_x,cur_y)
-                                    if (connected_to == start_room_id or
-                                        self.get_room(connected_to) in self.tunnels):
-                                        #abandon if back starting room or connected to tunnel
+                                connected_to = self.get_room_at(cur_x,cur_y)
+                                if connected_to:
+                                    if (connected_to == start_room or
+                                        connected_to in self.tunnels):
+                                        #abandon if back connected to
+                                        #starting room or connected to
+                                        #other tunnel
                                         abandon = True
                                     else:
                                         connection = True
-                                elif self.get_tile(cur_x,cur_y).tile_type == self.game.tile_types[FLOOR_ID]:
-                                    #not room but is floor
-                                    #intersecting other tunnel, abandon
-                                    abandon = True
                                 elif ((cur_dir >= 2 and (self.is_room(cur_x,cur_y+1) or
                                                          self.is_room(cur_x,cur_y-1))) or
                                       (cur_dir <= 1 and (self.is_room(cur_x+1,cur_y) or
                                                          self.is_room(cur_x-1,cur_y)))):
-                                    #adjacent is floor, abandon
+                                    #adjacent is room, abandon
                                     abandon = True
                                 else:
                                     #hasn't found room or run off map
@@ -411,8 +406,8 @@ class Level:
                             #self.get_tile(*pos).color = libtcod.blue #DEBUG
                         tunnel = Tunnel(self.get_next_room_id())
                         tunnel.tile_positions = tunnel_positions
-                        tunnel.add_connection(self.get_room(start_room_id))
-                        tunnel.add_connection(self.get_room(connected_to))
+                        tunnel.add_connection(start_room)
+                        tunnel.add_connection(connected_to)
                         self.rooms.append(tunnel)
 
                         #remove start cell from possible starts, so we don't
@@ -429,10 +424,10 @@ class Level:
             #find or create current caves network
             cur_network = None
             for network in cave_networks:
-                if cave.room_id in network:
+                if cave in network:
                     cur_network = network
             if cur_network == None:
-                cave_networks.append([cave.room_id])
+                cave_networks.append([cave])
                 cur_network = cave_networks[-1]
 
             #add connections to current cave's network
@@ -442,8 +437,8 @@ class Level:
                 for network in cave_networks:
                     if connection in network:
                         if cur_network != network:
-                            for room_id in network:
-                                cur_network.append(room_id)
+                            for room in network:
+                                cur_network.append(room)
                             for i in range(len(network)):
                                 network.remove(network[0])
                 if connection not in cur_network:
@@ -458,8 +453,8 @@ class Level:
         #remove caves in networks other than largest
         for network in cave_networks:
             if network != largest_network:
-                for room_id in network:
-                    self.remove_room(room_id)
+                for room in network:
+                    self.remove_room(room)
 
     def evaluate(self,
                  min_connectivity = 1.25,
@@ -478,7 +473,7 @@ class Level:
     def tag_rooms(self):
         graph = nx.MultiGraph()
         for cave in self.caves:
-            graph.add_node(cave.room_id)
+            graph.add_node(cave)
         for tunnel in self.tunnels:
             w = len(tunnel)
             graph.add_edge(*tunnel.connections, weight=w)
@@ -500,12 +495,12 @@ class Level:
         path = nx.dijkstra_path(graph,start,end)
 
         #set the start and end rooms, then rooms between as path
-        self.get_room(start).tag(TAG_START)
-        self.get_room(end).tag(TAG_END)
-        for room_id in path:
-            self.get_room(room_id).tag(TAG_PATH)
+        start.tag(TAG_START)
+        end.tag(TAG_END)
+        for room in path:
+            room.tag(TAG_PATH)
 
-        #make Tunnels tunnels, and everything else off_path
+        #tag sizes
         for room in self.rooms:
             size = len(room)
             if size < 25:
