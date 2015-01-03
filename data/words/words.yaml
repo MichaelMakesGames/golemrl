@@ -7,7 +7,7 @@ CAVE:
 
 MOUNTAIN:
   name: Mountain
-  char: C
+  char: M
   color: dark gray
   text_color: light gray
   verb: rise
@@ -47,7 +47,10 @@ VOID:
   text_color: dark_gray
   verb: sink #change
 
-#Words to include in the tower
+#Words to include later
+#WEB: #Spiders
+#HORDE: #TRIBE? CLAN? Goblins
+#LAIR: #ROOST? NEST? dragons
 #BOG: #MIRE? SWAMP? FEN?
 #STORM:
 #FOREST:
