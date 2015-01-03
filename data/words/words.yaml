@@ -1,20 +1,65 @@
-LIFE:
-  name: Life
-  char: L
-  color: white
-  text_color: white
-  verb: surge
+CAVE:
+  name: Cave
+  char: C
+  color: darkest gray
+  text_color: gray
+  verb: spread #change
 
-FIRE:
-  name: Fire
-  char: F
-  color: dark red
+MOUNTAIN:
+  name: Mountain
+  char: C
+  color: dark gray
+  text_color: light gray
+  verb: rise
+
+HIVE:
+  name: Hive
+  char: H
+  color: darker yellow
+  text_color: light yellow
+  verb: crawl
+
+INFERNO:
+  name: Inferno
+  char: I
+  color: darker red
   text_color: light red
   verb: burn
 
-WATER:
-  name: Water
-  char: W
-  color: dark blue
+RIVER:
+  name: River
+  char: R
+  color: darker blue
   text_color: light blue
   verb: flow
+
+MYCELIUM:
+  name: Mycelium
+  char: M
+  color: lightest yellow
+  text_color: lightest yellow
+  verb: creep
+
+VOID:
+  name: Void
+  char: V
+  color: black
+  text_color: dark_gray
+  verb: sink #change
+
+#Words to include in the tower
+#BOG: #MIRE? SWAMP? FEN?
+#STORM:
+#FOREST:
+#OCEAN:
+#SKY:
+#DESERT:
+#JUNGLE:
+#TUNDRA:
+#DREAMSCAPE:
+
+#Unnatural words to consider
+#Furnace
+#Mine
+#Tower
+#Catacombs
