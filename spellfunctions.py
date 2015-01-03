@@ -31,11 +31,12 @@ def heal(game, caster):
 def death_touch(game, caster, direction):
     target = get_target_touch(game, caster, direction)
     if target:
-        damage_dealt, killed = target.creature.take_damage(100)
+        damage_dealt, killed = target.creature.take_damage(100,100)
         return caster.notify(Event(EVENT_ATTACK,
                                    actor=caster,
                                    target=target,
                                    hit = True,
+                                   degree = 100,
                                    dealt = damage_dealt,
                                    killed = killed))
     else:
@@ -44,10 +45,11 @@ def death_touch(game, caster, direction):
 def death_ray(game, caster, direction):
     target = get_target_ranged(game,caster, direction)
     if target:
-        damage_dealt, killed = target.creature.take_damage(100)
+        damage_dealt, killed = target.creature.take_damage(100,100)
         return caster.notify(Event(EVENT_ATTACK,
                                    actor=caster,
                                    target=target,
+                                   degree=100,
                                    hit = True,
                                    dealt = damage_dealt,
                                    killed = killed))
