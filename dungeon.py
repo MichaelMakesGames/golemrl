@@ -64,8 +64,6 @@ class Dungeon(Observer):
                 print "Rejected"
             print ""
 
-        if EXPERIMENTAL_WALLS:
-            self.levels[depth].mark_explorable()
         self.levels[depth].tag_rooms()
         self.levels[depth].populate_rooms()
         self.compute_tcod_map()
@@ -201,7 +199,6 @@ class Dungeon(Observer):
 
                 char = ' '
                 color = libtcod.black
-                bkgnd = libtcod.black
 
                 if map_x in range(level.w) and map_y in range(level.h):
                     tile = level.get_tile(map_x,map_y)
@@ -212,79 +209,7 @@ class Dungeon(Observer):
                         visible = libtcod.map_is_in_fov(self.tcod_map,map_x,map_y)
                         if visible:
                             color = tile.color
-                            bkgnd = tile.background
                         else:
                             color = tile.color_not_visible
-                            bkgnd = tile.background_not_visible
 
-                        ### START OF EXPERIMENTAL WALL RENDERING ###
-                        if EXPERIMENTAL_WALLS and char == '#':
-                            try:
-                                #get the four neighbors of the tile
-                                four = [level.get_tile(map_x,map_y-1), #N
-                                        level.get_tile(map_x,map_y+1), #S
-                                        level.get_tile(map_x+1,map_y), #E
-                                        level.get_tile(map_x-1,map_y)] #W
-                                floor_not_vis = [not libtcod.map_is_in_fov(self.tcod_map,map_x,map_y-1),
-                                                 not libtcod.map_is_in_fov(self.tcod_map,map_x,map_y+1),
-                                                 not libtcod.map_is_in_fov(self.tcod_map,map_x+1,map_y),
-                                                 not libtcod.map_is_in_fov(self.tcod_map,map_x-1,map_y)]
-                                for i in [0,1,2,3]:
-                                    if four[i].char == '#': floor_not_vis[i] = False
-                                    if four[i].explored:
-                                        four[i] = four[i].char
-                                    else:
-                                        if ((four[i].char == '#' and
-                                             not four[i].explorable and
-                                             not four[i].explored) or
-                                            (four[i].char == '.' and
-                                             not four[i].explored)):
-                                            #if tile is unexplorable wall
-                                            #or unexplored floor, mark as
-                                            #'?' instead of '.' or '#'
-                                            #used to determine unseen half
-                                            #of tile should be black
-                                            four[i] = '?'
-                                        else:
-                                            four[i] = four[i].char
-                                            
-                                if four.count('#') == 2:
-                                    #change char to diagonal
-                                    if (four[0] == '#' and
-                                        four[2] == '#'): #NE
-                                        char = 227
-                                    elif (four[0] == '#' and
-                                          four[3] == '#'): #NW
-                                        char = 226
-                                    elif (four[1] == '#' and
-                                          four[2] == '#'): #SE
-                                        char = 229
-                                    elif (four[1] == '#' and
-                                          four[3] == '#'): #SW
-                                        char = 232
-
-                                    if char != '#':
-                                        #the character was changed
-                                        #colors need to be redone
-                                        color = bkgnd
-                                        if visible:
-                                            bkgnd = self.game.tile_types[FLOOR_ID].background
-                                        else:
-                                            bkgnd = self.game.tile_types[FLOOR_ID].background_not_visible
-                                        if four.count('?') > 1:
-                                            #not sure how this works
-                                            #if two or more tiles are
-                                            #unexplorable walls or
-                                            #unexplored floors, the
-                                            #background should be black
-                                            bkgnd = libtcod.black
-                                        elif floor_not_vis.count(True) > 1:
-                                            #similarly, if two or more
-                                            #not visible floors, the
-                                            #background should be gray
-                                            bkgnd = libtcod.light_gray
-                            except:
-                                pass
-                        ### END OF EXPERIMENTAL WALL RENDERING ###
-                con.put_char_ex(x,y,char,color,bkgnd)
-
+                con.put_char_ex(x,y,char,color,libtcod.black)

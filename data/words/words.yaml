@@ -1,50 +1,43 @@
 CAVE:
   name: Cave
   char: C
-  color: darkest gray
-  text_color: gray
+  color: gray
   verb: spread #change
 
 MOUNTAIN:
   name: Mountain
   char: M
-  color: dark gray
-  text_color: light gray
+  color: light gray
   verb: rise
 
 HIVE:
   name: Hive
   char: H
-  color: darker yellow
-  text_color: light yellow
+  color: light yellow
   verb: crawl
 
 INFERNO:
   name: Inferno
   char: I
-  color: darker red
-  text_color: light red
+  color: light red
   verb: burn
 
 RIVER:
   name: River
   char: R
-  color: darker blue
-  text_color: light blue
+  color: light blue
   verb: flow
 
 MYCELIUM:
   name: Mycelium
   char: M
   color: lightest yellow
-  text_color: lightest yellow
   verb: creep
 
 VOID:
   name: Void
   char: V
-  color: black
-  text_color: dark_gray
+  color: dark_gray
   verb: sink #change
 
 #Words to include later

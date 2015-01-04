@@ -1,9 +1,8 @@
 class Material:
-    def __init__(self,material_id,name,color,text_color,value):
+    def __init__(self,material_id,name,color,value):
         self.material_id = material_id
         self.name = name
         self.color = color
-        self.text_color = text_color
         self.value = value
 
     def __str__(self):

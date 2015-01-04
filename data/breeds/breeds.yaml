@@ -1,7 +1,7 @@
 ANIMATE_CLAY:
   name: Animate Clay
   char: c
-  color: darkest sepia
+  color: sepia
   health: 5
   agility: 2
   armor: 0
@@ -14,7 +14,7 @@ ANIMATE_CLAY:
 ERODEN_GOLEM:
   name: Eroded Golem
   char: e
-  color: darkest sepia
+  color: sepia
   health: 10
   agility: 2
   armor: 0

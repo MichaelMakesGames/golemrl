@@ -61,37 +61,37 @@ class MessageLog(Observer):
                       (event.word.name,
                        event.word.verb,
                        event.body_part.name)
-            color = event.word.text_color
+            color = event.word.color
         elif event.event_type == EVENT_ERASE:
             message = 'You feel the powers of %s leave your %s' % \
                       (event.word.name, event.body_part.name)
-            color = event.word.text_color
+            color = event.word.color
 
         ### Spell events ###
         elif event.event_type == EVENT_START_SPELL:
             message = 'You start casting %s - choose a direction' % \
                       (event.spell.name)
             try:
-                color = event.spell.word.text_color
+                color = event.spell.word.color
             except AttributeError:
                 color = C_MENU
         elif event.event_type == EVENT_CANCEL_SPELL:
             message = 'You change your mind'
             try:
-                color = event.spell.word.text_color
+                color = event.spell.word.color
             except AttributeError:
                 color = C_MENU
         elif event.event_type == EVENT_CAST_SPELL:
             message = 'You cast %s'%(event.spell.name)
             try:
-                color = event.spell.word.text_color
+                color = event.spell.word.color
             except AttributeError:
                 color = C_MENU
 
         ### Misc events ###
         elif event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
-            color = event.majority_material.text_color
+            color = event.majority_material.color
         elif event.event_type == EVENT_HEAL:
             message = 'Player healed %s' % event.part.name
             color = C_EFFECT_MSG

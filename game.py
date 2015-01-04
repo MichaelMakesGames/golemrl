@@ -104,8 +104,6 @@ class Game:
 
             tile_type.color = yamlhelp.load_color(tile_type.color)
             tile_type.color_not_visible = yamlhelp.load_color(tile_type.color_not_visible)
-            tile_type.background = yamlhelp.load_color(tile_type.background)
-            tile_type.background_not_visible = yamlhelp.load_color(tile_type.background_not_visible)
 
     def load_materials(self,files):
         for file_name in files:
@@ -120,7 +118,6 @@ class Game:
             self.materials[material_id] = material
 
             material.color = yamlhelp.load_color(material.color)
-            material.text_color = yamlhelp.load_color(material.text_color)
 
     def load_traits(self,files):
         for file_name in files:
@@ -166,7 +163,6 @@ class Game:
             self.words[word_id] = word
 
             word.color = yamlhelp.load_color(word.color)
-            word.text_color = yamlhelp.load_color(word.text_color)
 
     def load_spells(self,files):
         for file_name in files:
@@ -274,15 +270,15 @@ class Game:
         for material in sorted(self.player.materials):
             x = 2
             s = '%s: %i'%(material,self.player.materials[material])
-            self.panel_con.set_default_foreground(material.text_color)
+            self.panel_con.set_default_foreground(material.color)
             self.panel_con.print_string(x,y,s)
             y += 1
 
         y += 1
         for word in sorted(self.player.words):
-            color = word.text_color
+            color = word.color
             x = 2
-            self.panel_con.set_default_foreground(word.text_color)
+            self.panel_con.set_default_foreground(word.color)
             self.panel_con.print_string(x,y,word.name)
             y += 1
 

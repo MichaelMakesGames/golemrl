@@ -25,12 +25,6 @@ class Tile:
     def color_not_visible(self):
         return self.tile_type.color_not_visible
     @property
-    def background(self):
-        return self.tile_type.background
-    @property
-    def background_not_visible(self):
-        return self.tile_type.background_not_visible
-    @property
     def move_through(self):
         return self.tile_type.move_through
     @property

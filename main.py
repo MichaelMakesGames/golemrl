@@ -13,10 +13,7 @@ def main():
     logging.debug('start of main')
 
     #initialize main console
-    if EXPERIMENTAL_WALLS:
-        font_file = 'data/fonts/arial10x10(new).png'
-    else:
-        font_file = 'data/fonts/arial10x10.png'
+    font_file = 'data/fonts/arial10x10.png'
     libtcod.console_set_custom_font(font_file, libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
     libtcod.console_init_root(SCREEN_W,SCREEN_H,'GolemRL')
     libtcod.sys_set_fps(LIMIT_FPS)
