@@ -26,7 +26,7 @@ def get_target_ranged(game,caster,direction):
 
 def heal(game, caster):
     for bp_name in caster.creature.body_parts:
-        return caster.creature.body_parts[bp_name].heal(1)
+        caster.creature.body_parts[bp_name].heal(1)
 
 def death_touch(game, caster, direction):
     target = get_target_touch(game, caster, direction)
