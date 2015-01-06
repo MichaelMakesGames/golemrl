@@ -12,3 +12,31 @@ FLOOR:
   color_not_visible: gray
   move_through: true
   see_through: true
+WATER:
+  name: Water
+  char: "~"
+  color: [lighter blue, light blue]
+  color_not_visible: light gray
+  move_through: true
+  see_through: true
+PIT:
+  name: Pit
+  char: 25
+  color: darker gray
+  color_not_visible: darker gray
+  move_through: false
+  see_through: true
+BRIDGE_NS:
+  name: Bridge
+  char: 186
+  color: sepia
+  color_not_visible: gray
+  move_through: true
+  see_through: true
+BRIDGE_EW:
+  name: Bridge
+  char: 205
+  color: sepia
+  color_not_visible: gray
+  move_through: true
+  see_through: true
