@@ -102,7 +102,11 @@ class Game:
             tile_type = TileType(tile_type_id,**tile_type)
             self.tile_types[tile_type_id] = tile_type
 
-            tile_type.color = yamlhelp.load_color(tile_type.color)
+            if type(tile_type.color)==list:
+                tile_type.color = [yamlhelp.load_color(c)
+                                   for c in tile_type.color]
+            else:
+                tile_type.color = yamlhelp.load_color(tile_type.color)
             tile_type.color_not_visible = yamlhelp.load_color(tile_type.color_not_visible)
 
     def load_materials(self,files):

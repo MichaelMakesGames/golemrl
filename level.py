@@ -158,7 +158,7 @@ class Level:
 
     def remove_room(self,room):
         for pos in room.tile_positions:
-            self.get_tile(*pos).tile_type = self.game.tile_types[WALL_ID]
+            self.get_tile(*pos).change_type(self.game.tile_types[WALL_ID])
             self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
         self.rooms.remove(room)
 
@@ -230,7 +230,7 @@ class Level:
             for y in range(rect.y, rect.y+rect.h):
                 if (self.is_in_bounds(x,y) and
                     self.rng.get_float(0,1) < init_chance):
-                    self.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
+                    self.get_tile(x,y).change_type(self.game.tile_types[FLOOR_ID])
 
         num_visits = int(visits * rect.w * rect.h)
         for i in range(num_visits):
@@ -246,10 +246,10 @@ class Level:
 
                 if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID]:
                     if num_neighbor_floors >= starve or num_neighbor_floors <= wither:
-                        self.get_tile(x,y).tile_type = self.game.tile_types[WALL_ID]
+                        self.get_tile(x,y).change_type(self.game.tile_types[WALL_ID])
                 else: #is wall
                     if num_neighbor_floors >= grow:
-                        self.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
+                        self.get_tile(x,y).change_type(self.game.tile_types[FLOOR_ID])
 
     def rect_automata_cave_gen(self):
         rects = []
@@ -278,11 +278,11 @@ class Level:
                 
                     if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID]:
                         if num_neighbor_floors <= fill:
-                            tmp_level.get_tile(x,y).tile_type = self.game.tile_types[WALL_ID]
+                            tmp_level.get_tile(x,y).change_type(self.game.tile_types[WALL_ID])
 
                     else:
                         if num_neighbor_floors >= remove:
-                            tmp_level.get_tile(x,y).tile_type = self.game.tile_types[FLOOR_ID]
+                            tmp_level.get_tile(x,y).change_type(self.game.tile_types[FLOOR_ID])
 
         self.tiles = tmp_level.tiles
 
@@ -416,7 +416,7 @@ class Level:
                     if connection and not abandon:
                         #dig tunnel if successful and make rooms
                         for pos in tunnel_positions:
-                            self.get_tile(*pos).tile_type = self.game.tile_types[FLOOR_ID]
+                            self.get_tile(*pos).change_type(self.game.tile_types[FLOOR_ID])
                             #self.get_tile(*pos).color = libtcod.blue #DEBUG
                         tunnel = Tunnel(self.get_next_room_id())
                         tunnel.tile_positions = tunnel_positions

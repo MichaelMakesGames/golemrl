@@ -1,14 +1,14 @@
 WALL:
   name: Wall
-  char: 178
-  color: light sepia #dark sepia
+  char: [177,178]
+  color: [lighter sepia, light sepia]
   color_not_visible: dark gray #dark gray
   move_through: false
   see_through: false
 FLOOR:
   name: Floor
-  char: "."
-  color: lighter sepia
+  char: ["`", ".", ".", ","]
+  color: [lightest sepia, lighter sepia]
   color_not_visible: gray
   move_through: true
   see_through: true
