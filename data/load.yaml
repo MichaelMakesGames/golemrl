@@ -13,6 +13,11 @@ player:
   files:
     - "data/player/player.yaml"
 
+prefabs:
+  directories:
+    - "data/prefabs"
+  files: []
+
 spells:
   directories:
     - "data/spells"

@@ -14,6 +14,7 @@ from word import Word
 from spell import Spell
 from ai import AI
 from tiletype import TileType
+from prefab import Prefab
 from dungeon import Dungeon
 from console import Console
 from messagelog import MessageLog
@@ -34,6 +35,7 @@ class Game:
         self.traits = {}
         self.spells = {}
         self.breeds = {}
+        self.prefabs = {}
         self.player = None
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
@@ -76,6 +78,7 @@ class Game:
                       ('traits',self.load_traits),
                       ('spells',self.load_spells),
                       ('breeds',self.load_breeds),
+                      ('prefabs',self.load_prefabs),
                       ('player',self.load_player)]
 
         for category in load_order:
@@ -202,6 +205,21 @@ class Game:
 
             breed.color = yamlhelp.load_color(breed.color)
             yamlhelp.convert_keys(breed.materials,self.materials)
+
+    def load_prefabs(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.prefabs)
+
+        for prefab_id in self.prefabs:
+            prefab = self.prefabs[prefab_id]
+            prefab = Prefab(prefab_id,**prefab)
+            self.prefabs[prefab_id] = prefab
+
+            for char in prefab.char_to_tile:
+                prefab.char_to_tile[char] = self.tile_types[prefab.char_to_tile[char]]
 
     def load_player(self,files):
         player_data = {}
