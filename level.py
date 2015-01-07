@@ -18,25 +18,31 @@ class Rect:
         self.w = w
         self.h = h
     @property
+    def max_x(self):
+        return self.x+self.w-1
+    @property
+    def max_y(self):
+        return self.y+self.h-1
+    @property
     def center_x(self):
-        return (self.x*2+self.w-1)//2
+        return (self.x+self.max_x)//2
     @property
     def center_y(self):
-        return (self.y*2+self.w-1)//2
+        return (self.y+self.max_y)//2
     @property
     def center(self):
         return (self.center_x,self.center_y)
     
     def __contains__(self,pos):
         x,y = pos
-        return (x >= self.x and x < self.x+self.w and
-                y >= self.y and y < self.y+self.w)
+        return (x >= self.x and x <= self.max_x and
+                y >= self.y and y <= self.max_y)
 
-    def intersects(self,other): #WARNING not well tested
-        return (self.x <= other.x+other.w and
-                self.x+self.w >= other.x and
-                self.y <= other.y+other.h and
-                self.y+self.h >= other.y)
+    def intersects(self,other):
+        return ((self.x,self.y) in other or
+                (self.x,self.max_y) in other or
+                (self.max_x,self.y) in other or
+                (self.max_x,self.max_y) in other)
 
 class Level:
     """The Dungeon consists of several levels. This contains
@@ -199,7 +205,7 @@ class Level:
                 tile.explored = tile.explorable
         return Event(EVENT_EXPLORE_EXPLORABLE)
 
-    def create_rects(self,attempts,
+    def create_rects(self,attempts,restrictions,
                      min_w,max_w,min_h,max_h,
                      overlaps_allowed=0):
         rects = []
@@ -210,14 +216,21 @@ class Level:
             y = self.rng.get_int(2,self.h-2-h)
             new_rect = Rect(x,y,w,h)
             new_rect.overlaps = 0
-
-            overlaps = [r for r in rects if new_rect.intersects(r)]
-            if (len(overlaps) < overlaps_allowed and
-                overlaps_allowed not in [r.overlaps for r in overlaps]):
-                for r in overlaps:
-                    r.overlaps += 1
-                    new_rect.overlaps += 1
-                rects.append(new_rect)
+            
+            restricted = False
+            for r in restrictions:
+                if new_rect.intersects(r):
+                    restricted = True
+            if not restricted:
+                overlaps = [r for r in rects if new_rect.intersects(r)]
+                if (len(overlaps) <= overlaps_allowed and
+                    overlaps_allowed not in [r.overlaps
+                                             for r in overlaps]):
+                    #not too many overlaps, and none of the overlapped rectangles already at maximum overlaps
+                    for r in overlaps:
+                        r.overlaps += 1
+                        new_rect.overlaps += 1
+                    rects.append(new_rect)
 
         return rects
 
@@ -251,11 +264,27 @@ class Level:
                     if num_neighbor_floors >= grow:
                         self.get_tile(x,y).change_type(self.game.tile_types[FLOOR_ID])
 
-    def rect_automata_cave_gen(self):
+    def place_prefab(self,start_x,start_y,prefab):
+        prefab_data = prefab.get_map_data()
+        for x in range(prefab.w):
+            for y in range(prefab.h):
+                if prefab_data[y][x]:
+                    print 'changing tile to %s'%prefab_data[y][x].name
+                    self.get_tile(start_x+x,start_y+y).change_type(prefab_data[y][x])
+
+    def rect_automata_cave_gen(self,restrictions=[],
+                               attempts=80,
+                               rect_min_w=4, rect_max_w=8,
+                               rect_min_h=4, rect_max_h=8,
+                               max_overlaps=1,
+                               min_area=1200):
         rects = []
         total_area = 0
-        while total_area < 1750:
-            rects = self.create_rects(100, 4,8, 4,8, 2)
+        while total_area < min_area:
+            rects = self.create_rects(attempts, restrictions,
+                                      rect_min_w,rect_max_w,
+                                      rect_min_h,rect_max_h,
+                                      max_overlaps)
             total_area = sum([r.w*r.h for r in rects])
             print total_area
         for r in rects:
@@ -469,6 +498,20 @@ class Level:
             if network != largest_network:
                 for room in network:
                     self.remove_room(room)
+
+    def experimental_cave_gen(self):
+        prefab_rects = self.create_rects(4, [], 6,6, 6,6, 0)
+        print len(prefab_rects)
+        self.rect_automata_cave_gen(restrictions=prefab_rects,
+                                    min_area = 1000)
+        self.smooth_caves()
+        self.remove_caves_by_size()
+        for r in prefab_rects:
+            print 'Placing prefab at (%i,%i)'%(r.x,r.y)
+            self.place_prefab(r.x,r.y,self.game.prefabs["TEST"])
+        self.find_caves()
+        self.connect_caves()
+        self.remove_isolated_caves()
 
     def evaluate(self,
                  min_connectivity = 1.0,
