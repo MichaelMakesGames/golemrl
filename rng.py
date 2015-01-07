@@ -15,6 +15,9 @@ class RNG:
     def get_int(self,minimum,maximum):
         return libtcod.random_get_int(self.rng,minimum,maximum-1)
 
+    def flip(self):
+        return bool(self.get_int(0,2))
+
     def roll(self,num_dice,num_sides):
         return sum( [self.get_int(1,num_sides+1)
                      for i in range(num_dice)] )
