@@ -219,7 +219,10 @@ class Game:
             self.prefabs[prefab_id] = prefab
 
             for char in prefab.char_to_tile:
-                prefab.char_to_tile[char] = self.tile_types[prefab.char_to_tile[char]]
+                if type(prefab.char_to_tile[char])==list:
+                    prefab.char_to_tile[char] = [self.tile_types[t] for t in prefab.char_to_tile[char]]
+                else:
+                    prefab.char_to_tile[char] = self.tile_types[prefab.char_to_tile[char]]
 
     def load_player(self,files):
         player_data = {}

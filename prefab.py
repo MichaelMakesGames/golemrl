@@ -13,11 +13,17 @@ class Prefab:
 
     def get_map_data(self,rng=0):
         data = []
+        char_varieties = {}
         for s in self.map_data:
             row=[]
             for char in s:
                 if char in self.char_to_tile:
-                    row.append(self.char_to_tile[char])
+                    if type(self.char_to_tile[char])==list:
+                        if char not in char_varieties:
+                            char_varieties[char]=rng.get_int(0,len(self.char_to_tile[char]))
+                        row.append(self.char_to_tile[char][char_varieties[char]])
+                    else:      
+                        row.append(self.char_to_tile[char])
                 else:
                     row.append(None)
             data.append(row)
