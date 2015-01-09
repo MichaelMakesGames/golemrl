@@ -25,6 +25,10 @@ class Player(Thing):
         self.casting = None
         self.ghost = False
 
+    @property
+    def fov(self):
+        return self.creature.fov
+
     def harvest_corpse(self):
         """Harvests corpse at player tile, returns EVENT_HARVEST
         If there were no corpses, returns EVENT_NONE"""

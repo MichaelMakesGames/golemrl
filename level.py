@@ -184,7 +184,7 @@ class Level:
         """Called when player moves to mark seen tiles as explored"""
         for x in range(self.w):
             for y in range(self.h):
-                if libtcod.map_is_in_fov(self.dungeon.tcod_map,x,y):
+                if self.game.player.fov(x,y):
                     self.get_tile(x,y).explored = True
 
     def explore_all(self):

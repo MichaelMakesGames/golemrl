@@ -28,7 +28,7 @@ class Breed:
     def new(self,x,y,depth):
         thing = Thing(self.game,self.game.next_id(),
                       x, y, depth, False, True,
-                      creature = Creature(self),
+                      creature = Creature(self.game,self),
                       ai = AI() )
         thing.add_observer(self.game.dungeon)
         thing.add_observer(self.game.message_log)

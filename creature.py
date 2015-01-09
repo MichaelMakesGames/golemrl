@@ -3,16 +3,16 @@ from config import *
 import logging
 
 from event import Event
+from fov import FOV
 
 logger = logging.getLogger('creature')
 
 class Creature:
-    def __init__(self, breed):
+    def __init__(self, game, breed):
+        self.game = game
         self.breed = breed
         self.health = breed.max_health
-    @property
-    def game(self):
-        return self.owner.game
+        self.fov = FOV(self.game,self)
 
     @property
     def name(self):

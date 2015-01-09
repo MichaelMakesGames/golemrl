@@ -4,18 +4,19 @@ import logging
 
 from event import Event
 from creature import Creature
+from fov import FOV
 
 class Golem(Creature):
-    def __init__(self,name,char,color,body_parts):
+    def __init__(self,game,name,char,color,body_parts):
+        self.game = game
         self.raw_name = name
         self.raw_char = char
         self.raw_color = color
         self.breed = self #WARNING so that code for handling other creatures works for players as well -- kinda messy...
         self.body_parts = body_parts
+        self.fov = FOV(self.game,self)
         self.death_func=None
-    @property
-    def game(self):
-        return self.owner.game
+
     @property
     def name(self): return self.raw_name
     @property

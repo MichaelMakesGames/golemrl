@@ -182,9 +182,10 @@ class Dungeon(Observer):
             self.refresh_tcod = False
 
         if self.refresh_fov:
-            libtcod.map_compute_fov(self.tcod_map,
-                                    self.game.player.x,
-                                    self.game.player.y)
+            #libtcod.map_compute_fov(self.tcod_map,
+            #                        self.game.player.x,
+            #                        self.game.player.y)
+            self.game.player.fov.refresh()
             self.game.cur_level.explore()
             self.refresh_fov = False
 
@@ -207,7 +208,7 @@ class Dungeon(Observer):
 
                     if explored:
                         char = tile.char
-                        visible = libtcod.map_is_in_fov(self.tcod_map,map_x,map_y)
+                        visible = self.game.player.fov(map_x,map_y)
                         if visible:
                             color = tile.color
                         else:

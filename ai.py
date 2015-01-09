@@ -20,7 +20,7 @@ class AI:
             self.path = libtcod.path_new_using_map(tcod_map)
 
         pos = self.owner.pos
-        visible = libtcod.map_is_in_fov(tcod_map,*pos)
+        visible = self.game.player.fov(*pos)
     
         action_taken = False
         while not action_taken:

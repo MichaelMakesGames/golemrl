@@ -237,7 +237,7 @@ class Game:
         player_name = player_data.keys()[0]
         player_data = player_data[player_name]
 
-        player_creature = Golem(player_name,**player_data)
+        player_creature = Golem(self,player_name,**player_data)
         player_creature.raw_color = yamlhelp.load_color(player_creature.raw_color)
         for bp_name in player_creature.body_parts:
             bp = player_creature.body_parts[bp_name]
