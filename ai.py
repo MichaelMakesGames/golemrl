@@ -26,13 +26,18 @@ class AI:
         while not action_taken:
             if self.state == "sleeping":
                 if visible:
-                    logger.info('Thing %i waking up'%self.owner.thing_id)
-                    self.state = "awake"
+                    self.owner.fov.refresh()
+                    if self.owner.fov(*self.game.player.pos):
+                        logger.info('Thing %i waking up'%self.owner.thing_id)
+                        self.state = "awake"
+                    else:
+                        action_taken = True
                 else:
                     action_taken = True
 
             elif self.state == "awake":
-                if visible: #player sees thing, so thing sees player
+                self.owner.fov.refresh()
+                if self.owner.fov(*self.game.player.pos):
                     self.last_saw_player = 0
                 else: #increase last_saw_player and fall asleep if it's been too long
                     self.last_saw_player += 1

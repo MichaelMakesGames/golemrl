@@ -40,14 +40,16 @@ class Thing(Subject):
     @property
     def pos(self):
         return (self.x,self.y)
-
+    @property
+    def fov(self):
+        return self.creature.fov
     def clear(self, focus_x, focus_y, con):
         render_x = self.x - focus_x + MAP_W//2
         render_y = self.y - focus_y + MAP_H//2
         con.put_char(render_x,render_y,' ')
 
     def render(self, focus_x, focus_y, con):
-        if libtcod.map_is_in_fov(self.game.dungeon.tcod_map,self.x,self.y):
+        if self.game.player.fov(self.x,self.y):
             char = color = None
             if self.creature:
                 char = self.creature.char
