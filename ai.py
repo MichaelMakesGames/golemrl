@@ -36,7 +36,6 @@ class AI:
                     action_taken = True
 
             elif self.state == "awake":
-                self.owner.fov.refresh()
                 if self.owner.fov(*self.game.player.pos):
                     self.last_saw_player = 0
                 else: #increase last_saw_player and fall asleep if it's been too long
@@ -68,6 +67,7 @@ class AI:
                         self.compute_path(*self.player_pos)
                 else: #end of path and don't know where to go now
                     action_taken = True
+                self.owner.fov.refresh()
 
     def compute_path(self, x, y):
         logger.debug('Thing %i setting path to (%i,%i)'%(self.owner.thing_id,x,y))

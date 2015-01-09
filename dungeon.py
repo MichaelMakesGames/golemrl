@@ -189,7 +189,7 @@ class Dungeon(Observer):
             self.game.cur_level.explore()
             self.refresh_fov = False
 
-    def render(self, focus_x, focus_y, con):
+    def render(self, focus_x, focus_y, con, overlay=None):
         level = self.game.cur_level
         x_offset = 0 + focus_x - MAP_W//2
         y_offset = 0 + focus_y - MAP_H//2
@@ -201,6 +201,7 @@ class Dungeon(Observer):
 
                 char = ' '
                 color = libtcod.black
+                background = libtcod.black
 
                 if map_x in range(level.w) and map_y in range(level.h):
                     tile = level.get_tile(map_x,map_y)
@@ -211,7 +212,11 @@ class Dungeon(Observer):
                         visible = self.game.player.fov(map_x,map_y)
                         if visible:
                             color = tile.color
+                            if overlay == OVERLAY_FOV:
+                                for thing in self.game.living_things:
+                                    if (not thing is self.game.player) and self.game.player.fov(thing) and thing.fov(map_x,map_y):
+                                        background = libtcod.dark_blue
                         else:
                             color = tile.color_not_visible
 
-                con.put_char_ex(x,y,char,color,libtcod.black)
+                con.put_char_ex(x,y,char,color,background)

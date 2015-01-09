@@ -34,4 +34,5 @@ class Breed:
         thing.add_observer(self.game.message_log)
         self.game.add_thing(thing)
         thing.notify(Event(EVENT_CREATE, actor=thing))
+        thing.fov.refresh()
         return thing

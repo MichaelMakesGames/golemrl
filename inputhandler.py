@@ -39,6 +39,7 @@ class InputHandler(Subject):
             action_dict = {('r',False): ACTION_HARVEST,
                            ('s',False): ACTION_OPEN_SPELL_MENU,
                            ('t',False): ACTION_OPEN_BODY_MENU,
+                           ('f',False): ACTION_TOGGLE_OVERLAY_FOV,
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,
@@ -188,3 +189,9 @@ class InputHandler(Subject):
                                  'action':'self.owner.remove_trait(%s,%s)'%(repr(bp_name),repr(trait.trait_id))})
         menu = Menu('Choose trait to remove from %s'%bp_name,menu_options)
         return self.set_menu(menu)
+
+    def toggle_overlay(self,overlay):
+        if self.game.overlay == overlay:
+            self.game.overlay=None
+        else:
+            self.game.overlay = overlay

@@ -28,6 +28,7 @@ class Game:
         self.dungeon = None
         self.message_log = None
         self.menu = None
+        self.overlay = None
 
         self.tile_types = {}
         self.materials = {}
@@ -330,7 +331,8 @@ class Game:
             focus_x = LEVEL_W//2
             focus_y = LEVEL_H//2
 
-        self.dungeon.render(focus_x, focus_y, self.map_con)
+        self.dungeon.render(focus_x, focus_y, self.map_con,
+                            overlay=self.overlay)
         for thing in self.things:
             if thing != self.player:
                 thing.render(focus_x, focus_y, self.map_con)

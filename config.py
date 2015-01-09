@@ -51,6 +51,9 @@ STATE_PLAYING = 'PLAYING'
 STATE_PAUSED = 'PAUSED'
 STATE_MENU = 'MENU'
 
+#Map overlays
+OVERLAY_FOV = 'FOV'
+
 #Room tags
 TAG_CAVE = 'CAVE'
 TAG_TUNNEL = 'TUNNEL'
@@ -114,3 +117,4 @@ ACTION_PRINT_ROOM = 'self.notify(Event(EVENT_PRINT_ROOM, pos=self.owner.pos))'
 ACTION_CANCEL_MENU = 'self.set_menu(None)'
 ACTION_OPEN_SPELL_MENU = 'self.open_spell_menu()'
 ACTION_OPEN_BODY_MENU = 'self.open_body_menu()'
+ACTION_TOGGLE_OVERLAY_FOV = 'self.toggle_overlay(OVERLAY_FOV)'
