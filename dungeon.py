@@ -36,7 +36,7 @@ class Dungeon(Observer):
             start = t = time.time()
             self.levels[depth] = Level(self.game, seed, LEVEL_W, LEVEL_H)
             print "Created level:    \t%s"%str(time.time()-t)
-            t = time.time()
+            '''t = time.time()
             self.levels[depth].rect_automata_cave_gen()
             print "Generated caves:  \t%s"%str(time.time()-t)
             t = time.time()
@@ -55,7 +55,8 @@ class Dungeon(Observer):
             self.levels[depth].remove_isolated_caves()
             print "Removed caves (2):\t%s"%str(time.time()-t)
             print "Total time:       \t%s"%str(time.time()-start)
-
+            '''
+            self.levels[depth].experimental_cave_gen()
             if self.levels[depth].evaluate():
                 approved = True
                 print "Approved"

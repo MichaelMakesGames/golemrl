@@ -50,7 +50,9 @@ class Creature:
     @property
     def majority_material(self):
         return sorted(self.materials,key=lambda m: self.materials[m])[-1]
-
+    @property
+    def death_func(self):
+        return self.breed.death_func
 
     def update(self):
         pass
@@ -99,6 +101,8 @@ class Creature:
             return Event(EVENT_NONE)
 
     def die(self):
+        if self.death_func:
+            self.death_func(self.game,self.owner)
         return self.owner.notify(Event(EVENT_DIE, actor=self.owner))
 
     @property

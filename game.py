@@ -1,7 +1,7 @@
 import libtcodpy as libtcod
 from config import *
 import logging, yaml, os
-import spellfunctions, yamlhelp
+import spellfunctions, deathfunctions, yamlhelp
 from thing import Thing
 from player import Player
 from inputhandler import InputHandler
@@ -205,6 +205,9 @@ class Game:
 
             breed.color = yamlhelp.load_color(breed.color)
             yamlhelp.convert_keys(breed.materials,self.materials)
+            if breed.death_func:
+                breed.death_func = eval('deathfunctions.%s' % \
+                                        breed.death_func)
 
     def load_prefabs(self,files):
         for file_name in files:

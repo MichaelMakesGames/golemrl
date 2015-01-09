@@ -24,3 +24,18 @@ ERODEN_GOLEM:
   materials:
     CLAY: 40
     STONE: 10
+
+EARTHWORM:
+  name: Giant Earthworm
+  char: W
+  color: lighter red
+  health: 15
+  agility: 4
+  armor: 1
+  perception: 1
+  size: 150
+  strength: 2
+  death_func: spawn_animate_clay
+  materials:
+    CLAY: 50
+    FLESH: 25

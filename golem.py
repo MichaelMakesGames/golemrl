@@ -12,6 +12,7 @@ class Golem(Creature):
         self.raw_color = color
         self.breed = self #WARNING so that code for handling other creatures works for players as well -- kinda messy...
         self.body_parts = body_parts
+        self.death_func=None
     @property
     def game(self):
         return self.owner.game

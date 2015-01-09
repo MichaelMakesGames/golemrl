@@ -265,11 +265,10 @@ class Level:
                         self.get_tile(x,y).change_type(self.game.tile_types[FLOOR_ID])
 
     def place_prefab(self,start_x,start_y,prefab):
-        prefab_data = prefab.get_map_data()
+        prefab_data = prefab.get_map_data(self.rng)
         for x in range(prefab.w):
             for y in range(prefab.h):
                 if prefab_data[y][x]:
-                    print 'changing tile to %s'%prefab_data[y][x].name
                     self.get_tile(start_x+x,start_y+y).change_type(prefab_data[y][x])
 
     def rect_automata_cave_gen(self,restrictions=[],
@@ -286,7 +285,6 @@ class Level:
                                       rect_min_h,rect_max_h,
                                       max_overlaps)
             total_area = sum([r.w*r.h for r in rects])
-            print total_area
         for r in rects:
             self.automata_cave_gen(r, 0.9, 7,9,5, 0.4)
 
@@ -501,7 +499,6 @@ class Level:
 
     def experimental_cave_gen(self):
         prefab_rects = self.create_rects(4, [], 6,6, 6,6, 0)
-        print len(prefab_rects)
         self.rect_automata_cave_gen(restrictions=prefab_rects,
                                     min_area = 1000)
         self.smooth_caves()
@@ -579,8 +576,6 @@ class Level:
                     breed_ids = sorted(self.game.breeds)
                     breed_id = self.rng.choose(breed_ids)
                     thing = self.game.breeds[breed_id].new(x,y,depth)
-                    self.game.add_thing(thing)
-                    thing.notify(Event(EVENT_CREATE, actor=thing))
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]
