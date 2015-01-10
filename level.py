@@ -165,7 +165,6 @@ class Level:
     def remove_room(self,room):
         for pos in room.tile_positions:
             self.get_tile(*pos).change_type(self.game.tile_types[WALL_ID])
-            self.get_tile(*pos).color_unseen = libtcod.red #DEBUG
         self.rooms.remove(room)
 
     def get_start_pos(self):
@@ -444,7 +443,6 @@ class Level:
                         #dig tunnel if successful and make rooms
                         for pos in tunnel_positions:
                             self.get_tile(*pos).change_type(self.game.tile_types[FLOOR_ID])
-                            #self.get_tile(*pos).color = libtcod.blue #DEBUG
                         tunnel = Tunnel(self.get_next_room_id())
                         tunnel.tile_positions = tunnel_positions
                         tunnel.add_connection(start_room)
@@ -536,10 +534,10 @@ class Level:
         #find the two rooms that have the longest optimal path
         #these will be the start and the end
         longest_path = (None, None, 0)
-        for from_cave in graph.nodes():
+        for from_cave in sorted(graph.nodes()):
             #could perhaps be optimized -- calculated some path twice
             paths = nx.single_source_dijkstra_path_length(graph,from_cave)
-            for to_cave in paths:
+            for to_cave in sorted(paths):
                 if paths[to_cave] > longest_path[2]:
                     longest_path = (from_cave, to_cave, paths[to_cave])
                     
