@@ -89,6 +89,12 @@ class MessageLog(Observer):
                 color = C_MENU
 
         ### Misc events ###
+        elif event.event_type == EVENT_WAKE_UP:
+            message = '%s wakes up'%event.actor.creature.name
+            color = C_MENU
+        elif event.event_type == EVENT_NOTICE:
+            message = '%s notices you'%event.actor.creature.name
+            color = C_MENU
         elif event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
             color = event.majority_material.color

@@ -2,6 +2,8 @@ import libtcodpy as libtcod
 from config import *
 import logging
 
+from event import Event
+
 logger = logging.getLogger('ai')
 
 class AI:
@@ -26,18 +28,22 @@ class AI:
     
         done = False
         while not done:
-            print 'pass in ai loop'
-            if self.state == AI_INACTIVE:
+            if self.state == AI_INACTIVE: #not used yet
                 done = True
             elif self.state == AI_SLEEPING:
-                if visible:
-                    self.creature.fov.refresh()
-                    if self.game.rng.get_float(0,1) < self.creature.fov(*self.game.player.pos)/3.0:
-                        logger.info('Thing %i waking up'%self.thing.thing_id)
-                        self.state = AI_FIGHTING
-                    else:
-                        done = True
-                else:
+                if visible: #placeholder we put sound in
+                    self.state = AI_RESTING
+                    self.thing.notify(Event(EVENT_WAKE_UP,
+                                            actor=self.thing))
+                else: #continue sleeping
+                    done = True
+            elif self.state == AI_RESTING:
+                self.creature.fov.refresh()
+                if self.game.rng.get_float(0,1) < self.creature.fov(*self.creature.game.player.pos)/3.0: #1/3, 2/3, or 3/3 of noticing player depending where player is in fov
+                    self.state = AI_FIGHTING
+                    self.thing.notify(Event(EVENT_NOTICE,
+                                            actor=self.thing))
+                else: #TODO chance to start wandering or fall asleep
                     done = True
 
             elif self.state == AI_FIGHTING:
@@ -46,18 +52,15 @@ class AI:
                 else: #increase last_saw_player and fall asleep if it's been too long
                     self.last_saw_player += 1
                     if self.last_saw_player >= 5:
-                        logger.info('Thing %i falling asleep'%self.thing.thing_id)
                         self.state = AI_SLEEPING
 
                 new_player_pos = self.game.player.pos #get latest player pos and recalculate path if needed
                 if self.player_pos != new_player_pos:
-                    logger.debug('Thing %i saw player at (%i,%i)'%(self.thing.thing_id,new_player_pos[0],new_player_pos[1]))
                     self.player_pos = new_player_pos
                     self.compute_path(*self.player_pos)
 
                 if (self.path_index < libtcod.path_size(self.path)
                     and self.game.player.creature.alive):#walk path
-                    logger.debug('Thing %i walking path'%(self.thing.thing_id))
                     x,y = libtcod.path_get(self.path, self.path_index)
                     event = self.thing.move_to(x,y)
                     if event.event_type == EVENT_MOVE: #successfully moved, increase path index
@@ -68,14 +71,12 @@ class AI:
                         self.creature.attack(self.game.player)
                         done = True
                     else: #didn't move or attack, try new path
-                        logger.debug('Thing %i did not move or attack'%(self.thing.thing_id))
                         self.compute_path(*self.player_pos)
                 else: #end of path and don't know where to go now
                     done = True
                 self.creature.fov.refresh()
 
     def compute_path(self, x, y):
-        logger.debug('Thing %i setting path to (%i,%i)'%(self.thing.thing_id,x,y))
         self_x,self_y = self.thing.pos
         libtcod.path_compute(self.path, self_x, self_y, x, y)
         self.path_index = 0
