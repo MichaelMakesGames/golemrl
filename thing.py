@@ -82,6 +82,13 @@ class Thing(Subject):
                               actor=self,
                               from_pos=self.pos,
                               to_pos=(new_x,new_y))
+                #make sound while moving
+                if thing.creature and thing.creature.alive:
+                    if thing.creature.stumble_roll():
+                        #make big sound
+                        self.notify(Event(EVENT_STUMBLE,actor=self))
+                    else:
+                        pass #make smaller sound
                 self.x = new_x
                 self.y = new_y
 

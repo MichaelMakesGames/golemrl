@@ -95,6 +95,10 @@ class MessageLog(Observer):
         elif event.event_type == EVENT_NOTICE:
             message = '%s notices you'%event.actor.creature.name
             color = C_MENU
+        elif event.event_type == EVENT_STUMBLE:
+            if event.actor == self.game.player:
+                message = 'You stumble loudly'
+                color = C_MENU
         elif event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
             color = event.majority_material.color

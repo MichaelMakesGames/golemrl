@@ -72,6 +72,9 @@ class Creature:
     def damage_roll(self): #strength + size?
         return self.strength
 
+    def stumble_roll(self):
+        return self.defense_roll()<5
+
     def take_damage(self,damage_dealt,degree):
         '''Rolls for armor and calculates damage received
         Returns the damage received, and whether it died'''
