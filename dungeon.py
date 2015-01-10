@@ -213,9 +213,17 @@ class Dungeon(Observer):
                         if visible:
                             color = tile.color
                             if overlay == OVERLAY_FOV:
+                                fov_num = 0
                                 for thing in self.game.living_things:
-                                    if (not thing is self.game.player) and self.game.player.fov(thing) and thing.fov(map_x,map_y):
-                                        background = libtcod.dark_blue
+                                    if (not thing is self.game.player) and self.game.player.fov(thing):
+                                        fov_num = max(fov_num,thing.fov(map_x,map_y))
+                                
+                                if fov_num==1:
+                                    background = libtcod.darkest_blue
+                                elif fov_num==2:
+                                    background = libtcod.darker_blue
+                                elif fov_num==3:
+                                    background = libtcod.dark_blue
                         else:
                             color = tile.color_not_visible
 
