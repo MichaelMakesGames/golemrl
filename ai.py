@@ -27,7 +27,7 @@ class AI:
             if self.state == "sleeping":
                 if visible:
                     self.owner.fov.refresh()
-                    if self.owner.fov(*self.game.player.pos):
+                    if self.game.rng.get_float(0,1) < self.owner.fov(*self.game.player.pos)/3.0:
                         logger.info('Thing %i waking up'%self.owner.thing_id)
                         self.state = "awake"
                     else:
