@@ -4,6 +4,7 @@ import logging
 
 from event import Event
 from fov import FOV
+from ai import AI
 
 logger = logging.getLogger('creature')
 
@@ -13,6 +14,7 @@ class Creature:
         self.breed = breed
         self.health = breed.max_health
         self.fov = FOV(self.game,self)
+        self.ai = AI(self.game,self)
 
     @property
     def name(self):
@@ -55,7 +57,8 @@ class Creature:
         return self.breed.death_func
 
     def update(self):
-        pass
+        if self.alive:
+            self.ai.update()
 
     def defense_roll(self): #agility - size
         roll = (self.game.rng.roll(self.agility,6) - self.size/20)

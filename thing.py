@@ -10,7 +10,7 @@ logger = logging.getLogger('thing')
 class Thing(Subject):
     def __init__(self,game,thing_id,
                  x, y, depth, move_through, see_through,
-                 creature=None, ai=None, item=None):
+                 creature=None, item=None):
         Subject.__init__(self)
 
         self.game = game
@@ -25,10 +25,6 @@ class Thing(Subject):
         self.creature = creature
         if self.creature:
             self.creature.owner = self
-
-        self.ai = ai
-        if self.ai:
-            self.ai.owner = self
 
         self.item = item
         if self.item:
@@ -106,8 +102,6 @@ class Thing(Subject):
     def update(self):
         if self.creature:
             self.creature.update()
-            if self.creature.alive and self.ai:
-                self.ai.update()
 
         if self.item:
             self.item.update()
