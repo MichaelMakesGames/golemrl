@@ -61,8 +61,12 @@ class Creature:
             self.ai.update()
 
     def defense_roll(self): #agility - size
-        roll = (self.game.rng.roll(self.agility,6) - self.size/20)
-        return roll
+        if (self.owner != self.game.player and
+            self.ai.state != AI_FIGHTING):
+            return 0
+        else:
+            roll = (self.game.rng.roll(self.agility,6) - self.size/20)
+            return roll
 
     def accuracy_roll(self): #agility + perception
         roll = (self.game.rng.roll(self.agility,6) +
