@@ -35,6 +35,8 @@ class AI:
                 wake_up = False
                 for s in self.sounds:
                     if s[0]>50: wake_up = True
+                if self.creature.health < self.creature.max_health:
+                    wake_up = True
                 if wake_up:
                     self.state = AI_RESTING
                     self.thing.notify(Event(EVENT_WAKE_UP,
@@ -43,10 +45,19 @@ class AI:
                     done = True
             elif self.state == AI_RESTING:
                 self.creature.fov.refresh()
-                if self.game.rng.get_float(0,1) < self.creature.fov(*self.creature.game.player.pos)/3.0: #1/3, 2/3, or 3/3 of noticing player depending where player is in fov
-                    self.state = AI_FIGHTING
-                    self.thing.notify(Event(EVENT_NOTICE,
-                                            actor=self.thing))
+                if self.creature.fov(self.game.player):
+                    notice_player = False
+                    for s in self.sounds:
+                        if (s[1],s[2])==self.game.player.pos:
+                            notice_player = True
+                    if (self.game.rng.get_float(0,1) < self.creature.fov(self.game.player)/3.0): #1/3, 2/3, or 3/3 of noticing player depending where player is in fov
+                        notice_player = True
+                    if notice_player:
+                        self.state = AI_FIGHTING
+                        self.thing.notify(Event(EVENT_NOTICE,
+                                                actor=self.thing))
+                    else:
+                        done = True
                 else: #TODO chance to start wandering or fall asleep
                     done = True
 
