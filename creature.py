@@ -114,3 +114,13 @@ class Creature:
     @property
     def alive(self):
         return self.health > 0
+
+    def hear(self,volume,x,y):
+        if self.perception*10 > 100-volume:
+            self.ai.sounds.append((volume,x,y))
+            return self.owner.notify(Event(EVENT_HEAR,
+                                           actor=self.owner,
+                                           volume=volume,
+                                           pos=(x,y)))
+        else:
+            return Event(EVENT_NONE)

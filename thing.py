@@ -85,10 +85,10 @@ class Thing(Subject):
                 #make sound while moving
                 if thing.creature and thing.creature.alive:
                     if thing.creature.stumble_roll():
-                        #make big sound
+                        self.make_sound(200)
                         self.notify(Event(EVENT_STUMBLE,actor=self))
                     else:
-                        pass #make smaller sound
+                        self.make_sound(100)
                 self.x = new_x
                 self.y = new_y
 
@@ -105,6 +105,13 @@ class Thing(Subject):
                     thing.creature and thing.creature.alive):
                     event = self.creature.attack(thing)
         return event #return either move or none, if attack not already returned
+
+    def make_sound(self,volume):
+        for thing in self.game.things:
+            if (thing.creature and
+                thing.creature.alive and
+                not thing is self):
+                thing.creature.hear(volume//self.distance_to(*thing.pos)**2, *self.pos)
 
     def update(self):
         if self.creature:

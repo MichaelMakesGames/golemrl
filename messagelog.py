@@ -3,7 +3,7 @@ import libtcodpy as libtcod
 import logging
 
 import textwrap
-
+import util
 from observer import Observer
 
 logger = logging.getLogger('message')
@@ -99,6 +99,15 @@ class MessageLog(Observer):
             if event.actor == self.game.player:
                 message = 'You stumble loudly'
                 color = C_MENU
+        elif event.event_type == EVENT_HEAR:
+            if (event.actor == self.game.player and
+                event.pos != event.actor.pos):
+                direction = util.get_direction(event.actor.x,
+                                               event.actor.y,
+                                               *event.pos)
+                message = 'You hear something to the %s'%direction
+                color = C_MENU
+                
         elif event.event_type == EVENT_HARVEST:
             message = 'Player harvested a corpse!'
             color = event.majority_material.color

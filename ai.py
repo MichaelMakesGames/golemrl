@@ -15,6 +15,7 @@ class AI:
         self.path = None
         self.path_index = 0
         self.player_pos = (0,0)
+        self.sounds = []
     @property
     def thing(self):
         return self.creature.owner
@@ -31,7 +32,10 @@ class AI:
             if self.state == AI_INACTIVE: #not used yet
                 done = True
             elif self.state == AI_SLEEPING:
-                if visible: #placeholder we put sound in
+                wake_up = False
+                for s in self.sounds:
+                    if s[0]>50: wake_up = True
+                if wake_up:
                     self.state = AI_RESTING
                     self.thing.notify(Event(EVENT_WAKE_UP,
                                             actor=self.thing))
@@ -74,9 +78,13 @@ class AI:
                         self.compute_path(*self.player_pos)
                 else: #end of path and don't know where to go now
                     done = True
-                self.creature.fov.refresh()
+
+        self.sounds = []
+        if self.state != AI_INACTIVE and self.state != AI_SLEEPING:
+            self.creature.fov.refresh()
 
     def compute_path(self, x, y):
         self_x,self_y = self.thing.pos
         libtcod.path_compute(self.path, self_x, self_y, x, y)
         self.path_index = 0
+
