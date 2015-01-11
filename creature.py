@@ -61,8 +61,7 @@ class Creature:
             self.ai.update()
 
     def defense_roll(self): #agility - size
-        if (self.owner != self.game.player and
-            self.ai.state != AI_FIGHTING):
+        if (self.ai and self.ai.state != AI_FIGHTING):
             return 0
         else:
             roll = (self.game.rng.roll(self.agility,6) - self.size/20)
@@ -121,7 +120,8 @@ class Creature:
 
     def hear(self,volume,x,y):
         if self.perception*10 > 100-volume:
-            self.ai.sounds.append((volume,x,y))
+            if self.ai:
+                self.ai.sounds.append((volume,x,y))
             return self.owner.notify(Event(EVENT_HEAR,
                                            actor=self.owner,
                                            volume=volume,

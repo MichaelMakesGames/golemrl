@@ -16,6 +16,7 @@ class Golem(Creature):
         self.body_parts = body_parts
         self.fov = FOV(self.game,self)
         self.death_func=None
+        self.ai=None
 
     @property
     def name(self): return self.raw_name
