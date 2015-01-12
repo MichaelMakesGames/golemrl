@@ -90,8 +90,9 @@ class MessageLog(Observer):
 
         ### Misc events ###
         elif event.event_type == EVENT_WAKE_UP:
-            message = '%s wakes up'%event.actor.creature.name
-            color = C_MENU
+            if self.game.player.fov(event.actor):
+                message = '%s wakes up'%event.actor.creature.name
+                color = C_MENU
         elif event.event_type == EVENT_NOTICE:
             message = '%s notices you'%event.actor.creature.name
             color = C_MENU
