@@ -100,7 +100,7 @@ class Creature:
         if thing.creature:
             event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
             event.degree = (self.accuracy_roll()-thing.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1
-            if event.degree:
+            if event.degree>0:
                 event.hit = True
                 event.dealt, event.killed = thing.creature.take_damage(self.damage_roll(),event.degree)
             else:
