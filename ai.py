@@ -34,7 +34,8 @@ class AI:
             elif self.state == AI_SLEEPING:
                 wake_up = False
                 for s in self.sounds:
-                    if s[0]>50: wake_up = True
+                    if self.game.rng.percent(min(95,s[0]*(self.creature.perception+5)/10)):
+                        wake_up = True
                 if self.creature.health < self.creature.max_health:
                     wake_up = True
                 if wake_up:

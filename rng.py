@@ -18,6 +18,9 @@ class RNG:
     def flip(self):
         return bool(self.get_int(0,2))
 
+    def percent(self,p):
+        return self.get_int(0,100)<p
+
     def roll(self,num_dice,num_sides):
         return sum( [self.get_int(1,num_sides+1)
                      for i in range(num_dice)] )

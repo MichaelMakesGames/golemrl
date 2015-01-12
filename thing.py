@@ -87,10 +87,10 @@ class Thing(Subject):
                 #make sound while moving
                 if thing.creature and thing.creature.alive:
                     if thing.creature.stumble_roll():
-                        self.make_sound(200)
+                        self.make_sound(thing.creature.size*2)
                         self.notify(Event(EVENT_STUMBLE,actor=self))
                     else:
-                        self.make_sound(100)
+                        self.make_sound(thing.creature.size)
 
         return self.notify(event)
 
@@ -111,7 +111,7 @@ class Thing(Subject):
             if (thing.creature and
                 thing.creature.alive and
                 not thing is self):
-                thing.creature.hear(volume//self.distance_to(*thing.pos)**2, *self.pos)
+                thing.creature.hear(volume//self.distance_to(*thing.pos), *self.pos)
 
     def update(self):
         if self.creature:

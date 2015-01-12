@@ -75,8 +75,8 @@ class Creature:
     def damage_roll(self): #strength + size?
         return self.strength
 
-    def stumble_roll(self):
-        return self.defense_roll()<5
+    def stumble_roll(self): #roll agility against size
+        return self.game.rng.roll(self.agility,6)<self.size/10
 
     def take_damage(self,damage_dealt,degree):
         '''Rolls for armor and calculates damage received
@@ -119,7 +119,7 @@ class Creature:
         return self.health > 0
 
     def hear(self,volume,x,y):
-        if self.perception*10 > 100-volume:
+        if self.game.rng.percent(min(95,volume*(self.perception+5)/10)):
             if self.ai:
                 self.ai.sounds.append((volume,x,y))
             return self.owner.notify(Event(EVENT_HEAR,
