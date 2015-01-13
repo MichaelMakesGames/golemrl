@@ -1,6 +1,6 @@
 import libtcodpy as libtcod
 from config import *
-import logging, yaml, os
+import logging, yaml, os, time
 import spellfunctions, deathfunctions, yamlhelp
 from thing import Thing
 from player import Player
@@ -37,6 +37,7 @@ class Game:
         self.spells = {}
         self.breeds = {}
         self.prefabs = {}
+        self.active_region = []
         self.player = None
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
@@ -367,8 +368,21 @@ class Game:
                 self.menu = None
 
             if self.state == STATE_PLAYING:
+                player_room = self.cur_level.get_room_at(*self.player.pos)
+                try:
+                    if True:#self.player.pos not in self.active_region:
+                        self.active_region = player_room.tile_positions
+                        for room in player_room.connections:
+                            if room.tile_positions[0] not in self.active_region:
+                                self.active_region += room.tile_positions
+                            for r in room.connections:
+                                if r.tile_positions[0] not in self.active_region:
+                                    self.active_region += r.tile_positions
+                except AttributeError:
+                    self.active_region = [self.player.pos]
                 for thing in self.things:
-                    thing.update()
+                    if thing.pos in self.active_region:
+                        thing.update()
                 self.state = STATE_PAUSED
 
             self.dungeon.update()
