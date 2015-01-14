@@ -14,24 +14,24 @@ class InputHandler(Subject):
     @property
     def game(self):
         return self.owner.game
-    def __call__(self, key, mouse, menu=None, casting=None):
+    def __call__(self, key, mouse, menu=None, active=None):
         key_char = chr(key.c)
 
-        if casting:
-            if casting.targeting=='touch' or casting.targeting=='ranged':
-                action_dict = {libtcod.KEY_ESCAPE: ACTION_CANCEL_SPELL,
-                               libtcod.KEY_UP: ACTION_CAST_N,
-                               libtcod.KEY_DOWN: ACTION_CAST_S,
-                               libtcod.KEY_RIGHT: ACTION_CAST_E,
-                               libtcod.KEY_LEFT: ACTION_CAST_W,
-                               libtcod.KEY_KP1: ACTION_CAST_SW,
-                               libtcod.KEY_KP2: ACTION_CAST_S,
-                               libtcod.KEY_KP3: ACTION_CAST_SE,
-                               libtcod.KEY_KP4: ACTION_CAST_W,
-                               libtcod.KEY_KP6: ACTION_CAST_E,
-                               libtcod.KEY_KP7: ACTION_CAST_NW,
-                               libtcod.KEY_KP8: ACTION_CAST_N,
-                               libtcod.KEY_KP9: ACTION_CAST_NE}
+        if active:
+            if active.targeting=='touch' or active.targeting=='ranged':
+                action_dict = {libtcod.KEY_ESCAPE: ACTION_CANCEL_ABILITY,
+                               libtcod.KEY_UP: ACTION_ACTIVATE_N,
+                               libtcod.KEY_DOWN: ACTION_ACTIVATE_S,
+                               libtcod.KEY_RIGHT: ACTION_ACTIVATE_E,
+                               libtcod.KEY_LEFT: ACTION_ACTIVATE_W,
+                               libtcod.KEY_KP1: ACTION_ACTIVATE_SW,
+                               libtcod.KEY_KP2: ACTION_ACTIVATE_S,
+                               libtcod.KEY_KP3: ACTION_ACTIVATE_SE,
+                               libtcod.KEY_KP4: ACTION_ACTIVATE_W,
+                               libtcod.KEY_KP6: ACTION_ACTIVATE_E,
+                               libtcod.KEY_KP7: ACTION_ACTIVATE_NW,
+                               libtcod.KEY_KP8: ACTION_ACTIVATE_N,
+                               libtcod.KEY_KP9: ACTION_ACTIVATE_NE}
 
         elif menu:
             action_dict = menu.action_dict
@@ -40,6 +40,7 @@ class InputHandler(Subject):
                            ('s',False): ACTION_OPEN_SPELL_MENU,
                            ('t',False): ACTION_OPEN_BODY_MENU,
                            ('f',False): ACTION_TOGGLE_OVERLAY_FOV,
+                           ('c',False): ACTION_CHARGE,
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,
@@ -105,14 +106,15 @@ class InputHandler(Subject):
     def open_spell_menu(self):
         menu_options = []
         i = 1
-        for spell in self.owner.spells:
+        for ability in filter(lambda a: a.ability_type=='spell',
+                              self.owner.abilities):
             menu_options.append( {'input':(str(i),False),
-                                  'name': spell.name,
-                                  'action': 'self.owner.cast(self.owner.spells[%i])'%(i-1)} )
-            if not self.owner.can_cast(spell):
+                                  'name': ability.name,
+                                  'action': 'self.owner.activate(self.owner.abilities[%i])'%(i-1)} )
+            if not self.owner.can_activate(ability):
                 menu_options[-1]['name'] += ' (Cannot cast)'
             else:
-                menu_options[-1]['name'] += ' (%s)'%str(spell.cost)[1:-1]
+                menu_options[-1]['name'] += ' (%s)'%str(ability.cost)[1:-1]
             i += 1
         menu = Menu('Select spell',menu_options)
         return self.set_menu(menu)

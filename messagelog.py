@@ -67,24 +67,24 @@ class MessageLog(Observer):
                       (event.word.name, event.body_part.name)
             color = event.word.color
 
-        ### Spell events ###
-        elif event.event_type == EVENT_START_SPELL:
+        ### Ability events ###
+        elif event.event_type == EVENT_START_ABILITY:
             message = 'You start casting %s - choose a direction' % \
-                      (event.spell.name)
+                      (event.ability.name)
             try:
-                color = event.spell.word.color
+                color = event.ability.word.color
             except AttributeError:
                 color = C_MENU
-        elif event.event_type == EVENT_CANCEL_SPELL:
+        elif event.event_type == EVENT_CANCEL_ABILITY:
             message = 'You change your mind'
             try:
-                color = event.spell.word.color
+                color = event.ability.word.color
             except AttributeError:
                 color = C_MENU
-        elif event.event_type == EVENT_CAST_SPELL:
-            message = 'You cast %s'%(event.spell.name)
+        elif event.event_type == EVENT_ACTIVATE_ABILITY:
+            message = 'You cast %s'%(event.ability.name)
             try:
-                color = event.spell.word.color
+                color = event.ability.word.color
             except AttributeError:
                 color = C_MENU
 

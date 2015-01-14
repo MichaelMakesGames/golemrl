@@ -18,9 +18,9 @@ prefabs:
     - "data/prefabs"
   files: []
 
-spells:
+abilities:
   directories:
-    - "data/spells"
+    - "data/abilities"
   files: []
 
 tiles:

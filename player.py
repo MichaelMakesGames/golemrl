@@ -20,9 +20,9 @@ class Player(Thing):
         Thing.__init__(self,*args,**kwargs)
 
         self.materials = {}
-        self.spells = []
+        self.abilities = []
         self.words = []
-        self.casting = None
+        self.active = None
         self.ghost = False
 
     @property
@@ -77,31 +77,31 @@ class Player(Thing):
         if word not in self.words:
             self.append(word)
 
-    def can_cast(self,spell):
-        return spell.can_cast(self)
+    def can_activate(self,ability):
+        return ability.can_activate(self)
 
-    def cast(self,spell):
-        if self.can_cast(spell) and self.can_afford(spell.cost):
-            if spell.targeting == 'self':
-                self.pay(spell.cost)
-                return spell.cast(self)
-            elif spell.targeting == 'touch' or spell.targeting == 'ranged':
-                self.casting = spell
-                return self.notify(Event(EVENT_START_SPELL,
+    def activate(self,ability):
+        if self.can_activate(ability) and self.can_afford(ability.cost):
+            if ability.targeting == 'self':
+                self.pay(ability.cost)
+                return ability.activate(self)
+            elif ability.targeting == 'touch' or ability.targeting == 'ranged':
+                self.active = ability
+                return self.notify(Event(EVENT_START_ABILITY,
                                          actor = self,
-                                         spell = spell))
+                                         ability = ability))
 
-    def complete_spell(self,direction):
-        spell = self.casting
-        self.casting = None
-        return (spell.cast(self,direction))
+    def complete_ability(self,direction):
+        ability = self.active
+        self.active = None
+        return (ability.activate(self,direction))
 
-    def cancel_spell(self):
-        spell = self.casting
-        self.casting = None
-        return self.notify(Event(EVENT_CANCEL_SPELL,
+    def cancel_ability(self):
+        ability = self.active
+        self.active = None
+        return self.notify(Event(EVENT_CANCEL_ABILITY,
                                  actor=self,
-                                 spell=spell))
+                                 ability=ability))
 
     def add_trait(self,bp,trait):
         if type(bp) == str:

@@ -1,7 +1,7 @@
 import libtcodpy as libtcod
 from config import *
 import logging, yaml, os, time
-import spellfunctions, deathfunctions, yamlhelp
+import abilityfunctions, deathfunctions, yamlhelp
 from thing import Thing
 from player import Player
 from inputhandler import InputHandler
@@ -11,7 +11,7 @@ from golem import Golem
 from bodypart import BodyPart
 from trait import Trait
 from word import Word
-from spell import Spell
+from ability import Ability
 from ai import AI
 from tiletype import TileType
 from prefab import Prefab
@@ -34,7 +34,7 @@ class Game:
         self.materials = {}
         self.words = {}
         self.traits = {}
-        self.spells = {}
+        self.abilities = {}
         self.breeds = {}
         self.prefabs = {}
         self.active_region = []
@@ -78,7 +78,7 @@ class Game:
                       ('materials',self.load_materials),
                       ('words',self.load_words),
                       ('traits',self.load_traits),
-                      ('spells',self.load_spells),
+                      ('abilities',self.load_abilities),
                       ('breeds',self.load_breeds),
                       ('prefabs',self.load_prefabs),
                       ('player',self.load_player)]
@@ -173,25 +173,27 @@ class Game:
 
             word.color = yamlhelp.load_color(word.color)
 
-    def load_spells(self,files):
+    def load_abilities(self,files):
         for file_name in files:
             f = open(file_name)
             data = yaml.load(f)
             f.close()
-            yamlhelp.merge(data,self.spells)
+            yamlhelp.merge(data,self.abilities)
 
-        for spell_id in self.spells:
-            spell = self.spells[spell_id]
-            spell = Spell(self, spell_id, **spell)
-            self.spells[spell_id] = spell
+        for ability_id in self.abilities:
+            ability = self.abilities[ability_id]
+            ability['ability_type'] = ability['type']
+            del ability['type']
+            ability = Ability(self, ability_id, **ability)
+            self.abilities[ability_id] = ability
 
-            yamlhelp.convert_keys(spell.cost,self.materials)
+            yamlhelp.convert_keys(ability.cost,self.materials)
 
-            if spell.requires == None:
-                spell.requires = [None,None]
+            if ability.requires == None:
+                ability.requires = [None,None]
             else:
-                spell.requires[1] = self.words[spell.requires[1]]
-            spell.func = eval('spellfunctions.%s'%spell.func)
+                ability.requires[1] = self.words[ability.requires[1]]
+            ability.func = eval('abilityfunctions.%s'%ability.func)
 
     def load_breeds(self,files):
         for file_name in files:
@@ -258,8 +260,8 @@ class Game:
 
         for name in self.materials:
             self.player.materials[self.materials[name]] = 0
-        for spell_id in self.spells:
-            self.player.spells.append(self.spells[spell_id])
+        for ability_id in self.abilities:
+            self.player.abilities.append(self.abilities[ability_id])
         for word_id in self.words:
             self.player.words.append(self.words[word_id])
 
@@ -363,7 +365,7 @@ class Game:
 
             self.state = self.player.input_handler(key,mouse,
                                                    self.menu,
-                                                   self.player.casting)
+                                                   self.player.active)
             if self.menu and self.state != STATE_MENU:
                 self.menu = None
 
