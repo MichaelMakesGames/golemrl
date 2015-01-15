@@ -17,6 +17,8 @@ class Golem(Creature):
         self.fov = FOV(self.game,self)
         self.death_func=None
         self.ai=None
+        self.losing_balance=False
+        self.off_balance=False
 
     @property
     def name(self): return self.raw_name
@@ -62,7 +64,9 @@ class Golem(Creature):
                          for part in self.body_parts
                          if self.body_parts[part].vital]
 
-    def update(self): pass
+    def update(self):
+        self.off_balance = self.losing_balance
+        self.losing_balance = False
 
     def take_damage(self,damage_dealt,degree):
         part = self.game.rng.choose_weighted(self.intact_parts,

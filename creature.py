@@ -13,6 +13,8 @@ class Creature:
         self.game = game
         self.breed = breed
         self.health = breed.max_health
+        self.losing_balance = False
+        self.off_balance = False
         self.fov = FOV(self.game,self)
         self.ai = AI(self.game,self)
 
@@ -57,6 +59,8 @@ class Creature:
         return self.breed.death_func
 
     def update(self):
+        self.off_balance=self.losing_balance
+        self.losing_balance=False
         if self.alive:
             self.ai.update()
 
@@ -64,7 +68,10 @@ class Creature:
         if (self.ai and self.ai.state != AI_FIGHTING):
             return 0
         else:
-            roll = (self.game.rng.roll(self.agility,6) - self.size/20)
+            if self.off_balance:
+                roll=(self.game.rng.roll(self.agility//2,6)-self.size/20)
+            else:
+                roll = (self.game.rng.roll(self.agility,6) - self.size/20)
             return roll
 
     def accuracy_roll(self): #agility + perception
@@ -95,11 +102,11 @@ class Creature:
             logger.warn('Something attacked dead creature (thing %i)'%(self.owner.thing_id))
             return 0,False
 
-    def attack(self,thing):
+    def attack(self,thing,degree_mod=0):
         logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
         if thing.creature:
             event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
-            event.degree = (self.accuracy_roll()-thing.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1
+            event.degree = (self.accuracy_roll()-thing.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1 + degree_mod
             if event.degree>0:
                 event.hit = True
                 event.dealt, event.killed = thing.creature.take_damage(self.damage_roll(),event.degree)

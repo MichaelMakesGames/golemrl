@@ -85,11 +85,13 @@ class Player(Thing):
             if ability.targeting == 'self':
                 self.pay(ability.cost)
                 return ability.activate(self)
-            elif ability.targeting == 'touch' or ability.targeting == 'ranged':
+            elif ability.targeting in ['touch','ranged','other']:
                 self.active = ability
                 return self.notify(Event(EVENT_START_ABILITY,
                                          actor = self,
                                          ability = ability))
+        else:
+            return Event(EVENT_NONE)
 
     def complete_ability(self,direction):
         ability = self.active

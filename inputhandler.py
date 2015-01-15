@@ -18,7 +18,7 @@ class InputHandler(Subject):
         key_char = chr(key.c)
 
         if active:
-            if active.targeting=='touch' or active.targeting=='ranged':
+            if active.targeting in ['touch','ranged','other']:
                 action_dict = {libtcod.KEY_ESCAPE: ACTION_CANCEL_ABILITY,
                                libtcod.KEY_UP: ACTION_ACTIVATE_N,
                                libtcod.KEY_DOWN: ACTION_ACTIVATE_S,
@@ -94,6 +94,8 @@ class InputHandler(Subject):
         elif event_type == EVENT_HARVEST:
             return STATE_PLAYING
         elif event_type == EVENT_WAIT:
+            return STATE_PLAYING
+        elif event_type == EVENT_ACTIVATE_ABILITY:
             return STATE_PLAYING
 
     def set_menu(self,menu):

@@ -298,6 +298,13 @@ class Game:
             self.panel_con.print_string(x,y,part_health)
             y += 1
 
+        if self.player.creature.off_balance:
+            y += 1
+            x = 2
+            self.panel_con.set_default_foreground(C_MENU)
+            self.panel_con.print_string(x,y,'OFF BALANCE!')
+            y += 1
+
         y += 1
         for material in sorted(self.player.materials):
             x = 2

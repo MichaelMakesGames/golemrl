@@ -1,3 +1,12 @@
+CHARGE:
+  name: Charge
+  type: inherent
+  targeting: other
+  desc: Charge at an enemy, moving and attacking in the same turn. You deal more damage, but it is noisy and your defense is lowered for the next turn.
+  requires: ~
+  cost: {}
+  func: charge
+
 HEAL:
   name: Heal
   type: spell

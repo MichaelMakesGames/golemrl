@@ -24,6 +24,18 @@ def get_target_ranged(game,caster,direction):
             hit = True
     return False
 
+def charge(game, actor, direction):
+    first_tile  = game.cur_level.get_tile(actor.x+direction[0],
+                                          actor.y+direction[1])
+    second_tile = game.cur_level.get_tile(actor.x+direction[0]*2,
+                                          actor.y+direction[1]*2)
+    movement_event = actor.move_or_attack(*direction)
+    if movement_event.event_type == EVENT_MOVE:
+        if second_tile.creature:
+            actor.creature.losing_balance=True
+            return actor.creature.attack(second_tile.creature,1)
+    return movement_event
+
 def heal(game, caster):
     for bp_name in caster.creature.body_parts:
         caster.creature.body_parts[bp_name].heal(1)
