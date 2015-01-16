@@ -33,7 +33,9 @@ def charge(game, actor, direction):
     if movement_event.event_type == EVENT_MOVE:
         if second_tile.creature:
             actor.creature.losing_balance=True
-            return actor.creature.attack(second_tile.creature,1)
+            return actor.creature.attack(second_tile.creature,
+                                         degree_mod=1,
+                                         sound_multiplier=3)
     return movement_event
 
 def heal(game, caster):

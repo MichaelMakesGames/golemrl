@@ -102,7 +102,7 @@ class Creature:
             logger.warn('Something attacked dead creature (thing %i)'%(self.owner.thing_id))
             return 0,False
 
-    def attack(self,thing,degree_mod=0):
+    def attack(self,thing,degree_mod=0,sound_multiplier=2):
         logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
         if thing.creature:
             event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
@@ -110,6 +110,7 @@ class Creature:
             if event.degree>0:
                 event.hit = True
                 event.dealt, event.killed = thing.creature.take_damage(self.damage_roll(),event.degree)
+                self.owner.make_sound(sound_multiplier)
             else:
                 event.hit = False
             return self.owner.notify(event)
