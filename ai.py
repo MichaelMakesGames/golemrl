@@ -16,6 +16,7 @@ class AI:
         self.path_index = 0
         self.player_pos = (0,0)
         self.sounds = []
+        self.prev_dir = None
     @property
     def thing(self):
         return self.creature.owner
@@ -44,23 +45,58 @@ class AI:
                                             actor=self.thing))
                 else: #continue sleeping
                     done = True
+
             elif self.state == AI_RESTING:
                 self.creature.fov.refresh()
-                if self.creature.fov(self.game.player):
-                    notice_player = False
-                    for s in self.sounds:
-                        if (s[1],s[2])==self.game.player.pos:
-                            notice_player = True
-                    if (self.game.rng.get_float(0,1) < self.creature.fov(self.game.player)/3.0): #1/3, 2/3, or 3/3 of noticing player depending where player is in fov
-                        notice_player = True
-                    if notice_player:
-                        self.state = AI_FIGHTING
-                        self.thing.notify(Event(EVENT_NOTICE,
-                                                actor=self.thing))
-                    else:
+                if self.check_for_player():
+                    self.state = AI_FIGHTING
+                    self.thing.notify(Event(EVENT_NOTICE,
+                                            actor=self.thing))
+                else: #continue to rest or wander?
+                    if self.game.rng.percent(20):
                         done = True
-                else: #TODO chance to start wandering or fall asleep
-                    done = True
+                    else:
+                        self.state = AI_WANDERING
+
+            elif self.state == AI_WANDERING:
+                self.creature.fov.refresh()
+                if self.check_for_player():
+                    self.state = AI_FIGHTING
+                    self.thing.notify(Event(EVENT_NOTICE,
+                                            actor=self.thing))
+                else:
+                    direction = (0,0)
+                    while not (self.valid_movement(direction) or
+                               self.game.cur_level.get_tile(self.thing.x+direction[0],self.thing.y+direction[1]).creature==self.game.player):
+
+                        directions = [(1,1),(1,-1),(-1,1),(-1,-1),
+                                      (0,1),(0,-1),(1,0),(-1,0)]
+                        if self.prev_dir:
+                            directions += [self.prev_dir]*6
+                            if self.prev_dir[0]==0:
+                                directions += [(1,self.prev_dir[1])]*2
+                                directions += [(-1,self.prev_dir[1])]*2
+                            elif self.prev_dir[1]==0:
+                                directions += [(self.prev_dir[0],1)]*2
+                                directions += [(self.prev_dir[0],-1)]*2
+                            else:
+                                directions += [(self.prev_dir[0],0)]*2
+                                directions += [(0,self.prev_dir[1])]*2
+                        direction = self.game.rng.choose(directions)
+                    t = self.game.cur_level(self.thing.x+direction[0],
+                                            self.thing.y+direction[1])
+                    if self.game.rng.percent(10):
+                        self.state = AI_RESTING
+                        done=True
+                    elif t.creature is self.game.player:
+                        self.thing.notify(EVENT_NOTICE,
+                                          actor=self.thing)
+                        self.state = AI_FIGHTING
+                    else:
+                        self.thing.move_to(self.thing.x+direction[0],
+                                           self.thing.y+direction[1])
+                        self.prev_dir=direction
+                        done=True
 
             elif self.state == AI_FIGHTING:
                 if self.creature.fov(*self.game.player.pos):
@@ -94,6 +130,24 @@ class AI:
         self.sounds = []
         if self.state != AI_INACTIVE and self.state != AI_SLEEPING:
             self.creature.fov.refresh()
+
+    def check_for_player(self):
+        notice_player = False
+        if self.creature.fov(self.game.player):
+            for s in self.sounds:
+                if (s[1],s[2])==self.game.player.pos:
+                    notice_player = True
+            if (self.game.rng.get_float(0,1) < self.creature.fov(self.game.player)/3.0): #1/3, 2/3, or 3/3 of noticing player depending where player is in fov
+                notice_player = True
+        return notice_player
+
+    def valid_movement(self,direction):
+        if direction==None:
+            return False
+        else:
+            t = self.game.cur_level.get_tile(self.thing.x+direction[0],
+                                             self.thing.y+direction[1])
+            return t.move_through and t.creature==None
 
     def compute_path(self, x, y):
         self_x,self_y = self.thing.pos
