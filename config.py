@@ -1,5 +1,7 @@
 import libtcodpy as libtcod
 
+PLAYER_FOV_RADIUS = 10
+
 FOCUS_PLAYER = 'PLAYER'
 FOCUS_FIXED = 'FIXED'
 FOCUS = FOCUS_FIXED
