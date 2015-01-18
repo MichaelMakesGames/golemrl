@@ -215,8 +215,8 @@ class Dungeon(Observer):
                             color = tile.color
                             if overlay == OVERLAY_FOV:
                                 fov_num = 0
-                                for thing in self.game.living_things:
-                                    if (not thing is self.game.player) and self.game.player.fov(thing) and thing.creature.ai.state!=AI_SLEEPING:
+                                for thing in self.game.active_things:
+                                    if self.game.player.fov(thing) and (not thing is self.game.player) and thing.creature.ai.state!=AI_SLEEPING:
                                         fov_num = max(fov_num,thing.fov(map_x,map_y))
                                 
                                 if fov_num==1:

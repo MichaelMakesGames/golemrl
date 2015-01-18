@@ -100,7 +100,7 @@ class Thing(Subject):
     def move_or_attack(self, dx, dy):
         event = self.move(dx,dy)
         if event.event_type == EVENT_NONE:
-            for thing in self.game.things:
+            for thing in self.game.active_things:
                 if (thing.pos == (self.x+dx, self.y+dy) and
                     thing.creature and thing.creature.alive):
                     event = self.creature.attack(thing)
