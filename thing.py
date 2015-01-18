@@ -85,8 +85,8 @@ class Thing(Subject):
                 self.x = new_x
                 self.y = new_y
                 #make sound while moving
-                if thing.creature and thing.creature.alive:
-                    if thing.creature.stumble_roll():
+                if self.creature and self.creature.alive:
+                    if self.creature.stumble_roll():
                         self.make_sound(2)
                         self.notify(Event(EVENT_STUMBLE,actor=self))
                     else:
