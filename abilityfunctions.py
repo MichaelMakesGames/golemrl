@@ -38,6 +38,30 @@ def charge(game, actor, direction):
                                          sound_multiplier=3)
     return movement_event
 
+def tackle(game, actor, direction):
+    target = get_target_touch(game,actor,direction)
+    if target:
+        degree = (actor.creature.size//20 + game.rng.roll(actor.creature.strength,6) > target.creature.size//20 + game.rng.roll(actor.creature.strength,6)) // DEGREE_OF_SUCCESS + 1
+        push_to = game.cur_level.get_tile(actor.x+2*direction[0],
+                                          actor.y+2*direction[1])
+        if degree>0:
+            target.creature.losing_balance=True
+            if (game.rng.percent(degree*100/2) and
+                push_to.move_through and
+                push_to.creature==None):
+                target.move_to(actor.x+2*direction[0],
+                               actor.y+2*direction[1])
+                actor.move_to(actor.x+direction[0],
+                              actor.y+direction[1])
+                
+        elif degree<0:
+            actor.losing_balance=True
+    return Event(EVENT_NONE)
+            
+
+def defensive_stance(game, actor, bp): pass
+def dodge(game, actor): pass
+
 def heal(game, caster):
     for bp_name in caster.creature.body_parts:
         caster.creature.body_parts[bp_name].heal(1)
