@@ -65,6 +65,7 @@ class Dungeon(Observer):
                 print "Rejected"
             print ""
 
+        self.compute_tcod_map()
         self.levels[depth].tag_rooms()
         self.levels[depth].populate_rooms()
         self.compute_tcod_map()
@@ -215,7 +216,7 @@ class Dungeon(Observer):
                             if overlay == OVERLAY_FOV:
                                 fov_num = 0
                                 for thing in self.game.living_things:
-                                    if (not thing is self.game.player) and self.game.player.fov(thing):
+                                    if (not thing is self.game.player) and self.game.player.fov(thing) and thing.creature.ai.state!=AI_SLEEPING:
                                         fov_num = max(fov_num,thing.fov(map_x,map_y))
                                 
                                 if fov_num==1:
