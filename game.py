@@ -25,6 +25,7 @@ class Game:
     def __init__(self):
         self.rng = RNG()
         self.things = []
+        self.active_things = []
         self.dungeon = None
         self.message_log = None
         self.menu = None
@@ -387,20 +388,26 @@ class Game:
 
             if self.state == STATE_PLAYING:
                 player_room = self.cur_level.get_room_at(*self.player.pos)
-                try:
-                    if True:#self.player.pos not in self.active_region:
-                        self.active_region = player_room.tile_positions
-                        for room in player_room.connections:
-                            if room.tile_positions[0] not in self.active_region:
-                                self.active_region += room.tile_positions
+                if player_room:
+                    active_rooms = [player_room]
+                    self.active_region = []
+                    for room in player_room.connections:
+                        if room not in active_rooms:
+                            active_rooms.append(room)
                             for r in room.connections:
-                                if r.tile_positions[0] not in self.active_region:
-                                    self.active_region += r.tile_positions
-                except AttributeError:
+                                if r not in active_rooms:
+                                    active_rooms.append(room)
+                    for room in active_rooms:
+                        self.active_region += room.tile_positions
+                else:
                     self.active_region = [self.player.pos]
+                self.active_things=[]
                 for thing in self.things:
                     if thing.pos in self.active_region:
-                        thing.update()
+                        self.active_things.append(thing)
+
+                for thing in self.active_things:
+                    thing.update()
                 self.state = STATE_PAUSED
 
             self.dungeon.update()
