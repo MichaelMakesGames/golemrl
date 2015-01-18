@@ -39,6 +39,7 @@ class Game:
         self.prefabs = {}
         self.active_region = []
         self.player = None
+        self.fps=0
 
         self.map_con = Console("Dungeon Map",MAP_X,MAP_Y,MAP_W,MAP_H)
         self.panel_con = Console("Side Panel",PANEL_X,PANEL_Y,PANEL_W,PANEL_H)
@@ -286,6 +287,13 @@ class Game:
         self.panel_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
 
         y = 2
+        if SHOW_FPS:
+            x=2
+            self.panel_con.set_default_foreground(C_MENU)
+            self.panel_con.print_string(x,y,'FPS: %i'%self.fps)
+            y += 1
+
+        y += 1
         for part_name in ['Head','Torso','L Arm','R Arm','L Leg','R Leg']:
             part = self.player.creature.body_parts[part_name]
             part_name = '%s:'%part.name
@@ -366,6 +374,7 @@ class Game:
         key = libtcod.Key()
         mouse = libtcod.Mouse()
 
+        t = time.time()
         while not libtcod.console_is_window_closed():
             libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
             self.clear_all()
@@ -395,9 +404,10 @@ class Game:
                 self.state = STATE_PAUSED
 
             self.dungeon.update()
-
             self.render_all()
             libtcod.console_flush()
+            self.fps = 1.0/(time.time()-t)
+            t=time.time()
 
 def new_game(seed = 0xDEADBEEF):
     game = Game()
