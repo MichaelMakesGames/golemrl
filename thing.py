@@ -108,11 +108,11 @@ class Thing(Subject):
 
     def make_sound(self,multiplier=1):
         volume = multiplier*self.creature.size
-        for thing in self.game.things:
+        for thing in self.game.active_things:
             if (thing.creature and
                 thing.creature.alive and
                 not thing is self):
-                thing.creature.hear(volume//self.distance_to(*thing.pos), *self.pos)
+                thing.creature.hear(volume//max(1,self.distance_to(*thing.pos)), *self.pos)
 
     def update(self):
         if self.creature:
