@@ -69,7 +69,9 @@ class MessageLog(Observer):
 
         ### Ability events ###
         elif event.event_type == EVENT_START_ABILITY:
-            if event.ability.ability_type=='spell':
+            if event.ability.initiate_text:
+                message = event.ability.initiate_text
+            elif event.ability.ability_type=='spell':
                 message = 'You start casting %s - choose a direction' % \
                           (event.ability.name)
             else:
@@ -86,7 +88,9 @@ class MessageLog(Observer):
             except AttributeError:
                 color = C_MENU
         elif event.event_type == EVENT_ACTIVATE_ABILITY:
-            if event.ability.ability_type=='spell':
+            if event.ability.activate_text:
+                message = event.ability.activate_text
+            elif event.ability.ability_type=='spell':
                 message = 'You cast %s'%(event.ability.name)
             else:
                 message = 'You activate "%s"'%(event.ability.name)

@@ -3,13 +3,15 @@ from config import *
 from event import Event
 
 class Ability:
-    def __init__(self, game, ability_id, name, ability_type, func, targeting='self', desc='', cost={}, requires=[None,None]):
+    def __init__(self, game, ability_id, name, ability_type, func, targeting='self', desc='', initiate_text='', activate_text='', cost={}, requires=[None,None]):
         self.game = game
         self.ability_id = ability_id
         self.name = name
         self.ability_type = ability_type
         self.targeting = targeting
         self.desc = desc
+        self.initiate_text = initiate_text
+        self.activate_text = activate_text
         self.cost = cost
         self.requires = requires
         self.func = func

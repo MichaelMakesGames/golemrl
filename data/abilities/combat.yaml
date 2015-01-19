@@ -3,6 +3,8 @@ CHARGE:
   type: inherent
   targeting: other
   desc: Charge at an enemy, moving and attacking in the same turn. You deal more damage, but it is noisy and your defense is lowered for the next turn.
+  initiate_text: You prepare to charge - choose a direction
+  activate_text: You charge wildly at your opponent
   requires: ~
   cost: {}
   func: charge
@@ -12,6 +14,8 @@ TACKLE:
   type: inherent
   targeting: touch
   desc: Shove your opponent, pushing them back and leaving them off-balance, but not dealing any damage. A failure might leave you off balance.
+  initiate_text: You prepare to tackle - choose a direction
+  activate_text: You shove your opponent
   requires: ~
   cost: {}
   func: tackle
