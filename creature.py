@@ -69,21 +69,24 @@ class Creature:
             return 0
         else:
             if self.off_balance:
-                roll=(self.game.rng.roll(self.agility//2,6)-self.size/20)
+                roll=(self.game.rng.stat_roll(self.agility//2)-self.size/50)
             else:
-                roll = (self.game.rng.roll(self.agility,6) - self.size/20)
+                roll = (self.game.rng.stat_roll(self.agility) - self.size/50)
+            print "Defense",roll
             return roll
 
     def accuracy_roll(self): #agility + perception
-        roll = (self.game.rng.roll(self.agility,6) +
-                self.game.rng.roll(self.perception/2,6))
+        roll = (self.game.rng.stat_roll(self.agility) +
+                self.game.rng.stat_roll(self.perception/2))
+        print "Accuracy",roll
         return roll
 
     def damage_roll(self): #strength + size?
         return self.strength
 
     def stumble_roll(self): #roll agility against size
-        return self.game.rng.roll(self.agility,6)<self.size/10
+        roll = self.game.rng.stat_roll(self.agility)<self.size/10
+        print "Stumble",roll
 
     def take_damage(self,damage_dealt,degree):
         '''Rolls for armor and calculates damage received

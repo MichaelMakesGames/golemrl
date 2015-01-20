@@ -1,4 +1,5 @@
 import libtcodpy as libtcod
+from config import *
 
 class RNG:
     def __init__(self,rng=None,seed=None):
@@ -24,6 +25,12 @@ class RNG:
     def roll(self,num_dice,num_sides):
         return sum( [self.get_int(1,num_sides+1)
                      for i in range(num_dice)] )
+
+    def stat_roll(self,stat):
+        if stat>=3:
+            return self.roll(stat//3,DICE_SIDES) + stat % 3
+        else:
+            return self.roll(1,DICE_SIDES)
 
     def choose(self,sequence):
         return sequence[ self.get_int(0,len(sequence)) ]
