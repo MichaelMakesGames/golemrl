@@ -7,7 +7,7 @@ WEATHERED_HEAD:
   considered: bad
   modifiers:
     health: -5
-    perception: -1
+    perception: -3
     word_slots: -1
 
 ERODED_HEAD:
@@ -20,7 +20,7 @@ ERODED_HEAD:
   considered: bad
   modifiers:
     health: -10
-    perception: -2
+    perception: -6
     word_slots: -1
 
 WEATHERED_TORSO:
@@ -33,7 +33,7 @@ WEATHERED_TORSO:
   modifiers:
     health: -15
     armor: -1
-    strength: -1
+    agility: -3
     
 ERODED_TORSO:
   name: Eroded
@@ -45,9 +45,10 @@ ERODED_TORSO:
   considered: bad
   modifiers:
     health: -30
-    size: -15
+    size: -1
     armor: -2
-    strength: -2
+    strength: -3
+    agility: -3
     word_slots: -2
 
 WEATHERED_ARM:
@@ -60,7 +61,7 @@ WEATHERED_ARM:
   modifiers:
     health: -10
     armor: -1
-    agility: -1
+    strength: -3
     word_slots: -1
 
 ERODED_ARM:
@@ -73,10 +74,10 @@ ERODED_ARM:
   considered: bad
   modifiers:
     health: -20
-    size: -10
+    size: -1
     armor: -1
-    strength: -1
-    agility: -2
+    strength: -3
+    agility: -3
     word_slots: -2
 
 WEATHERED_LEG:
@@ -89,7 +90,7 @@ WEATHERED_LEG:
   modifiers:
     health: -10
     armor: -1
-    agility: -1
+    agility: -3
     word_slots: -1
 
 ERODED_LEG:
@@ -102,8 +103,8 @@ ERODED_LEG:
   considered: bad
   modifiers:
     health: -20
-    size: -10
+    size: -1
     armor: -1
-    strength: -1
-    agility: -2
+    strength: -3
+    agility: -3
     word_slots: -2

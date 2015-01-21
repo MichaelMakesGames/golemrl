@@ -107,7 +107,7 @@ class Thing(Subject):
         return event #return either move or none, if attack not already returned
 
     def make_sound(self,multiplier=1):
-        volume = multiplier*self.creature.size
+        volume = multiplier*self.creature.size*10
         for thing in self.game.active_things:
             if (thing.creature and
                 thing.creature.alive and

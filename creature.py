@@ -69,24 +69,23 @@ class Creature:
             return 0
         else:
             if self.off_balance:
-                roll=(self.game.rng.stat_roll(self.agility//2)-self.size/50)
+                roll=(self.game.rng.stat_roll(self.agility//2)-self.size//3)
             else:
-                roll = (self.game.rng.stat_roll(self.agility) - self.size/50)
+                roll = (self.game.rng.stat_roll(self.agility) - self.size/3)
             print "Defense",roll
             return roll
 
     def accuracy_roll(self): #agility + perception
         roll = (self.game.rng.stat_roll(self.agility) +
-                self.game.rng.stat_roll(self.perception/2))
+                self.game.rng.stat_roll(self.perception//2))
         print "Accuracy",roll
         return roll
 
     def damage_roll(self): #strength + size?
-        return self.strength
+        return self.strength//3
 
     def stumble_roll(self): #roll agility against size
-        roll = self.game.rng.stat_roll(self.agility)<self.size/10
-        print "Stumble",roll
+        return self.game.rng.stat_roll(self.agility)>self.game.rng.stat_roll(self.size)
 
     def take_damage(self,damage_dealt,degree):
         '''Rolls for armor and calculates damage received
@@ -102,11 +101,9 @@ class Creature:
             else:
                 return (damage_received,False)
         else:
-            logger.warn('Something attacked dead creature (thing %i)'%(self.owner.thing_id))
             return 0,False
 
     def attack(self,thing,degree_mod=0,sound_multiplier=2):
-        logger.info('Thing %i attacking thing %i'%(self.owner.thing_id,thing.thing_id))
         if thing.creature:
             event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
             event.degree = (self.accuracy_roll()-thing.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1 + degree_mod
@@ -130,7 +127,7 @@ class Creature:
         return self.health > 0
 
     def hear(self,volume,x,y):
-        if self.game.rng.percent(min(95,volume*(self.perception+5)/10)):
+        if self.game.rng.percent(min(95,volume*(self.perception//3))):
             if self.ai:
                 self.ai.sounds.append((volume,x,y))
             return self.owner.notify(Event(EVENT_HEAR,

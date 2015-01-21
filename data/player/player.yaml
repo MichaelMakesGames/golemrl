@@ -5,10 +5,10 @@ Player:
     Head:
       health: 15
       vital: true
-      size: 10
+      size: 1
       armor: 0
       agility: 0
-      perception: 3
+      perception: 9
       strength: 0
       word_slots: 1
       traits:
@@ -16,9 +16,9 @@ Player:
     Torso:
       health: 45
       vital: true
-      size: 45
+      size: 3
       armor: 2
-      agility: 1
+      agility: 3
       perception: 0
       strength: 3
       word_slots: 3
@@ -26,41 +26,41 @@ Player:
         - ERODED_TORSO
     L Arm:
       health: 30
-      size: 30
+      size: 2
       armor: 1
-      agility: 2
+      agility: 3
       perception: 0
-      strength: 2
+      strength: 6
       word_slots: 2
       traits:
         - ERODED_ARM
     R Arm:
       health: 30
-      size: 30
+      size: 2
       armor: 1
-      agility: 2
+      agility: 3
       perception: 0
-      strength: 2
+      strength: 6
       word_slots: 2
       traits:
         - ERODED_ARM
     L Leg:
       health: 30
-      size: 30
+      size: 2
       armor: 1
-      agility: 3
+      agility: 6
       perception: 0
-      strength: 1
+      strength: 3
       word_slots: 2
       traits:
         - ERODED_LEG
     R Leg:
       health: 30
-      size: 30
+      size: 2
       armor: 1
-      agility: 3
+      agility: 6
       perception: 0
-      strength: 1
+      strength: 3
       word_slots: 2
       traits:
         - ERODED_LEG

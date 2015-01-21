@@ -3,39 +3,38 @@ ANIMATE_CLAY:
   char: c
   color: sepia
   health: 5
-  agility: 2
   armor: 0
-  perception: 2
-  size: 20
-  strength: 2
+  agility: 6
+  perception: 6
+  size: 6
+  strength: 6
   materials:
-    CLAY: 20
+    CLAY: 5
 
 ERODEN_GOLEM:
   name: Eroded Golem
   char: e
   color: sepia
   health: 10
-  agility: 2
   armor: 0
-  perception: 3
-  size: 80
-  strength: 3
+  agility: 6
+  perception: 6
+  size: 6
+  strength: 6
   materials:
-    CLAY: 40
-    STONE: 10
+    CLAY: 5
+    STONE: 5
 
 EARTHWORM:
   name: Giant Earthworm
   char: W
   color: lighter red
   health: 15
-  agility: 4
   armor: 1
-  perception: 1
-  size: 150
-  strength: 2
+  agility: 3
+  perception: 3
+  size: 18
+  strength: 12
   death_func: spawn_animate_clay
   materials:
-    CLAY: 50
-    FLESH: 25
+    FLESH: 5

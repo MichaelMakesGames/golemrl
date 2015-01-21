@@ -29,7 +29,7 @@ class FOV:
             libtcod.map_compute_fov(tcod_map,
                                      self.thing.x,
                                      self.thing.y,
-                                     self.creature.perception*2)
+                                     self.creature.perception)
         if self.thing is self.game.player:
             for x in range(len(self.fov_map)):
                 for y in range(len(self.fov_map[0])):
@@ -37,17 +37,17 @@ class FOV:
                                                                  x,y))
         else:
             self.clear()
-            for x in range(self.thing.x-self.creature.perception*2,
-                           self.thing.x+self.creature.perception*2+1):
-                for y in range(self.thing.y-self.creature.perception*2,
-                               self.thing.y+self.creature.perception*2+1):
+            for x in range(self.thing.x-self.creature.perception,
+                           self.thing.x+self.creature.perception+1):
+                for y in range(self.thing.y-self.creature.perception,
+                               self.thing.y+self.creature.perception+1):
                     fov_num = int(libtcod.map_is_in_fov(tcod_map,x,y))
                     if fov_num:
                         if (x-self.thing.x==0 or
                             y-self.thing.y==0 or
                             abs(x-self.thing.x)-abs(y-self.thing.y)==0):
                             fov_num += 1
-                        if util.distance(self.thing.x,self.thing.y,x,y)<=self.creature.perception:
+                        if util.distance(self.thing.x,self.thing.y,x,y)<=self.creature.perception//3:
                             fov_num += 1
                     try:
                         self.fov_map[x][y] = fov_num
