@@ -87,7 +87,7 @@ class Level:
         n = 0
         for col in self.tiles:
             for tile in col:
-                if tile.tile_type == self.game.tile_types[FLOOR_ID]:
+                if tile.move_through:
                     n += 1
         return n
 
@@ -116,7 +116,7 @@ class Level:
             for y in range(self.h):
                 explorable = False
                 for neighbor in self.get_neighbors(x,y):
-                    if neighbor.tile_type == self.game.tile_types[FLOOR_ID]:
+                    if neighbor.move_through:
                         explorable = True
                 self.get_tile(x,y).explorable = explorable
 
@@ -253,10 +253,10 @@ class Level:
                 neighbors = self.get_neighbors(x,y)
                 num_neighbor_floors = 0
                 for neighbor in neighbors:
-                    if neighbor.tile_type == self.game.tile_types[FLOOR_ID]:
+                    if neighbor.move_through:
                         num_neighbor_floors += 1
 
-                if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID]:
+                if self.get_tile(x,y).move_through:
                     if num_neighbor_floors >= starve or num_neighbor_floors <= wither:
                         self.get_tile(x,y).change_type(self.game.tile_types[WALL_ID])
                 else: #is wall
@@ -299,10 +299,10 @@ class Level:
                     neighbors = self.get_neighbors(x,y)
                     num_neighbor_floors = 0
                     for n in neighbors:
-                        if n.tile_type == self.game.tile_types[FLOOR_ID]:
+                        if n.move_through:
                             num_neighbor_floors += 1
                 
-                    if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID]:
+                    if self.get_tile(x,y).move_through:
                         if num_neighbor_floors <= fill:
                             tmp_level.get_tile(x,y).change_type(self.game.tile_types[WALL_ID])
 
@@ -316,7 +316,7 @@ class Level:
         """go through all tiles and used floodfill to find caves"""
         for x in range(1, self.w-1):
             for y in range(1, self.h-1):
-                if self.get_tile(x,y).tile_type == self.game.tile_types[FLOOR_ID] and not self.is_room(x,y):
+                if self.get_tile(x,y).move_through and not self.is_room(x,y):
                     self.flood_fill_add_cave(x,y)
 
     def flood_fill_add_cave(self,x,y):
@@ -329,7 +329,7 @@ class Level:
         while len(q) > 0:
             n = q[-1]
             q = q[:-1]
-            if self.get_tile(*n).tile_type == self.game.tile_types[FLOOR_ID] and n not in q:
+            if self.get_tile(*n).move_through and n not in q:
                 tile_positions.append(n)
                 if (n[0]-1,n[1]) not in tile_positions and self.is_in_level(n[0]-1,n[1]):
                     q.append((n[0]-1,n[1]))
@@ -389,11 +389,12 @@ class Level:
                         for i in range(self.rng.get_int(min_length,max_length)):
                             #now go forward a randomized number of spaces
 
-                            if i == 0 and turn_num != 0:
-                                #just turned, check corner to avoid following:   .###
-                                for neighbor in self.get_neighbors(cur_x,cur_y): #...
-                                    if neighbor.tile_type.tile_type_id == FLOOR_ID:
-                                        abandon = True                           #.##
+                            #if i == 0 and turn_num != 0:
+                            #    #just turned, check corner to avoid following:   .###
+                            #    for neighbor in self.get_neighbors(cur_x,cur_y): #...
+                            #        if neighbor.move_through:
+                            #            print "Tunnel failed corner test"
+                            #            abandon = True                           #.##
 
                             if cur_dir == 0: #north/up
                                 cur_y -= 1
@@ -496,14 +497,15 @@ class Level:
                     self.remove_room(room)
 
     def experimental_cave_gen(self):
-        prefab_rects = self.create_rects(4, [], 6,6, 6,6, 0)
+        prefab_rects = self.create_rects(1, [], 15,15, 10,10, 0)
+        #prefab_rects = self.create_rects(4, [], 6,6, 6,6, 0)
         self.rect_automata_cave_gen(restrictions=prefab_rects,
                                     min_area = 1000)
         self.smooth_caves()
         self.remove_caves_by_size()
         for r in prefab_rects:
             print 'Placing prefab at (%i,%i)'%(r.x,r.y)
-            self.place_prefab(r.x,r.y,self.game.prefabs["TEST"])
+            self.place_prefab(r.x,r.y,self.game.prefabs["CAVERN_POND_0"])
         self.find_caves()
         self.connect_caves()
         self.remove_isolated_caves()

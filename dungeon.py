@@ -57,7 +57,7 @@ class Dungeon(Observer):
             print "Total time:       \t%s"%str(time.time()-start)
             '''
             self.levels[depth].experimental_cave_gen()
-            if self.levels[depth].evaluate():
+            if self.levels[depth].evaluate() or True:
                 approved = True
                 print "Approved"
             else:
@@ -67,7 +67,7 @@ class Dungeon(Observer):
 
         self.compute_tcod_map()
         self.levels[depth].tag_rooms()
-        self.levels[depth].populate_rooms()
+        #self.levels[depth].populate_rooms()
         self.compute_tcod_map()
         return self.levels[depth].get_start_pos()
 

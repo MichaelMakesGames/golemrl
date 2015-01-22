@@ -6,10 +6,10 @@ class Prefab:
 
     @property
     def h(self):
-        return len(self.map_data[0])
+        return len(self.map_data)
     @property
     def w(self):
-        return len(self.map_data)
+        return len(self.map_data[0])
 
     def get_map_data(self,rng=0):
         data = []
@@ -22,7 +22,7 @@ class Prefab:
                         if char not in char_varieties:
                             char_varieties[char]=rng.get_int(0,len(self.char_to_tile[char]))
                         row.append(self.char_to_tile[char][char_varieties[char]])
-                    else:      
+                    else:
                         row.append(self.char_to_tile[char])
                 else:
                     row.append(None)

@@ -10,3 +10,71 @@ TEST:
     "#": WALL
     ".": FLOOR
     "A": [WALL,FLOOR]
+
+CAVERN_PILLARS_0:
+  map_data:
+    - "##########"
+    - "##.....###"
+    - "##.AD...##"
+    - "#..ADD..G#"
+    - "##.....GG#"
+    - "##.B.C..G#"
+    - "##......##"
+    - "##EE..FFF#"
+    - "###E...F##"
+    - "##########"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [WALL,FLOOR]
+    "D": [WALL,FLOOR]
+    "E": [WALL,FLOOR]
+    "F": [WALL,FLOOR]
+    "G": [WALL,FLOOR]
+
+CHASM_BRIDGE_0:
+  map_data:
+    - "######"
+    - "##..C#"
+    - "#v|vB#"
+    - "#v|vA#"
+    - "#...##"
+    - "######"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "v": PIT
+    "|": BRIDGE_NS
+    "A": [WALL,PIT]
+    "B": [WALL,PIT]
+    "C": [WALL,FLOOR]
+
+CAVERN_POND_0:
+  map_data:
+    - "###############"
+    - "###........GG##"
+    - "##..DD.....FGG#"
+    - "##..DDDAA..FFG#"
+    - "##...D~~~B...G#"
+    - "#E...II~~B..J##"
+    - "#EE..IICHHHHH##"
+    - "##E.....CCHH###"
+    - "##EEEE....C####"
+    - "####E##########"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "~": WATER
+    "A": [WATER,FLOOR]
+    "B": [WATER,FLOOR]
+    "C": [WATER,FLOOR]
+    "D": [WATER,FLOOR]
+    "E": [WALL,FLOOR]
+    "F": [WALL,FLOOR]
+    "G": [WALL,FLOOR]
+    "H": [WALL,FLOOR]
+    "I": [WATER,FLOOR]
+    "J": [WALL,FLOOR]
+
