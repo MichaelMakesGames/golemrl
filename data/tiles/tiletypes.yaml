@@ -16,7 +16,7 @@ WATER:
   name: Water
   char: "~"
   color: [lighter blue, light blue]
-  color_not_visible: light gray
+  color_not_visible: gray
   move_through: true
   see_through: true
 PIT:

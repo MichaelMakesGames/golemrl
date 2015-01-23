@@ -54,9 +54,9 @@ CHASM_BRIDGE_0:
 CAVERN_POND_0:
   map_data:
     - "###############"
-    - "###........GG##"
-    - "##..DD.....FGG#"
-    - "##..DDDAA..FFG#"
+    - "###....KK..GG##"
+    - "##..DD...K.FGG#"
+    - "##..DDDAAK.FFG#"
     - "##...D~~~B...G#"
     - "#E...II~~B..J##"
     - "#EE..IICHHHHH##"
@@ -67,14 +67,15 @@ CAVERN_POND_0:
     "#": WALL
     ".": FLOOR
     "~": WATER
-    "A": [WATER,FLOOR]
-    "B": [WATER,FLOOR]
-    "C": [WATER,FLOOR]
-    "D": [WATER,FLOOR]
+    "A": [WATER,WATER,FLOOR]
+    "B": [WATER,WATER,FLOOR]
+    "C": [WATER,FLOOR,FLOOR]
+    "D": [WATER,WATER,FLOOR]
     "E": [WALL,FLOOR]
     "F": [WALL,FLOOR]
     "G": [WALL,FLOOR]
     "H": [WALL,FLOOR]
-    "I": [WATER,FLOOR]
+    "I": [WATER,WATER,FLOOR]
     "J": [WALL,FLOOR]
+    "K": [WATER,FLOOR,FLOOR]
 
