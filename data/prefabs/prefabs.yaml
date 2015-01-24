@@ -34,6 +34,31 @@ CAVERN_PILLARS_0:
     "F": [WALL,FLOOR]
     "G": [WALL,FLOOR]
 
+CAVERN_HALL_0:
+  map_data:
+    - "##########"
+    - "#D......E#"
+    - "#C.#..#.E#"
+    - "#C......F#"
+    - "#C.#..#.F#"
+    - "#B......F#"
+    - "#B.#..#.G#"
+    - "#A......G#"
+    - "#A.#..#.G#"
+    - "#A......##"
+    - "#F.#..#.C#"
+    - "#F......C#"
+    - "##########"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [WALL,FLOOR]
+    "E": [WALL,FLOOR]
+    "F": [WALL,FLOOR]
+    "G": [WALL,FLOOR]
+
 CHASM_BRIDGE_0:
   map_data:
     - "######"
@@ -55,10 +80,10 @@ CAVERN_POND_0:
   map_data:
     - "###############"
     - "###....KK..GG##"
-    - "##..DD...K.FGG#"
+    - "##..DD..MK.FGG#"
     - "##..DDDAAK.FFG#"
-    - "##...D~~~B...G#"
-    - "#E...II~~B..J##"
+    - "##..LD~~~B...G#"
+    - "#E...II~~BN.J##"
     - "#EE..IICHHHHH##"
     - "##E.....CCHH###"
     - "##EEEE....C####"
@@ -78,4 +103,7 @@ CAVERN_POND_0:
     "I": [WATER,WATER,FLOOR]
     "J": [WALL,FLOOR]
     "K": [WATER,FLOOR,FLOOR]
+    "L": [STALAGMITE,FLOOR]
+    "M": [STALAGMITE,FLOOR]
+    "N": [STALAGMITE,FLOOR]
 

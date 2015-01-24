@@ -22,12 +22,13 @@ CAVE_8X5_2:
   map_data:
     - "########"
     - "##.....#"
-    - "#...#..#"
+    - "#...A..#"
     - "##..####"
     - "########"
   char_to_tile:
     "#": WALL
     ".": FLOOR
+    "A": [WALL,STALAGMITE]
 CAVE_8X5_3:
   map_data:
     - "########"
@@ -42,12 +43,13 @@ CAVE_8X5_4:
   map_data:
     - "########"
     - "#####..#"
-    - "#......#"
+    - "#...^..#"
     - "##.....#"
     - "########"
   char_to_tile:
     "#": WALL
     ".": FLOOR
+    "^": STALAGMITE
 CAVE_8X5_5:
   map_data:
     - "########"
@@ -77,19 +79,116 @@ CAVE_10X7_0:
     "D": [WALL,FLOOR]
     "E": [WALL,FLOOR]
     "F": [WALL,FLOOR]
+CAVE_10X7_1:
+  map_data:
+    - "##########"
+    - "##....AA##"
+    - "#...F....#"
+    - "#.E.##.G.#"
+    - "#...BB..C#"
+    - "##DDBBCC##"
+    - "##########"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [WALL,FLOOR]
+    "D": [WALL,FLOOR]
+    "E": [STALAGMITE,FLOOR]
+    "F": [STALAGMITE,FLOOR]
+    "G": [STALAGMITE,FLOOR]
+CAVE_10X7_2:
+  map_data:
+    - "##########"
+    - "##A.....##"
+    - "#AAA..D..#"
+    - "#BAAA....#"
+    - "#B.......#"
+    - "##..C.BB##"
+    - "##########"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [STALAGMITE,FLOOR]
+    "D": [STALAGMITE,FLOOR]
+CAVE_10X7_3:
+  map_data:
+    - "##########"
+    - "##A....B##"
+    - "#...J....#"
+    - "#.I.##H..#"
+    - "#G..##..D#"
+    - "##F....E##"
+    - "##########"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [WALL,FLOOR]
+    "D": [WALL,FLOOR]
+    "E": [WALL,FLOOR]
+    "F": [WALL,FLOOR]
+    "G": [WALL,FLOOR]
+    "H": [WALL,FLOOR]
+    "I": [STALAGMITE,FLOOR]
+    "J": [STALAGMITE,FLOOR]
 
 CAVE_12X9_0:
   map_data:
     - "############"
     - "###.......##"
-    - "##........##"
+    - "##...B....##"
     - "#......AA###"
-    - "#...##AAAA##"
+    - "#D..##AAAA##"
     - "#..####...##"
-    - "#..###.....#"
+    - "#..###..C..#"
     - "##........##"
     - "############"
   char_to_tile:
     "#": WALL
     ".": FLOOR
     "A": [WALL,FLOOR]
+    "B": [STALAGMITE,FLOOR]
+    "C": [STALAGMITE,FLOOR]
+    "D": [STALAGMITE,FLOOR]
+CAVE_12X9_1:
+  map_data:
+    - "############"
+    - "#####.....##"
+    - "##.....E..##"
+    - "#..AAA....##"
+    - "#...BBB...##"
+    - "#...CBB...##"
+    - "#.D.....C..#"
+    - "##........##"
+    - "############"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [STALAGMITE,FLOOR]
+    "D": [STALAGMITE,FLOOR]
+    "E": [STALAGMITE,FLOOR]
+CAVE_12X9_2:
+  map_data:
+    - "############"
+    - "###.......##"
+    - "##...BB...##"
+    - "#DD..B....##"
+    - "#D........##"
+    - "#AA......C##"
+    - "#AA.....CCC#"
+    - "##AA......##"
+    - "############"
+  char_to_tile:
+    "#": WALL
+    ".": FLOOR
+    "A": [WALL,FLOOR]
+    "B": [WALL,FLOOR]
+    "C": [WALL,FLOOR]
+    "D": [WALL,FLOOR]

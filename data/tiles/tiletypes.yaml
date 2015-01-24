@@ -2,9 +2,16 @@ WALL:
   name: Wall
   char: [177,178]
   color: [lighter sepia, light sepia]
-  color_not_visible: dark gray #dark gray
+  color_not_visible: dark gray
   move_through: false
   see_through: false
+STALAGMITE:
+  name: Stalagmite
+  char: 30
+  color: [light sepia, sepia]
+  color_not_visible: dark gray
+  move_through: false
+  see_through: true
 FLOOR:
   name: Floor
   char: ["`", ".", ".", ","]
