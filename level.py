@@ -264,7 +264,9 @@ class Level:
                         self.get_tile(x,y).change_type(self.game.tile_types[FLOOR_ID])
 
     def place_prefab(self,start_x,start_y,prefab):
-        prefab_data = prefab.get_map_data(self.rng)
+        prefab_data = prefab.get_map_data(self.rng,
+                                          self.rng.flip(),
+                                          self.rng.flip())
         for x in range(prefab.w):
             for y in range(prefab.h):
                 if prefab_data[y][x]:

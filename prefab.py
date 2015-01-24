@@ -11,7 +11,7 @@ class Prefab:
     def w(self):
         return len(self.map_data[0])
 
-    def get_map_data(self,rng=0):
+    def get_map_data(self,rng,flip_x=False,flip_y=False):
         data = []
         char_varieties = {}
         for s in self.map_data:
@@ -27,4 +27,10 @@ class Prefab:
                 else:
                     row.append(None)
             data.append(row)
+        if flip_x:
+            for row in data:
+                row.reverse()
+        if flip_y:
+            data.reverse()
+                
         return data
