@@ -20,9 +20,10 @@ def spawn_animate_clay(game,entity):
                 t = game.cur_level.get_tile(*positions[j])
                 print t.move_through, t.creature
                 if t.move_through and not t.creature:
-                    game.breeds['ANIMATE_CLAY'].new(positions[j][0],
-                                                    positions[j][1],
-                                                    game.depth)
+                    e = game.breeds['ANIMATE_CLAY'].new(positions[j][0],
+                                                        positions[j][1],
+                                                        game.depth)
+                    e.creature.ai.state = AI_RESTING
                     spawned = True
                 j += 1
             r += 1
