@@ -8,7 +8,7 @@ from rng import RNG
 
 from creature import Creature
 from ai import AI
-from thing import Thing
+from entity import Entity
 from event import Event
 
 class Rect:
@@ -172,8 +172,8 @@ class Level:
         Used for initializing the player"""
         for room in self.rooms:
             if room.has_tag(TAG_START):
-                creature_positions = [thing.pos for thing
-                                      in self.game.living_things]
+                creature_positions = [entity.pos for entity
+                                      in self.game.living_entities]
                 start_pos = creature_positions[0]
                 while start_pos in creature_positions:
                     start_pos = self.rng.choose(room.tile_positions)
@@ -577,7 +577,7 @@ class Level:
                     tile_positions.remove( (x,y) )
                     breed_ids = sorted(self.game.breeds)
                     breed_id = self.rng.choose(breed_ids)
-                    thing = self.game.breeds[breed_id].new(x,y,depth)
+                    self.game.breeds[breed_id].new(x,y,depth)
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]

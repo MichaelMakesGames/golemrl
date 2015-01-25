@@ -139,7 +139,7 @@ class MessageLog(Observer):
             message = 'Map explored'
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_PRINT_POS:
-            message = 'Player at (%i,%i)' % event.thing.pos
+            message = 'Player at (%i,%i)' % event.entity.pos
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_PRINT_ROOM:
             room = self.game.cur_level.get_room_at(*event.pos)

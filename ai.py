@@ -18,14 +18,14 @@ class AI:
         self.sounds = []
         self.prev_dir = None
     @property
-    def thing(self):
+    def entity(self):
         return self.creature.owner
     def update(self):
         tcod_map = self.game.dungeon.tcod_map        
         if not self.path:
             self.path = libtcod.path_new_using_map(tcod_map)
 
-        pos = self.thing.pos
+        pos = self.entity.pos
         visible = self.game.player.fov(*pos)
     
         done = False
@@ -41,8 +41,8 @@ class AI:
                     wake_up = True
                 if wake_up:
                     self.state = AI_RESTING
-                    self.thing.notify(Event(EVENT_WAKE_UP,
-                                            actor=self.thing))
+                    self.entity.notify(Event(EVENT_WAKE_UP,
+                                            actor=self.entity))
                 else: #continue sleeping
                     done = True
 
@@ -50,8 +50,8 @@ class AI:
                 self.creature.fov.refresh()
                 if self.check_for_player():
                     self.state = AI_FIGHTING
-                    self.thing.notify(Event(EVENT_NOTICE,
-                                            actor=self.thing))
+                    self.entity.notify(Event(EVENT_NOTICE,
+                                            actor=self.entity))
                 else: #continue to rest or wander?
                     if self.game.rng.percent(20):
                         done = True
@@ -62,12 +62,12 @@ class AI:
                 self.creature.fov.refresh()
                 if self.check_for_player():
                     self.state = AI_FIGHTING
-                    self.thing.notify(Event(EVENT_NOTICE,
-                                            actor=self.thing))
+                    self.entity.notify(Event(EVENT_NOTICE,
+                                            actor=self.entity))
                 else:
                     direction = (0,0)
                     while not (self.valid_movement(direction) or
-                               self.game.cur_level.get_tile(self.thing.x+direction[0],self.thing.y+direction[1]).creature==self.game.player):
+                               self.game.cur_level.get_tile(self.entity.x+direction[0],self.entity.y+direction[1]).creature==self.game.player):
 
                         directions = [(1,1),(1,-1),(-1,1),(-1,-1),
                                       (0,1),(0,-1),(1,0),(-1,0)]
@@ -83,18 +83,18 @@ class AI:
                                 directions += [(self.prev_dir[0],0)]*2
                                 directions += [(0,self.prev_dir[1])]*2
                         direction = self.game.rng.choose(directions)
-                    t = self.game.cur_level(self.thing.x+direction[0],
-                                            self.thing.y+direction[1])
+                    t = self.game.cur_level(self.entity.x+direction[0],
+                                            self.entity.y+direction[1])
                     if self.game.rng.percent(10):
                         self.state = AI_RESTING
                         done=True
                     elif t.creature is self.game.player:
-                        self.thing.notify(EVENT_NOTICE,
-                                          actor=self.thing)
+                        self.entity.notify(EVENT_NOTICE,
+                                          actor=self.entity)
                         self.state = AI_FIGHTING
                     else:
-                        self.thing.move_to(self.thing.x+direction[0],
-                                           self.thing.y+direction[1])
+                        self.entity.move_to(self.entity.x+direction[0],
+                                           self.entity.y+direction[1])
                         self.prev_dir=direction
                         done=True
 
@@ -114,11 +114,11 @@ class AI:
                 if (self.path_index < libtcod.path_size(self.path)
                     and self.game.player.creature.alive):#walk path
                     x,y = libtcod.path_get(self.path, self.path_index)
-                    event = self.thing.move_to(x,y)
+                    event = self.entity.move_to(x,y)
                     if event.event_type == EVENT_MOVE: #successfully moved, increase path index
                         self.path_index += 1
                         done = True
-                    elif self.thing.distance_to(*self.player_pos) < 2:
+                    elif self.entity.distance_to(*self.player_pos) < 2:
                         #didn't move but can attack player
                         self.creature.attack(self.game.player)
                         done = True
@@ -145,12 +145,12 @@ class AI:
         if direction==None:
             return False
         else:
-            t = self.game.cur_level.get_tile(self.thing.x+direction[0],
-                                             self.thing.y+direction[1])
+            t = self.game.cur_level.get_tile(self.entity.x+direction[0],
+                                             self.entity.y+direction[1])
             return t.move_through and t.creature==None
 
     def compute_path(self, x, y):
-        self_x,self_y = self.thing.pos
+        self_x,self_y = self.entity.pos
         libtcod.path_compute(self.path, self_x, self_y, x, y)
         self.path_index = 0
 

@@ -103,13 +103,13 @@ class Creature:
         else:
             return 0,False
 
-    def attack(self,thing,degree_mod=0,sound_multiplier=2):
-        if thing.creature:
-            event = Event(EVENT_ATTACK, actor=self.owner, target=thing)
-            event.degree = (self.accuracy_roll()-thing.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1 + degree_mod
+    def attack(self,entity,degree_mod=0,sound_multiplier=2):
+        if entity.creature:
+            event = Event(EVENT_ATTACK, actor=self.owner, target=entity)
+            event.degree = (self.accuracy_roll()-entity.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1 + degree_mod
             if event.degree>0:
                 event.hit = True
-                event.dealt, event.killed = thing.creature.take_damage(self.damage_roll(),event.degree)
+                event.dealt, event.killed = entity.creature.take_damage(self.damage_roll(),event.degree)
                 self.owner.make_sound(sound_multiplier)
             else:
                 event.hit = False

@@ -2,7 +2,7 @@ import libtcodpy as libtcod
 from config import *
 import logging, yaml, os, time
 import abilityfunctions, deathfunctions, yamlhelp
-from thing import Thing
+from entity import Entity
 from player import Player
 from inputhandler import InputHandler
 from creature import Creature
@@ -24,8 +24,8 @@ from material import Material
 class Game:
     def __init__(self):
         self.rng = RNG()
-        self.things = []
-        self.active_things = []
+        self.entities = []
+        self.active_entities = []
         self.dungeon = None
         self.message_log = None
         self.menu = None
@@ -56,15 +56,15 @@ class Game:
         return self.player.level
 
     @property
-    def living_things(self):
-        return filter(lambda thing: thing.creature and thing.creature.alive, self.things)
+    def living_entities(self):
+        return filter(lambda entity: entity.creature and entity.creature.alive, self.entities)
 
-    def add_thing(self,thing):
-        self.things.append(thing)
+    def add_entity(self,entity):
+        self.entities.append(entity)
 
     def next_id(self):
         next_id = 0
-        id_list = [thing.thing_id for thing in self.things]
+        id_list = [entity.entity_id for entity in self.entities]
         while True:
             if next_id not in id_list:
                 return next_id
@@ -259,7 +259,7 @@ class Game:
                              0, 0, 0, False, True,
                              input_handler = InputHandler(),
                              creature = player_creature)
-        self.add_thing(self.player)
+        self.add_entity(self.player)
 
         for name in self.materials:
             self.player.materials[self.materials[name]] = 0
@@ -270,15 +270,15 @@ class Game:
             self.player.words.append(self.words[word_id])
 
     def clear_all(self):
-        for thing in self.things:
-            thing.clear(self.player.x,
+        for entity in self.entities:
+            entity.clear(self.player.x,
                         self.player.y,
                         self.map_con)
 
-    def get_thing(self,thing_id):
-        for thing in self.things:
-            if thing.thing_id == thing_id:
-                return thing
+    def get_entity(self,entity_id):
+        for entity in self.entities:
+            if entity.entity_id == entity_id:
+                return entity
 
     def get_creature_at(self,x,y):
         return self.cur_level.get_tile(x,y).creature
@@ -354,12 +354,12 @@ class Game:
 
         self.dungeon.render(focus_x, focus_y, self.map_con,
                             overlay=self.overlay)
-        for thing in self.things:
-            if thing != self.player:
-                thing.render(focus_x, focus_y, self.map_con)
-        for thing in self.living_things: #draw living creatures on top
-            if thing != self.player:
-                thing.render(focus_x, focus_y, self.map_con)
+        for entity in self.entities:
+            if entity != self.player:
+                entity.render(focus_x, focus_y, self.map_con)
+        for entity in self.living_entities: #draw living creatures on top
+            if entity != self.player:
+                entity.render(focus_x, focus_y, self.map_con)
         self.player.render(focus_x, focus_y, self.map_con)
         self.map_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
         #self.map_con.blit()
@@ -403,13 +403,13 @@ class Game:
                         self.active_region += room.tile_positions
                 else:
                     self.active_region = [self.player.pos]
-                self.active_things=[]
-                for thing in self.things:
-                    if thing.pos in self.active_region:
-                        self.active_things.append(thing)
+                self.active_entities=[]
+                for entity in self.entities:
+                    if entity.pos in self.active_region:
+                        self.active_entities.append(entity)
 
-                for thing in self.active_things:
-                    thing.update()
+                for entity in self.active_entities:
+                    entity.update()
                 self.state = STATE_PAUSED
 
             self.dungeon.update()

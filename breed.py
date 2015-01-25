@@ -2,7 +2,7 @@ import logging
 from config import *
 
 from event import Event
-from thing import Thing
+from entity import Entity
 from creature import Creature
 from ai import AI
 
@@ -26,14 +26,14 @@ class Breed:
         self.death_func = death_func
 
     def new(self,x,y,depth):
-        thing = Thing(self.game,self.game.next_id(),
+        entity = Entity(self.game,self.game.next_id(),
                       x, y, depth, False, True,
                       creature = Creature(self.game,self))
-        thing.add_observer(self.game.dungeon)
-        thing.add_observer(self.game.message_log)
+        entity.add_observer(self.game.dungeon)
+        entity.add_observer(self.game.message_log)
         for ability_id in self.game.abilities:
-            thing.add_observer(self.game.abilities[ability_id])
-        self.game.add_thing(thing)
-        thing.notify(Event(EVENT_CREATE, actor=thing))
-        thing.fov.refresh()
-        return thing
+            entity.add_observer(self.game.abilities[ability_id])
+        self.game.add_entity(entity)
+        entity.notify(Event(EVENT_CREATE, actor=entity))
+        entity.fov.refresh()
+        return entity

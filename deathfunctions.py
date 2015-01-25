@@ -1,6 +1,6 @@
 from config import *
 
-def spawn_animate_clay(game,thing):
+def spawn_animate_clay(game,entity):
     for i in range(game.rng.get_int(2,5)):
         print 'spawning clay %i'%i
         r = 1
@@ -8,12 +8,12 @@ def spawn_animate_clay(game,thing):
         while not spawned:
             print 'trying in radius %i'%r
             positions = []
-            for x in range(thing.x-r,thing.x+r+1):
-                positions.append((x, thing.y+r))
-                positions.append((x, thing.y-r))
-            for y in range(thing.y-r,thing.y+r+1):
-                positions.append((thing.x+r, y))
-                positions.append((thing.x-r, y))
+            for x in range(entity.x-r,entity.x+r+1):
+                positions.append((x, entity.y+r))
+                positions.append((x, entity.y-r))
+            for y in range(entity.y-r,entity.y+r+1):
+                positions.append((entity.x+r, y))
+                positions.append((entity.x-r, y))
             j = 0
             while j<len(positions) and not spawned:
                 print 'tring tile (%i,%i)'%positions[j]

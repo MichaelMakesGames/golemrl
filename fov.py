@@ -11,7 +11,7 @@ class FOV:
                         for x in range(LEVEL_W)]
 
     @property
-    def thing(self):
+    def entity(self):
         return self.creature.owner
 
     def clear(self):
@@ -20,34 +20,34 @@ class FOV:
 
     def refresh(self):
         tcod_map = self.game.dungeon.tcod_map
-        if self.thing is self.game.player:
+        if self.entity is self.game.player:
             libtcod.map_compute_fov(tcod_map,
-                                    self.thing.x,
-                                    self.thing.y,
+                                    self.entity.x,
+                                    self.entity.y,
                                     PLAYER_FOV_RADIUS)
         else:
             libtcod.map_compute_fov(tcod_map,
-                                     self.thing.x,
-                                     self.thing.y,
+                                     self.entity.x,
+                                     self.entity.y,
                                      self.creature.perception)
-        if self.thing is self.game.player:
+        if self.entity is self.game.player:
             for x in range(len(self.fov_map)):
                 for y in range(len(self.fov_map[0])):
                     self.fov_map[x][y]=int(libtcod.map_is_in_fov(tcod_map,
                                                                  x,y))
         else:
             self.clear()
-            for x in range(self.thing.x-self.creature.perception,
-                           self.thing.x+self.creature.perception+1):
-                for y in range(self.thing.y-self.creature.perception,
-                               self.thing.y+self.creature.perception+1):
+            for x in range(self.entity.x-self.creature.perception,
+                           self.entity.x+self.creature.perception+1):
+                for y in range(self.entity.y-self.creature.perception,
+                               self.entity.y+self.creature.perception+1):
                     fov_num = int(libtcod.map_is_in_fov(tcod_map,x,y))
                     if fov_num:
-                        if (x-self.thing.x==0 or
-                            y-self.thing.y==0 or
-                            abs(x-self.thing.x)-abs(y-self.thing.y)==0):
+                        if (x-self.entity.x==0 or
+                            y-self.entity.y==0 or
+                            abs(x-self.entity.x)-abs(y-self.entity.y)==0):
                             fov_num += 1
-                        if util.distance(self.thing.x,self.thing.y,x,y)<=self.creature.perception//3:
+                        if util.distance(self.entity.x,self.entity.y,x,y)<=self.creature.perception//3:
                             fov_num += 1
                     try:
                         self.fov_map[x][y] = fov_num

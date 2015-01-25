@@ -24,11 +24,11 @@ class BodyPart:
         self.base_strength = strength
 
     @property
-    def thing(self):
+    def entity(self):
         return self.golem.owner
     @property
     def game(self):
-        return self.thing.game
+        return self.entity.game
 
     @property
     def max_health(self):
@@ -109,16 +109,16 @@ class BodyPart:
     def inscribe(self,word):
         if word not in self.words and None in self.words:
             self.words[self.words.index(None)] = word
-            return self.thing.notify(Event(EVENT_INSCRIBE,
-                                           actor = self.thing,
+            return self.entity.notify(Event(EVENT_INSCRIBE,
+                                           actor = self.entity,
                                            body_part = self,
                                            word = word))
 
     def erase(self,word):
         if word in self.words:
             self.words[self.words.index(word)] = None
-            return self.thing.notify(Event(EVENT_ERASE,
-                                           actor = self.thing,
+            return self.entity.notify(Event(EVENT_ERASE,
+                                           actor = self.entity,
                                            body_part = self,
                                            word = word))
 
@@ -158,8 +158,8 @@ class BodyPart:
             self.health += trait.health_mod
             self.check_word_slots()
             if not force: #WARNING, this might cause trouble, but for now it seems like we're best not raising an event when we force a trait (ie player starting traits, and a trait that's added as a result of trait that replaced it being removed
-                return self.thing.notify(Event(EVENT_ADD_TRAIT,
-                                               actor=self.thing,
+                return self.entity.notify(Event(EVENT_ADD_TRAIT,
+                                               actor=self.entity,
                                                body_part=self,
                                                trait=trait) )
         else: return Event(EVENT_NONE)
@@ -172,7 +172,7 @@ class BodyPart:
             self.health -= trait.health_mod
             self.check_word_slots()
             if not force:
-                return self.thing.notify(Event(EVENT_REMOVE_TRAIT,
-                                               actor = self.thing,
+                return self.entity.notify(Event(EVENT_REMOVE_TRAIT,
+                                               actor = self.entity,
                                                body_part = self,
                                                trait = trait))

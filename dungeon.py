@@ -26,7 +26,7 @@ class Dungeon(Observer):
         self.refresh_fov = True
         #does the tcod map need to be refreshed (ie terrain change)
         self.refresh_tcod = True
-        #positions of things that block movement or sight
+        #positions of entities that block movement or sight
         self.creature_positions = []
 
     def generate_level(self,depth):
@@ -78,9 +78,9 @@ class Dungeon(Observer):
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            tile.see_through,
                                            tile.move_through)
-        for thing in self.game.things:
-            if thing != self.game.player:
-                x,y = thing.pos
+        for entity in self.game.entities:
+            if entity != self.game.player:
+                x,y = entity.pos
                 libtcod.map_set_properties(self.tcod_map,x,y,
                                            True,
                                            False)
@@ -92,24 +92,24 @@ class Dungeon(Observer):
                                        tile.see_through,
                                        tile.move_through)
         self.creature_positions = []
-        for thing in self.game.living_things:
-            self.creature_positions.append(thing.pos)
-            if thing != self.game.player:
+        for entity in self.game.living_entities:
+            self.creature_positions.append(entity.pos)
+            if entity != self.game.player:
                 libtcod.map_set_properties(self.tcod_map,
-                                           thing.pos[0],thing.pos[1],
-                                           thing.see_through,
-                                           thing.move_through)
+                                           entity.pos[0],entity.pos[1],
+                                           entity.see_through,
+                                           entity.move_through)
 
     def on_notify(self,event):
         #WARNING: assumes items don't affect tcod map
         if event.event_type == EVENT_MOVE:
-            thing = event.actor
-            from_tile = self.levels[thing.depth].get_tile(*event.from_pos)
-            to_tile = self.levels[thing.depth].get_tile(*event.to_pos)
-            if thing.creature and thing.creature.alive:
+            entity = event.actor
+            from_tile = self.levels[entity.depth].get_tile(*event.from_pos)
+            to_tile = self.levels[entity.depth].get_tile(*event.to_pos)
+            if entity.creature and entity.creature.alive:
                 from_tile.creature = None
-                to_tile.creature = thing
-                if thing != self.game.player:
+                to_tile.creature = entity
+                if entity != self.game.player:
                     libtcod.map_set_properties(self.tcod_map,
                                                event.from_pos[0],
                                                event.from_pos[1],
@@ -118,64 +118,64 @@ class Dungeon(Observer):
                     libtcod.map_set_properties(self.tcod_map,
                                                event.to_pos[0],
                                                event.to_pos[1],
-                                               thing.see_through,
-                                               thing.move_through)
+                                               entity.see_through,
+                                               entity.move_through)
                                            
-            elif thing.item:
+            elif entity.item:
                 from_tile.item = None
-                to_tile.item = thing
+                to_tile.item = entity
             if event.actor == self.game.player:
                 self.refresh_fov = True
 
         elif event.event_type == EVENT_DIE:
-            thing = event.actor
-            tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
+            entity = event.actor
+            tile = self.levels[entity.depth].get_tile(entity.x,entity.y)
             tile.creature = None
             libtcod.map_set_properties(self.tcod_map,
-                                       thing.x, thing.y,
+                                       entity.x, entity.y,
                                        tile.see_through,
                                        tile.move_through)
             if not tile.item:
-                tile.item = thing
+                tile.item = entity
             else:
                 placed_corpse = False
-                x,y = thing.pos
+                x,y = entity.pos
                 r = 1
                 while not placed_corpse:
                     positions = []
-                    for try_x in range(thing.x-r,thing.x+r+1):
-                        positions.append((try_x,thing.y+r))
-                        positions.append((try_x,thing.y-r))
-                    for try_y in range(thing.y-r,thing.y+r+1):
-                        positions.append((thing.x+r,try_y))
-                        positions.append((thing.x-r,try_y))
+                    for try_x in range(entity.x-r,entity.x+r+1):
+                        positions.append((try_x,entity.y+r))
+                        positions.append((try_x,entity.y-r))
+                    for try_y in range(entity.y-r,entity.y+r+1):
+                        positions.append((entity.x+r,try_y))
+                        positions.append((entity.x-r,try_y))
                     i = 0
                     while i<len(positions) and not placed_corpse:
-                        try_tile = self.levels[thing.depth].get_tile(*positions[i])
+                        try_tile = self.levels[entity.depth].get_tile(*positions[i])
                         if try_tile.move_through and not try_tile.item:
-                            try_tile.item = thing
+                            try_tile.item = entity
                             placed_corpse = True
-                            thing.x = positions[i][0]
-                            thing.y = positions[i][1]
+                            entity.x = positions[i][0]
+                            entity.y = positions[i][1]
                         i += 1
                     r += 1
 
         elif event.event_type == EVENT_HARVEST:
-            thing = event.corpse
-            tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
+            entity = event.corpse
+            tile = self.levels[entity.depth].get_tile(entity.x,entity.y)
             tile.item = None
 
         elif event.event_type == EVENT_CREATE:
-            thing = event.actor
-            tile = self.levels[thing.depth].get_tile(thing.x,thing.y)
-            if thing.creature and thing.creature.alive:
-                tile.creature = thing
-            elif thing.item:
-                tile.item = thing
+            entity = event.actor
+            tile = self.levels[entity.depth].get_tile(entity.x,entity.y)
+            if entity.creature and entity.creature.alive:
+                tile.creature = entity
+            elif entity.item:
+                tile.item = entity
             libtcod.map_set_properties(self.tcod_map,
-                                       thing.x, thing.y,
-                                       thing.see_through,
-                                       thing.move_through)
+                                       entity.x, entity.y,
+                                       entity.see_through,
+                                       entity.move_through)
 
     def update(self):
         if self.refresh_tcod:
@@ -215,9 +215,9 @@ class Dungeon(Observer):
                             color = tile.color
                             if overlay == OVERLAY_FOV:
                                 fov_num = 0
-                                for thing in self.game.active_things:
-                                    if self.game.player.fov(thing) and (not thing is self.game.player) and thing.creature.ai.state!=AI_SLEEPING and thing.creature.alive:
-                                        fov_num = max(fov_num,thing.fov(map_x,map_y))
+                                for entity in self.game.active_entities:
+                                    if self.game.player.fov(entity) and (not entity is self.game.player) and entity.creature.ai.state!=AI_SLEEPING and entity.creature.alive:
+                                        fov_num = max(fov_num,entity.fov(map_x,map_y))
                                 
                                 if fov_num==1:
                                     background = libtcod.darkest_blue

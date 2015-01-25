@@ -3,11 +3,11 @@ from config import *
 import logging
 
 from event import Event
-from thing import Thing
+from entity import Entity
 
-logger = logging.getLogger('thing')
+logger = logging.getLogger('entity')
 
-class Player(Thing):
+class Player(Entity):
     def __init__(self,*args,**kwargs):
         if 'input_handler' in kwargs:
             self.input_handler = kwargs['input_handler']
@@ -17,7 +17,7 @@ class Player(Thing):
         if self.input_handler:
             self.input_handler.owner = self
 
-        Thing.__init__(self,*args,**kwargs)
+        Entity.__init__(self,*args,**kwargs)
 
         self.materials = {}
         self.abilities = []
@@ -32,14 +32,14 @@ class Player(Thing):
     def harvest_corpse(self):
         """Harvests corpse at player tile, returns EVENT_HARVEST
         If there were no corpses, returns EVENT_NONE"""
-        thing = self.game.get_item_at(*self.pos)
-        if thing and thing.creature:
-            self.add_materials(thing.creature.materials)
-            self.game.things.remove(thing)
+        entity = self.game.get_item_at(*self.pos)
+        if entity and entity.creature:
+            self.add_materials(entity.creature.materials)
+            self.game.entities.remove(entity)
             return self.notify(Event(EVENT_HARVEST,
                                      actor = self,
-                                     corpse = thing,
-                                     majority_material=thing.creature.majority_material))
+                                     corpse = entity,
+                                     majority_material=entity.creature.majority_material))
         else:
             return Event(EVENT_NONE)
 
