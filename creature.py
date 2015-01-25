@@ -118,6 +118,8 @@ class Creature:
             return Event(EVENT_NONE)
 
     def die(self):
+        if self.ai:
+            self.ai.state = AI_INACTIVE
         if self.death_func:
             self.death_func(self.game,self.owner)
         return self.owner.notify(Event(EVENT_DIE, actor=self.owner))

@@ -216,7 +216,7 @@ class Dungeon(Observer):
                             if overlay == OVERLAY_FOV:
                                 fov_num = 0
                                 for thing in self.game.active_things:
-                                    if self.game.player.fov(thing) and (not thing is self.game.player) and thing.creature.ai.state!=AI_SLEEPING:
+                                    if self.game.player.fov(thing) and (not thing is self.game.player) and thing.creature.ai.state!=AI_SLEEPING and thing.creature.alive:
                                         fov_num = max(fov_num,thing.fov(map_x,map_y))
                                 
                                 if fov_num==1:
