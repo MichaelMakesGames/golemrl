@@ -14,7 +14,8 @@ class MessageLog(Observer):
         self.lines = []
 
     def on_notify(self,event):
-        message = color = None
+        message = None
+        color = C_MENU
 
         ### Combat events ###
         if event.event_type == EVENT_ATTACK:
@@ -68,36 +69,12 @@ class MessageLog(Observer):
             color = event.word.color
 
         ### Ability events ###
-        elif event.event_type == EVENT_START_ABILITY:
-            if event.ability.initiate_text:
-                message = event.ability.initiate_text
-            elif event.ability.ability_type=='spell':
-                message = 'You start casting %s - choose a direction' % \
-                          (event.ability.name)
+        elif event.event_type == EVENT_ACTIVATE:
+            if event.actor is self.game.player:
+                message = "You activate \"%s\"" % (event.ability.name)
             else:
-                message = 'You start "%s" - choose a direction' % \
-                          (event.ability.name)
-            try:
-                color = event.ability.word.color
-            except AttributeError:
-                color = C_MENU
-        elif event.event_type == EVENT_CANCEL_ABILITY:
-            message = 'You change your mind'
-            try:
-                color = event.ability.word.color
-            except AttributeError:
-                color = C_MENU
-        elif event.event_type == EVENT_ACTIVATE_ABILITY:
-            if event.ability.activate_text:
-                message = event.ability.activate_text
-            elif event.ability.ability_type=='spell':
-                message = 'You cast %s'%(event.ability.name)
-            else:
-                message = 'You activate "%s"'%(event.ability.name)
-            try:
-                color = event.ability.word.color
-            except AttributeError:
-                color = C_MENU
+                message = "%s activates \"%s\"" % \
+                          (event.actor.creature.name, event.ability.name)
 
         ### Misc events ###
         elif event.event_type == EVENT_WAKE_UP:
