@@ -184,18 +184,19 @@ class Game:
 
         for ability_id in self.abilities:
             ability = self.abilities[ability_id]
-            ability['ability_type'] = ability['type']
-            del ability['type']
+            #ability['ability_type'] = ability['type']
+            #del ability['type']
             ability = Ability(self, ability_id, **ability)
             self.abilities[ability_id] = ability
 
-            yamlhelp.convert_keys(ability.cost,self.materials)
+            #yamlhelp.convert_keys(ability.cost,self.materials)
 
-            if ability.requires == None:
-                ability.requires = [None,None]
-            else:
-                ability.requires[1] = self.words[ability.requires[1]]
-            ability.func = eval('abilityfunctions.%s'%ability.func)
+            #if ability.requires == None:
+            #    ability.requires = [None,None]
+            #else:
+            #    ability.requires[1] = self.words[ability.requires[1]]
+            ability.trigger = eval('abilityfunctions.%s'%ability.trigger)
+            ability.effect  = eval('abilityfunctions.%s'%ability.effect)
 
     def load_breeds(self,files):
         for file_name in files:
@@ -263,7 +264,8 @@ class Game:
         for name in self.materials:
             self.player.materials[self.materials[name]] = 0
         for ability_id in self.abilities:
-            self.player.abilities.append(self.abilities[ability_id])
+            #self.player.abilities.append(self.abilities[ability_id])
+            self.player.add_observer(self.abilities[ability_id])
         for word_id in self.words:
             self.player.words.append(self.words[word_id])
 

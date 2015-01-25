@@ -1,6 +1,21 @@
 from config import *
+import math
 from event import Event
 
+def heal_trigger(game,ability,event):
+    event_type = event.event_type
+    if event_type == EVENT_ACTIVATE and event.ability == ability:
+        return True
+    return False
+def heal_effect(game,ability,event):
+    actor = event.actor
+    for bp_name in actor.creature.body_parts:
+        bp = actor.creature.body_parts[bp_name]
+        if bp.health < bp.max_health:
+            bp.heal(math.ceil((bp.max_health-bp.health)/2.0))
+    
+
+'''
 def get_target_touch(game,caster,direction):
     x = caster.x + direction[0]
     y = caster.y + direction[1]
@@ -93,3 +108,4 @@ def death_ray(game, caster, direction):
                                    killed = killed))
     else:
         return Event(EVENT_NONE)
+'''

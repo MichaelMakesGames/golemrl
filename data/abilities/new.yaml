@@ -1,0 +1,4 @@
+HEAL:
+  name: heal
+  trigger: heal_trigger
+  effect:  heal_effect

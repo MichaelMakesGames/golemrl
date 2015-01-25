@@ -37,13 +37,14 @@ class InputHandler(Subject):
             action_dict = menu.action_dict
         else:
             action_dict = {('r',False): ACTION_HARVEST,
-                           ('s',False): ACTION_OPEN_SPELL_MENU,
+                           #('s',False): ACTION_OPEN_SPELL_MENU,
+                           ('h',False): ACTION_HEAL,
                            ('t',False): ACTION_OPEN_BODY_MENU,
                            ('f',False): ACTION_TOGGLE_OVERLAY_FOV,
-                           ('c',False): ACTION_CHARGE,
-                           ('t',False): ACTION_TACKLE,
-                           ('d',False): ACTION_DEFENSIVE_STANCE,
-                           ('g',False): ACTION_DODGE,
+                           #('c',False): ACTION_CHARGE,
+                           #('t',False): ACTION_TACKLE,
+                           #('d',False): ACTION_DEFENSIVE_STANCE,
+                           #('g',False): ACTION_DODGE,
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,
@@ -111,7 +112,7 @@ class InputHandler(Subject):
     def open_spell_menu(self):
         menu_options = []
         i = 1
-        for ability in filter(lambda a: a.ability_type=='spell',
+        for ability in filter(lambda a: True,#a.ability_type=='spell',
                               self.owner.abilities):
             menu_options.append( {'input':(str(i),False),
                                   'name': ability.name,

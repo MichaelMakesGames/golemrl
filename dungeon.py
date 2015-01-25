@@ -67,7 +67,7 @@ class Dungeon(Observer):
 
         self.compute_tcod_map()
         self.levels[depth].tag_rooms()
-        #self.levels[depth].populate_rooms()
+        self.levels[depth].populate_rooms()
         self.compute_tcod_map()
         return self.levels[depth].get_start_pos()
 

@@ -102,6 +102,7 @@ EVENT_WAKE_UP = 'WAKE_UP'
 EVENT_NOTICE = 'NOTICE'
 EVENT_STUMBLE = 'STUMBLE'
 EVENT_HEAR = 'HEAR'
+EVENT_ACTIVATE = 'ACTIVATE'
 
 #Actions (temporary)
 ACTION_NONE = 'Event(EVENT_NONE)'
@@ -137,3 +138,4 @@ ACTION_CHARGE = 'self.owner.activate(self.game.abilities["CHARGE"])'
 ACTION_TACKLE = 'self.owner.activate(self.game.abilities["TACKLE"])'
 ACTION_DEFENSIVE_STANCE = 'self.owner.activate(self.game.abilities["DEFENSIVE_STANCE"])'
 ACTION_DODGE = 'self.owner.activate(self.game.abilities["DODGE"])'
+ACTION_HEAL = 'self.owner.notify(Event(EVENT_ACTIVATE, actor=self.owner, ability=self.game.abilities["HEAL"]))'
