@@ -99,6 +99,8 @@ class InputHandler(Subject):
             return STATE_PLAYING
         elif event_type == EVENT_WAIT:
             return STATE_PLAYING
+        elif event_type == EVENT_ACTIVATE:
+            return STATE_PLAYING
 
     def set_menu(self,menu):
         self.game.menu = menu
