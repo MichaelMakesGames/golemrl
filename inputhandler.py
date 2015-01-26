@@ -11,13 +11,20 @@ logger = logging.getLogger('input')
 class InputHandler(Subject):
     def __init__(self):
         Subject.__init__(self)
+        self.ability_event = None
     @property
     def game(self):
         return self.owner.game
-    def __call__(self, key, mouse, menu=None, active=None):
+
+    def on_notify(self,event):
+        event_type = event.event_type
+        if event_type != EVENT_NONE and event.actor is self.game.player:
+            self.ability_event = event
+
+    def __call__(self, key, mouse, state, menu=None):
         key_char = chr(key.c)
 
-        if active:
+        '''if active:
             if active.targeting in ['touch','ranged','other']:
                 action_dict = {libtcod.KEY_ESCAPE: ACTION_CANCEL_ABILITY,
                                libtcod.KEY_UP: ACTION_ACTIVATE_N,
@@ -32,17 +39,32 @@ class InputHandler(Subject):
                                libtcod.KEY_KP7: ACTION_ACTIVATE_NW,
                                libtcod.KEY_KP8: ACTION_ACTIVATE_N,
                                libtcod.KEY_KP9: ACTION_ACTIVATE_NE}
-
-        elif menu:
+        '''
+        if menu:
             action_dict = menu.action_dict
-        else:
+        elif state==INPUT_DIRECTION_8:
+            action_dict = {libtcod.KEY_UP: ACTION_DIRECTION_N,
+                           libtcod.KEY_DOWN: ACTION_DIRECTION_S,
+                           libtcod.KEY_RIGHT: ACTION_DIRECTION_E,
+                           libtcod.KEY_LEFT: ACTION_DIRECTION_W,
+                           libtcod.KEY_KP1: ACTION_DIRECTION_SW,
+                           libtcod.KEY_KP2: ACTION_DIRECTION_S,
+                           libtcod.KEY_KP3: ACTION_DIRECTION_SE,
+                           libtcod.KEY_KP4: ACTION_DIRECTION_W,
+                           libtcod.KEY_KP5: ACTION_DIRECTION_NONE,
+                           libtcod.KEY_KP6: ACTION_DIRECTION_E,
+                           libtcod.KEY_KP7: ACTION_DIRECTION_NW,
+                           libtcod.KEY_KP8: ACTION_DIRECTION_N,
+                           libtcod.KEY_KP9: ACTION_DIRECTION_NE,
+                           libtcod.KEY_ESCAPE: ACTION_CANCEL}
+        elif state==INPUT_NORMAL:
             action_dict = {('r',False): ACTION_HARVEST,
                            #('s',False): ACTION_OPEN_SPELL_MENU,
-                           ('h',False): ACTION_HEAL,
                            ('t',False): ACTION_OPEN_BODY_MENU,
-                           ('f',False): ACTION_TOGGLE_OVERLAY_FOV,
-                           #('c',False): ACTION_CHARGE,
-                           #('t',False): ACTION_TACKLE,
+                           ('F',False): ACTION_TOGGLE_OVERLAY_FOV,
+                           ('h',False): ACTION_HEAL,
+                           #('a',False): ACTION_TACKLE,
+                           ('c',False): ACTION_CHARGE,
                            #('d',False): ACTION_DEFENSIVE_STANCE,
                            #('g',False): ACTION_DODGE,
                            ('g',True): ACTION_TOGGLE_GHOST,
@@ -75,7 +97,10 @@ class InputHandler(Subject):
                 action = action_dict[key.vk]
             except KeyError: pass
 
-        if type(action) == str:
+        if self.ability_event:
+            event = self.ability_event
+            self.ability_event = None
+        elif type(action) == str:
             event = eval(action)
         else:
             event = action()

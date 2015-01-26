@@ -54,6 +54,13 @@ STATE_PLAYING = 'PLAYING'
 STATE_PAUSED = 'PAUSED'
 STATE_MENU = 'MENU'
 
+#Input states
+INPUT_NORMAL      = 'NORMAL'
+INPUT_BP          = 'BP'
+INPUT_DIRECTION_4 = 'DIRECTION_4'
+INPUT_DIRECTION_8 = 'DIRECTION_8'
+INPUT_DIRECTION   = 'DIRECTION'
+
 #Map overlays
 OVERLAY_FOV = 'FOV'
 
@@ -100,6 +107,9 @@ EVENT_NOTICE = 'NOTICE'
 EVENT_STUMBLE = 'STUMBLE'
 EVENT_HEAR = 'HEAR'
 EVENT_ACTIVATE = 'ACTIVATE'
+#for dealing with abilities requiring input
+EVENT_DIRECTION = 'DIRECTION'
+EVENT_CANCEL = 'CANCEL'
 
 #Actions (temporary)
 ACTION_NONE = 'Event(EVENT_NONE)'
@@ -131,8 +141,17 @@ ACTION_CANCEL_MENU = 'self.set_menu(None)'
 ACTION_OPEN_SPELL_MENU = 'self.open_spell_menu()'
 ACTION_OPEN_BODY_MENU = 'self.open_body_menu()'
 ACTION_TOGGLE_OVERLAY_FOV = 'self.toggle_overlay(OVERLAY_FOV)'
-ACTION_CHARGE = 'self.owner.activate(self.game.abilities["CHARGE"])'
-ACTION_TACKLE = 'self.owner.activate(self.game.abilities["TACKLE"])'
-ACTION_DEFENSIVE_STANCE = 'self.owner.activate(self.game.abilities["DEFENSIVE_STANCE"])'
-ACTION_DODGE = 'self.owner.activate(self.game.abilities["DODGE"])'
 ACTION_HEAL = 'self.owner.notify(Event(EVENT_ACTIVATE, actor=self.owner, ability=self.game.abilities["HEAL"]))'
+ACTION_CHARGE = 'self.owner.notify(Event(EVENT_ACTIVATE, actor=self.owner, ability=self.game.abilities["CHARGE"]))'
+#Extra input actions
+ACTION_CANCEL = 'self.owner.notify(Event(EVENT_CANCEL,actor=self.owner))'
+#INPUT_DIRECTION_4/8 actions
+ACTION_DIRECTION_N  = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(0,-1)))'
+ACTION_DIRECTION_NE = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(1,-1)))'
+ACTION_DIRECTION_E  = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(1,0)))'
+ACTION_DIRECTION_SE = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(1,1)))'
+ACTION_DIRECTION_S  = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(0,1)))'
+ACTION_DIRECTION_SW = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(-1,1)))'
+ACTION_DIRECTION_W  = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(-1,0)))'
+ACTION_DIRECTION_NW = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(-1,-1)))'
+ACTION_DIRECTION_NONE = 'self.owner.notify(Event(EVENT_DIRECTION,actor=self.owner, direction=(0,0)))'

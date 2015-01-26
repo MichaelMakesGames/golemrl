@@ -4,7 +4,9 @@ from event import Event
 
 def heal_trigger(game,ability,event):
     event_type = event.event_type
-    if event_type == EVENT_ACTIVATE and event.ability == ability:
+    if (event_type == EVENT_ACTIVATE and
+        event.ability == ability and
+        ability in event.actor.abilities):
         return True
     return False
 def heal_effect(game,ability,event):
@@ -13,7 +15,44 @@ def heal_effect(game,ability,event):
         bp = actor.creature.body_parts[bp_name]
         if bp.health < bp.max_health:
             bp.heal(math.ceil((bp.max_health-bp.health)/2.0))
+    return Event(EVENT_HEAL,actor=actor)
     
+def charge_trigger(game,ability,event):
+    event_type = event.event_type
+    if (event_type == EVENT_ACTIVATE and
+        event.ability == ability and
+        ability in event.actor.abilities):
+        return True
+    return False
+def charge_effect(game,ability,event):
+    print 'in charge effect'
+    event.actor.add_ability('CHARGE_INPUT')
+    game.input_state = INPUT_DIRECTION_8
+    return Event(EVENT_NONE)
+
+def charge_input_trigger(game,ability,event):
+    event_type = event.event_type
+    if (event_type==EVENT_DIRECTION and
+        ability in event.actor.abilities):
+        game.input_state = INPUT_NORMAL
+        return True
+    return False
+def charge_input_effect(game,ability,event):
+    actor = event.actor
+    direction = event.direction
+    actor.remove_ability(ability)
+    first_tile  = game.cur_level.get_tile(actor.x+direction[0],
+                                          actor.y+direction[1])
+    second_tile = game.cur_level.get_tile(actor.x+direction[0]*2,
+                                          actor.y+direction[1]*2)
+    movement_event = actor.move_or_attack(*direction)
+    if movement_event.event_type == EVENT_MOVE:
+        if second_tile.creature:
+            actor.creature.losing_balance=True
+            return actor.creature.attack(second_tile.creature,
+                                         degree_mod=1,
+                                         sound_multiplier=3)
+    return movement_event
 
 '''
 def get_target_touch(game,caster,direction):

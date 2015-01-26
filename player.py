@@ -77,33 +77,17 @@ class Player(Entity):
         if word not in self.words:
             self.append(word)
 
-    def can_activate(self,ability):
-        return ability.can_activate(self)
+    def add_ability(self,ability):
+        if type(ability)==str:
+            ability = self.game.abilities[ability]
+        if ability not in self.abilities:
+            self.abilities.append(ability)
 
-    def activate(self,ability):
-        if self.can_activate(ability) and self.can_afford(ability.cost):
-            if ability.targeting == 'self':
-                self.pay(ability.cost)
-                return ability.activate(self)
-            elif ability.targeting in ['touch','ranged','other']:
-                self.active = ability
-                return self.notify(Event(EVENT_START_ABILITY,
-                                         actor = self,
-                                         ability = ability))
-        else:
-            return Event(EVENT_NONE)
-
-    def complete_ability(self,direction):
-        ability = self.active
-        self.active = None
-        return (ability.activate(self,direction))
-
-    def cancel_ability(self):
-        ability = self.active
-        self.active = None
-        return self.notify(Event(EVENT_CANCEL_ABILITY,
-                                 actor=self,
-                                 ability=ability))
+    def remove_ability(self,ability):
+        if type(ability)==str:
+            ability = self.game.abilityies[ability]
+        if ability in self.abilities:
+            self.abilities.remove(ability)
 
     def add_trait(self,bp,trait):
         if type(bp) == str:

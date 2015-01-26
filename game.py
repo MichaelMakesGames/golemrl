@@ -47,6 +47,7 @@ class Game:
         self.log_con = Console("Message Log",LOG_X,LOG_Y,LOG_W,LOG_H)
 
         self.state = STATE_PLAYING
+        self.input_state = INPUT_NORMAL
 
     @property
     def depth(self):
@@ -263,9 +264,11 @@ class Game:
 
         for name in self.materials:
             self.player.materials[self.materials[name]] = 0
-        for ability_id in self.abilities:
-            #self.player.abilities.append(self.abilities[ability_id])
-            self.player.add_observer(self.abilities[ability_id])
+        for ability in self.abilities.values():
+            self.player.add_observer(ability)
+            ability.add_observer(self.player.input_handler)
+        self.player.add_ability(self.abilities['HEAL'])
+        self.player.add_ability(self.abilities['CHARGE'])
         for word_id in self.words:
             self.player.words.append(self.words[word_id])
 
@@ -383,8 +386,8 @@ class Game:
             self.clear_all()
 
             self.state = self.player.input_handler(key,mouse,
-                                                   self.menu,
-                                                   self.player.active)
+                                                   self.input_state,
+                                                   self.menu)
             if self.menu and self.state != STATE_MENU:
                 self.menu = None
 

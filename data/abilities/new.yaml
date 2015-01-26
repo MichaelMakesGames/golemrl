@@ -1,4 +1,14 @@
 HEAL:
-  name: heal
+  name: Heal
   trigger: heal_trigger
   effect:  heal_effect
+
+CHARGE:
+  name: Charge
+  trigger: charge_trigger
+  effect: charge_effect
+
+CHARGE_INPUT:
+  name: Charge
+  trigger: charge_input_trigger
+  effect: charge_input_effect
