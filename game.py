@@ -427,6 +427,8 @@ def new_game(seed = 0xDEADBEEF):
 
     message_log = MessageLog(game)
     game.player.add_observer(message_log)
+    for ability in game.abilities.values():
+        ability.add_observer(message_log)
     game.player.input_handler.add_observer(message_log)
     game.message_log = message_log
 

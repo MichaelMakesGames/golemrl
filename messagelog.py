@@ -69,12 +69,8 @@ class MessageLog(Observer):
             color = event.word.color
 
         ### Ability events ###
-        elif event.event_type == EVENT_ACTIVATE:
-            if event.actor is self.game.player:
-                message = "You activate \"%s\"" % (event.ability.name)
-            else:
-                message = "%s activates \"%s\"" % \
-                          (event.actor.creature.name, event.ability.name)
+        elif event.event_type == EVENT_RESOLVE_ABILITY:
+            message = event.ability.message
 
         ### Misc events ###
         elif event.event_type == EVENT_WAKE_UP:

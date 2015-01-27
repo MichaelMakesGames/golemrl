@@ -18,8 +18,10 @@ class InputHandler(Subject):
 
     def on_notify(self,event):
         event_type = event.event_type
-        if event_type != EVENT_NONE and event.actor is self.game.player:
-            self.ability_event = event
+        if (event_type == EVENT_RESOLVE_ABILITY and
+            'actor' in event.event.__dict__ and
+            event.event.actor is self.game.player):
+            self.ability_event = event.event
 
     def __call__(self, key, mouse, state, menu=None):
         key_char = chr(key.c)

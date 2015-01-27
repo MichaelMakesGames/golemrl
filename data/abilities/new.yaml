@@ -5,10 +5,12 @@ HEAL:
 
 CHARGE:
   name: Charge
+  message: You prepare to charge - choose a direction
   trigger: charge_trigger
   effect: charge_effect
 
 CHARGE_INPUT:
   name: Charge
+  message: You charge your opponent!
   trigger: charge_input_trigger
   effect: charge_input_effect
