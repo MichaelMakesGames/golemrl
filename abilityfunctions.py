@@ -8,7 +8,8 @@ def heal_trigger(game,ability,event):
         event.ability == ability and
         ability in event.actor.abilities):
         return True
-    return False
+    else:
+        return False
 def heal_effect(game,ability,event):
     actor = event.actor
     for bp_name in actor.creature.body_parts:
@@ -36,7 +37,11 @@ def charge_input_trigger(game,ability,event):
         ability in event.actor.abilities):
         game.input_state = INPUT_NORMAL
         return True
-    return False
+    elif (event_type==EVENT_CANCEL):
+        game.input_state = INPUT_NORMAL
+        return False
+    else:
+        return False
 def charge_input_effect(game,ability,event):
     actor = event.actor
     direction = event.direction

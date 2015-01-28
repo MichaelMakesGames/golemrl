@@ -52,37 +52,39 @@ class MessageLog(Observer):
                       (event.trait.name, event.body_part.name)
             color = C_EFFECT_MSG
         elif event.event_type == EVENT_REMOVE_TRAIT:
-            message = 'Trait \'%s\' removed from %s' % \
+            message = "Trait \'%s\' removed from %s" % \
                       (event.trait.name, event.body_part.name)
             color = C_EFFECT_MSG
             
         ### Word events ###
         elif event.event_type == EVENT_INSCRIBE:
-            message = 'You feel the powers of %s %s through your %s' % \
+            message = "You feel the powers of %s %s through your %s" % \
                       (event.word.name,
                        event.word.verb,
                        event.body_part.name)
             color = event.word.color
         elif event.event_type == EVENT_ERASE:
-            message = 'You feel the powers of %s leave your %s' % \
+            message = "You feel the powers of %s leave your %s" % \
                       (event.word.name, event.body_part.name)
             color = event.word.color
 
         ### Ability events ###
         elif event.event_type == EVENT_RESOLVE_ABILITY:
             message = event.ability.message
+        elif event.event_type == EVENT_CANCEL:
+            message = "Canceled"
 
         ### Misc events ###
         elif event.event_type == EVENT_WAKE_UP:
             if self.game.player.fov(event.actor):
-                message = '%s wakes up'%event.actor.creature.name
+                message = "%s wakes up"%event.actor.creature.name
                 color = C_MENU
         elif event.event_type == EVENT_NOTICE:
-            message = '%s notices you'%event.actor.creature.name
+            message = "%s notices you"%event.actor.creature.name
             color = C_MENU
         elif event.event_type == EVENT_STUMBLE:
             if event.actor == self.game.player:
-                message = 'You stumble loudly'
+                message = "You stumble loudly"
                 color = C_MENU
         elif event.event_type == EVENT_HEAR:
             if (event.actor == self.game.player and
@@ -90,37 +92,37 @@ class MessageLog(Observer):
                 direction = util.get_direction(event.actor.x,
                                                event.actor.y,
                                                *event.pos)
-                message = 'You hear something to the %s'%direction
+                message = "You hear something to the %s"%direction
                 color = C_MENU
                 
         elif event.event_type == EVENT_HARVEST:
-            message = 'Player harvested a corpse!'
+            message = "Player harvested a corpse!"
             color = event.majority_material.color
         elif event.event_type == EVENT_HEAL:
-            message = 'Player healed %s' % event.part.name
+            message = "Player healed %s" % event.part.name
             color = C_EFFECT_MSG
 
         ### Debug events ###
         elif event.event_type == EVENT_TOGGLE_GHOST:
-            message = 'Ghost mode %s' % \
+            message = "Ghost mode %s" % \
                       ('disabled','enabled')[event.enabled]
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_EXPLORE_EXPLORABLE:
-            message = 'Reachable tiles explored'
+            message = "Reachable tiles explored"
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_EXPLORE_ALL:
-            message = 'Map explored'
+            message = "Map explored"
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_PRINT_POS:
-            message = 'Player at (%i,%i)' % event.entity.pos
+            message = "Player at (%i,%i)" % event.entity.pos
             color = C_DEBUG_MSG
         elif event.event_type == EVENT_PRINT_ROOM:
             room = self.game.cur_level.get_room_at(*event.pos)
             if room:
-                message = 'In room %i, tags: %s' % \
+                message = "In room %i, tags: %s" % \
                           (room.room_id, ', '.join(room.tags))
             else:
-                message = 'Not in a room'
+                message = "Not in a room"
             color = C_DEBUG_MSG
 
         else:
