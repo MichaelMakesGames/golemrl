@@ -572,12 +572,13 @@ class Level:
             if room.has_tag(TAG_CAVE) and not room.has_tag(TAG_START):
                 tile_positions = room.tile_positions[:]
                 for i in range(self.rng.get_int(2,4)):
-                    x, y = self.rng.choose(tile_positions)
-                    depth = self.dungeon.levels.index(self)
-                    tile_positions.remove( (x,y) )
-                    breed_ids = sorted(self.game.breeds)
-                    breed_id = self.rng.choose(breed_ids)
-                    self.game.breeds[breed_id].new(x,y,depth)
+                    if tile_positions:
+                        x, y = self.rng.choose(tile_positions)
+                        depth = self.dungeon.levels.index(self)
+                        tile_positions.remove( (x,y) )
+                        breed_ids = sorted(self.game.breeds)
+                        breed_id = self.rng.choose(breed_ids)
+                        self.game.breeds[breed_id].new(x,y,depth)
 
     def __repr__(self):
         lines = [ '' for i in range(self.h) ]
