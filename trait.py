@@ -1,11 +1,11 @@
 class Trait:
-    def __init__(self, trait_id, name, applied_to,
+    def __init__(self, trait_id, name, applied_to, effect,
                  prefix=None, suffix=None,
                  replaces=None, cancels=[],
-                 cost=None, removal_cost=None, considered='neutral',
-                 health_mod=0, word_slots_mod=0, armor_mod=0,
-                 agility_mod=0, perception_mod=0,
-                 size_mod=0, strength_mod=0):
+                 cost=None, removal_cost=None, considered='neutral'):
+                 #health_mod=0, word_slots_mod=0, armor_mod=0,
+                 #agility_mod=0, perception_mod=0,
+                 #size_mod=0, strength_mod=0):
         self.trait_id = trait_id
         self.name = name
         self.applied_to = applied_to
@@ -20,13 +20,14 @@ class Trait:
         self.removal_cost = removal_cost
         self.considered = considered
 
-        self.health_mod = health_mod
-        self.word_slots_mod = word_slots_mod
-        self.agility_mod = agility_mod
-        self.armor_mod = armor_mod
-        self.perception_mod = perception_mod
-        self.size_mod = size_mod
-        self.strength_mod = strength_mod
+        self.effect = effect
+        #self.health_mod = health_mod
+        #self.word_slots_mod = word_slots_mod
+        #self.agility_mod = agility_mod
+        #self.armor_mod = armor_mod
+        #self.perception_mod = perception_mod
+        #self.size_mod = size_mod
+        #self.strength_mod = strength_mod
 
     @property
     def removable(self):

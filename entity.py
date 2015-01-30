@@ -87,10 +87,10 @@ class Entity(Subject):
                 #make sound while moving
                 if self.creature and self.creature.alive:
                     if self.creature.stumble_roll():
-                        self.make_sound(2)
+                        self.creature.make_sound(2)
                         self.notify(Event(EVENT_STUMBLE,actor=self))
                     else:
-                        self.make_sound()
+                        self.creature.make_sound()
 
         return self.notify(event)
 
@@ -105,15 +105,6 @@ class Entity(Subject):
                     entity.creature and entity.creature.alive):
                     event = self.creature.attack(entity)
         return event #return either move or none, if attack not already returned
-
-    def make_sound(self,multiplier=1):
-        volume = multiplier*self.creature.size*10
-        for entity in self.game.active_entities:
-            if (entity.creature and
-                entity.creature.alive and
-                not entity is self):
-                entity.creature.hear(volume//max(1,self.distance_to(*entity.pos)), *self.pos)
-
     def update(self):
         if self.creature:
             self.creature.update()

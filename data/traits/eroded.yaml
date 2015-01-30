@@ -5,10 +5,10 @@ WEATHERED_HEAD:
   removal_cost:
     CLAY: 10
   considered: bad
-  modifiers:
-    health: -5
-    perception: -3
-    word_slots: -1
+  effect:
+    health_mod: -5
+    perception_mod: -3
+    word_slots_mod: -1
 
 ERODED_HEAD:
   name: Eroded
@@ -18,10 +18,10 @@ ERODED_HEAD:
   removal_cost:
     CLAY: 10
   considered: bad
-  modifiers:
-    health: -10
-    perception: -6
-    word_slots: -1
+  effect:
+    health_mod: -10
+    perception_mod: -6
+    word_slots_mod: -1
 
 WEATHERED_TORSO:
   name: Weathered
@@ -30,10 +30,10 @@ WEATHERED_TORSO:
   removal_cost:
     CLAY: 30
   considered: bad
-  modifiers:
-    health: -15
-    armor: -1
-    agility: -3
+  effect:
+    health_mod: -15
+    armor_mod: -1
+    agility_mod: -3
     
 ERODED_TORSO:
   name: Eroded
@@ -43,13 +43,13 @@ ERODED_TORSO:
   removal_cost:
     CLAY: 30
   considered: bad
-  modifiers:
-    health: -30
-    size: -1
-    armor: -2
-    strength: -3
-    agility: -3
-    word_slots: -2
+  effect:
+    health_mod: -30
+    size_mod: -1
+    armor_mod: -2
+    strength_mod: -3
+    agility_mod: -3
+    word_slots_mod: -2
 
 WEATHERED_ARM:
   name: Weathered
@@ -58,11 +58,11 @@ WEATHERED_ARM:
   removal_cost:
     CLAY: 20
   considered: bad
-  modifiers:
-    health: -10
-    armor: -1
-    strength: -3
-    word_slots: -1
+  effect:
+    health_mod: -10
+    armor_mod: -1
+    strength_mod: -3
+    word_slots_mod: -1
 
 ERODED_ARM:
   name: Eroded
@@ -72,13 +72,13 @@ ERODED_ARM:
   removal_cost:
     CLAY: 20
   considered: bad
-  modifiers:
-    health: -20
-    size: -1
-    armor: -1
-    strength: -3
-    agility: -3
-    word_slots: -2
+  effect:
+    health_mod: -20
+    size_mod: -1
+    armor_mod: -1
+    strength_mod: -3
+    agility_mod: -3
+    word_slots_mod: -2
 
 WEATHERED_LEG:
   name: Weathered
@@ -87,11 +87,11 @@ WEATHERED_LEG:
   removal_cost:
     CLAY: 20
   considered: bad
-  modifiers:
-    health: -10
-    armor: -1
-    agility: -3
-    word_slots: -1
+  effect:
+    health_mod: -10
+    armor_mod: -1
+    agility_mod: -3
+    word_slots_mod: -1
 
 ERODED_LEG:
   name: Eroded
@@ -101,10 +101,10 @@ ERODED_LEG:
   removal_cost:
     CLAY: 20
   considered: bad
-  modifiers:
-    health: -20
-    size: -1
-    armor: -1
-    strength: -3
-    agility: -3
-    word_slots: -2
+  effect:
+    health_mod: -20
+    size_mod: -1
+    armor_mod: -1
+    strength_mod: -3
+    agility_mod: -3
+    word_slots_mod: -2

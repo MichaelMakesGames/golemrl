@@ -17,8 +17,6 @@ class Golem(Creature):
         self.fov = FOV(self.game,self)
         self.death_func=None
         self.ai=None
-        self.losing_balance=False
-        self.off_balance=False
 
     @property
     def name(self): return self.raw_name
@@ -59,14 +57,23 @@ class Golem(Creature):
         return sum([part.strength for part in self.intact_parts])
 
     @property
+    def accuracy_mod(self): #TODO
+        return 0
+    @property
+    def defense_mod(self): #TODO
+        return 0
+    @property
+    def sound_mod(self): #TODO
+        return 0
+
+    @property
     def alive(self):
-        return 0 not in [self.body_parts[part].health
-                         for part in self.body_parts
-                         if self.body_parts[part].vital]
+        return 0 not in [bp.health
+                         for bp in self.body_parts.values()
+                         if bp.vital]
 
     def update(self):
-        self.off_balance = self.losing_balance
-        self.losing_balance = False
+        pass
 
     def take_damage(self,damage_dealt,degree):
         part = self.game.rng.choose_weighted(self.intact_parts,
@@ -74,21 +81,3 @@ class Golem(Creature):
         result = part.take_damage(damage_dealt,degree)
         if result[1]: self.die()
         return result
-
-    def heal(self,part_name):
-        clay = self.game.materials['CLAY']
-
-        if (self.body_parts[part_name].damaged and
-            clay in self.owner.materials and
-            self.owner.materials[clay] >= 10):
-
-            self.owner.materials[clay] -= 10
-            self.body_parts[part_name].health += 1
-            event = Event(EVENT_HEAL,
-                          actor=self,
-                          part=self.body_parts[part_name],
-                          amount=1)
-        else:
-            event = Event(EVENT_NONE)
-        
-        return self.owner.notify(event)

@@ -9,6 +9,7 @@ from creature import Creature
 from breed import Breed
 from golem import Golem
 from bodypart import BodyPart
+from statuseffect import StatusEffect
 from trait import Trait
 from word import Word
 from ability import Ability
@@ -140,10 +141,6 @@ class Game:
 
         for trait_id in self.traits:
             trait = self.traits[trait_id]
-            if 'modifiers' in trait:
-                for modifier in trait['modifiers']:
-                    trait[modifier+'_mod'] = trait['modifiers'][modifier]
-                del trait['modifiers']
             trait = Trait(trait_id,**self.traits[trait_id])
             self.traits[trait_id] = trait
 
@@ -155,6 +152,8 @@ class Game:
             if not trait.cancels: trait.cancels=[]
             for i in range(len(trait.cancels)):
                 trait.cancels[i] = self.traits[trait.cancels[i]]
+
+            trait.effect = StatusEffect(trait_id,**trait.effect)
 
             if trait.cost:
                 yamlhelp.convert_keys(trait.cost,self.materials)
@@ -312,13 +311,6 @@ class Game:
             self.panel_con.print_string(x,y,part_health)
             y += 1
 
-        if self.player.creature.off_balance:
-            y += 1
-            x = 2
-            self.panel_con.set_default_foreground(C_MENU)
-            self.panel_con.print_string(x,y,'OFF BALANCE!')
-            y += 1
-
         y += 1
         for material in sorted(self.player.materials):
             x = 2
@@ -365,7 +357,7 @@ class Game:
                 entity.render(focus_x, focus_y, self.map_con)
         self.player.render(focus_x, focus_y, self.map_con)
         self.map_con.draw_border(True,C_BORDER,C_BORDER_BKGND)
-        #self.map_con.blit()
+
         if self.menu:
             self.menu.render(self.map_con)
         self.map_con.blit()

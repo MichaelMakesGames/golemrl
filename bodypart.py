@@ -1,8 +1,9 @@
 from config import *
 
+from creature import Creature
 from event import Event
 
-class BodyPart:
+class BodyPart(Creature):
     def __init__(self,golem,name,
                  word_slots,
                  health,agility,armor,perception,size,strength,
@@ -15,6 +16,8 @@ class BodyPart:
         self.vital = vital
         self.traits = traits
         self.words = [None for i in range(word_slots)]
+
+        self.status_effects = []
 
         self.base_word_slots = word_slots
         self.base_agility = agility
@@ -32,34 +35,29 @@ class BodyPart:
 
     @property
     def max_health(self):
-        return self.base_max_health + sum([trait.health_mod
-                                           for trait in self.traits])
+        return self.base_max_health + self.health_mod
 
     @property
     def agility(self):
-        return self.base_agility + sum([trait.agility_mod
-                                        for trait in self.traits])
+        return self.base_agility + self.agility_mod
     @property
     def armor(self):
-        return self.base_armor + sum([trait.armor_mod
-                                      for trait in self.traits])
+        return self.base_armor + self.armor_mod
     @property
     def perception(self):
-        return self.base_perception + sum([trait.perception_mod
-                                           for trait in self.traits])
+        return self.base_perception + self.perception_mod
     @property
     def size(self):
-        return self.base_size + sum([trait.size_mod
-                                     for trait in self.traits])
+        return self.base_size + self.size_mod
     @property
     def strength(self):
-        return self.base_strength + sum([trait.strength_mod
-                                         for trait in self.traits])
-
+        return self.base_strength + self.strength_mod
+    @property
+    def word_slots_mod(self):
+        return sum([se.word_slots_mod for se in self.status_effects])
     @property
     def word_slots(self):
-        slots = self.base_word_slots + sum([trait.word_slots_mod
-                                            for trait in self.traits])
+        slots = self.base_word_slots + self.word_slots_mod
         return max(0,slots)
 
 
@@ -155,7 +153,8 @@ class BodyPart:
             if trait.replaces:
                 self.remove_trait(trait.replaces)
             self.traits.append(trait)
-            self.health += trait.health_mod
+            self.add_status_effect(trait.effect)
+            #self.health += trait.health_mod
             self.check_word_slots()
             if not force: #WARNING, this might cause trouble, but for now it seems like we're best not raising an event when we force a trait (ie player starting traits, and a trait that's added as a result of trait that replaced it being removed
                 return self.entity.notify(Event(EVENT_ADD_TRAIT,
@@ -169,7 +168,8 @@ class BodyPart:
             if trait.replaces:
                 self.add_trait(trait.replaces, True)
             self.traits.remove(trait)
-            self.health -= trait.health_mod
+            self.remove_status_effect(trait.effect)
+            #self.health -= trait.health_mod
             self.check_word_slots()
             if not force:
                 return self.entity.notify(Event(EVENT_REMOVE_TRAIT,
