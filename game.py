@@ -324,6 +324,18 @@ class Game:
             self.panel_con.print_string(x,y,part_health)
             y += 1
 
+        status_effects = []
+        for bp in self.player.creature.body_parts.values():
+            status_effects += bp.status_effects
+        if status_effects:
+            y += 1
+            for se in status_effects:
+                if se.name:
+                    x = 2
+                    self.panel_con.set_default_foreground(C_MENU)
+                    self.panel_con.print_string(x,y,se.name)
+                    y += 1
+
         y += 1
         for material in sorted(self.player.materials):
             x = 2

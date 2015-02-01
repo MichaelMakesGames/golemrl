@@ -41,6 +41,9 @@ class ActiveStatusEffect:
         self.creature = creature
 
     @property
+    def name(self): return self.status_effect.name
+
+    @property
     def health_mod(self): return self.status_effect.health_mod
     @property
     def agility_mod(self): return self.status_effect.agility_mod
