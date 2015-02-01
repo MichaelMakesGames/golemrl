@@ -177,8 +177,9 @@ class Creature:
             return Event(EVENT_NONE)
 
     def add_status_effect(self,status_effect):
-        #TODO pass in id
         #TODO status effect already active... stacks? replaces? nothing?
+        if type(status_effect) == str:
+            status_effect = self.game.status_effects[status_effect]
         self.status_effects.append(ActiveStatusEffect(status_effect,self))
         self.health += status_effect.health_mod
     def remove_status_effect(self,status_effect):

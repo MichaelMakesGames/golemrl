@@ -81,3 +81,7 @@ class Golem(Creature):
         result = part.take_damage(damage_dealt,degree)
         if result[1]: self.die()
         return result
+
+    def add_status_effect(self,status_effect):
+        print "WARNING: Body part not specified for status effect; applying to torso"
+        self.body_parts['Torso'].add_status_effect(status_effect)

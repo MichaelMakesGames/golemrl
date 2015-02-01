@@ -53,9 +53,8 @@ def charge_input_effect(game,ability,event):
     movement_event = actor.move_or_attack(*direction)
     if movement_event.event_type == EVENT_MOVE:
         if second_tile.creature:
-            actor.creature.losing_balance=True
+            actor.creature.add_status_effect('OFF_BALANCE')
             return actor.creature.attack(second_tile.creature,
-                                         degree_mod=1,
                                          sound_multiplier=3)
     return movement_event
 

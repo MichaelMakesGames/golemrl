@@ -35,6 +35,7 @@ class Game:
         self.tile_types = {}
         self.materials = {}
         self.words = {}
+        self.status_effects = {}
         self.traits = {}
         self.abilities = {}
         self.breeds = {}
@@ -81,6 +82,7 @@ class Game:
         load_order = [('tiles',self.load_tile_types),
                       ('materials',self.load_materials),
                       ('words',self.load_words),
+                      ('statuseffects',self.load_status_effects),
                       ('traits',self.load_traits),
                       ('abilities',self.load_abilities),
                       ('breeds',self.load_breeds),
@@ -131,6 +133,17 @@ class Game:
             self.materials[material_id] = material
 
             material.color = yamlhelp.load_color(material.color)
+
+    def load_status_effects(self,files):
+        for file_name in files:
+            f = open(file_name)
+            data = yaml.load(f)
+            f.close()
+            yamlhelp.merge(data,self.status_effects)
+        for status_effect_id in self.status_effects:
+            status_effect = self.status_effects[status_effect_id]
+            status_effect = StatusEffect(status_effect_id, **status_effect)
+            self.status_effects[status_effect_id] = status_effect
 
     def load_traits(self,files):
         for file_name in files:
@@ -319,13 +332,13 @@ class Game:
             self.panel_con.print_string(x,y,s)
             y += 1
 
-        y += 1
+        """y += 1
         for word in sorted(self.player.words):
             color = word.color
             x = 2
             self.panel_con.set_default_foreground(word.color)
             self.panel_con.print_string(x,y,word.name)
-            y += 1
+            y += 1"""
 
         y += 1
         self.panel_con.set_default_foreground(C_MENU)

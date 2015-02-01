@@ -28,6 +28,11 @@ tiles:
     - "data/tiles"
   files: []
 
+statuseffects:
+  directories:
+    - "data/statuseffects"
+  files: []
+
 traits:
   directories:
     - "data/traits"

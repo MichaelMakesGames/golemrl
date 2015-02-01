@@ -1,0 +1,4 @@
+OFF_BALANCE:
+  name: Off Balance
+  turns: 2
+  agility_mod: -1
