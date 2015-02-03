@@ -78,6 +78,15 @@ class BodyPart(Creature):
     def damaged(self):
         return self.health < self.max_health
 
+    def update(self):
+        se_to_remove = []
+        for se in self.status_effects:
+            remove = se.update()
+            if remove:
+                se_to_remove.append(se)
+        for se in se_to_remove:
+            self.remove_status_effect(se)
+
     def take_damage(self,damage_dealt,degree):
         if self.intact:
             damage_received = damage_dealt*degree - self.armor

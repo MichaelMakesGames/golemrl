@@ -73,7 +73,8 @@ class Golem(Creature):
                          if bp.vital]
 
     def update(self):
-        pass
+        for bp in self.body_parts.values():
+            bp.update()
 
     def take_damage(self,damage_dealt,degree):
         part = self.game.rng.choose_weighted(self.intact_parts,
