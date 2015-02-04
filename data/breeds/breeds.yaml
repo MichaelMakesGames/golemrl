@@ -11,7 +11,7 @@ ANIMATE_CLAY:
   materials:
     CLAY: 5
 
-ERODEN_GOLEM:
+ERODED_GOLEM:
   name: Eroded Golem
   char: e
   color: sepia
