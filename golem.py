@@ -57,14 +57,17 @@ class Golem(Creature):
         return sum([part.strength for part in self.intact_parts])
 
     @property
-    def accuracy_mod(self): #TODO
-        return 0
+    def accuracy_mod(self):
+        return sum([part.accuracy_mod for part in self.intact_parts])
     @property
-    def defense_mod(self): #TODO
-        return 0
+    def defense_mod(self):
+        return sum([part.defense_mod for part in self.intact_parts])
     @property
-    def sound_mod(self): #TODO
-        return 0
+    def sound_mod(self):
+        return sum([part.sound_mod for part in self.intact_parts])
+    @property
+    def damage_mod(self):
+        return sum([part.damage_mod for part in self.intact_parts])
 
     @property
     def alive(self):

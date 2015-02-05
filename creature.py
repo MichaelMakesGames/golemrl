@@ -38,18 +38,6 @@ class Creature:
             return self.majority_material.color
 
     @property
-    def max_health(self): return self.breed.max_health + self.health_mod
-    @property
-    def agility(self): return self.breed.agility + self.agility_mod
-    @property
-    def armor(self): return self.breed.armor + self.armor_mod
-    @property
-    def perception(self): return self.breed.perception + self.perception_mod
-    @property
-    def size(self): return self.breed.size + self.size_mod
-    @property
-    def strength(self): return self.breed.strength + self.strength_mod
-    @property
     def health_mod(self):
         return sum([se.health_mod for se in self.status_effects])
     @property
@@ -72,10 +60,26 @@ class Creature:
         return sum([se.accuracy_mod for se in self.status_effects])
     @property
     def defense_mod(self):
-        return sum([se.sound for se in self.status_effects])
+        return sum([se.defense_mod for se in self.status_effects])
     @property
     def sound_mod(self):
         return sum([se.sound_mod for se in self.status_effects])
+    @property
+    def damage_mod(self):
+        return sum([se.damage_mod for se in self.status_effects])
+
+    @property
+    def max_health(self): return self.breed.max_health + self.health_mod
+    @property
+    def agility(self): return self.breed.agility + self.agility_mod
+    @property
+    def armor(self): return self.breed.armor + self.armor_mod
+    @property
+    def perception(self): return self.breed.perception + self.perception_mod
+    @property
+    def size(self): return self.breed.size + self.size_mod
+    @property
+    def strength(self): return self.breed.strength + self.strength_mod
 
     @property
     def materials(self): return self.breed.materials
@@ -114,7 +118,7 @@ class Creature:
         return roll
 
     def damage_roll(self): #strength + size?
-        return self.strength//3
+        return self.strength//3 + self.damage_mod
 
     def stumble_roll(self): #roll agility against size
         return self.game.rng.stat_roll(self.agility)>self.game.rng.stat_roll(self.size)
