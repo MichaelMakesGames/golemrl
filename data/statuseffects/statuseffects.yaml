@@ -2,3 +2,9 @@ OFF_BALANCE:
   name: Off Balance
   turns: 1
   agility_mod: -1
+
+CHARGING:
+  name: Charging
+  turns: 0
+  sound_mod: +1
+  accuracy_mod: +5

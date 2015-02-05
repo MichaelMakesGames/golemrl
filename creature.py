@@ -140,14 +140,14 @@ class Creature:
             if self.health > self.max_health:
                 self.health = self.max_health
 
-    def attack(self,entity,sound_multiplier=2):
+    def attack(self,entity):
         if entity.creature:
             event = Event(EVENT_ATTACK, actor=self.owner, target=entity)
             event.degree = (self.accuracy_roll()-entity.creature.defense_roll()) // DEGREE_OF_SUCCESS + 1
             if event.degree>0:
                 event.hit = True
                 event.dealt, event.killed = entity.creature.take_damage(self.damage_roll(),event.degree)
-                self.make_sound(sound_multiplier)
+                self.make_sound(2)
             else:
                 event.hit = False
             return self.owner.notify(event)
