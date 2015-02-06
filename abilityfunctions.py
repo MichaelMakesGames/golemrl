@@ -16,7 +16,7 @@ def heal_effect(game,ability,event):
         bp = actor.creature.body_parts[bp_name]
         if bp.health < bp.max_health:
             bp.heal(math.ceil((bp.max_health-bp.health)/2.0))
-    return Event(EVENT_HEAL,actor=actor)
+    return Event(EVENT_USE,actor=actor,ability=ability)
     
 def charge_trigger(game,ability,event):
     event_type = event.event_type

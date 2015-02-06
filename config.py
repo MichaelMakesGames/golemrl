@@ -107,6 +107,7 @@ EVENT_NOTICE = 'NOTICE'
 EVENT_STUMBLE = 'STUMBLE'
 EVENT_HEAR = 'HEAR'
 EVENT_ACTIVATE = 'ACTIVATE'
+EVENT_USE = 'USE' #representing an active ability use which counts as a turn; returned by some ability events
 EVENT_RESOLVE_ABILITY = 'RESOLVE_ABILITY'
 #for dealing with abilities requiring input
 EVENT_DIRECTION = 'DIRECTION'
