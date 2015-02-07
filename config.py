@@ -145,6 +145,7 @@ ACTION_OPEN_BODY_MENU = 'self.open_body_menu()'
 ACTION_TOGGLE_OVERLAY_FOV = 'self.toggle_overlay(OVERLAY_FOV)'
 ACTION_HEAL = 'self.owner.notify(Event(EVENT_ACTIVATE, actor=self.owner, ability=self.game.abilities["HEAL"]))'
 ACTION_CHARGE = 'self.owner.notify(Event(EVENT_ACTIVATE, actor=self.owner, ability=self.game.abilities["CHARGE"]))'
+ACTION_DODGE = 'self.owner.notify(Event(EVENT_ACTIVATE, actor=self.owner, ability=self.game.abilities["DODGE"]))'
 #Extra input actions
 ACTION_CANCEL = 'self.owner.notify(Event(EVENT_CANCEL,actor=self.owner))'
 #INPUT_DIRECTION_4/8 actions

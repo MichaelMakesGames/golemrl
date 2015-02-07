@@ -89,3 +89,6 @@ class Golem(Creature):
     def add_status_effect(self,status_effect):
         print "WARNING: Body part not specified for status effect; applying to torso"
         self.body_parts['Torso'].add_status_effect(status_effect)
+    def remove_status_effect(self,status_effect):
+        print "WARNING: Body part not specified for status effect; applying to torso"
+        self.body_parts['Torso'].remove_status_effect(status_effect)

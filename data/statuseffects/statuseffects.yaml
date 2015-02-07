@@ -5,6 +5,9 @@ OFF_BALANCE:
 
 CHARGING:
   name: Charging
-  turns: 0
   sound_mod: +1
   accuracy_mod: +5
+
+DODGING:
+  name: Dodging
+  defense_mod: +5  

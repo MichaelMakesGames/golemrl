@@ -68,7 +68,7 @@ class InputHandler(Subject):
                            #('a',False): ACTION_TACKLE,
                            ('c',False): ACTION_CHARGE,
                            #('d',False): ACTION_DEFENSIVE_STANCE,
-                           #('g',False): ACTION_DODGE,
+                           ('g',False): ACTION_DODGE,
                            ('g',True): ACTION_TOGGLE_GHOST,
                            ('e',True): ACTION_EXPLORE_EXPLORABLE,
                            ('a',True): ACTION_EXPLORE_ALL,

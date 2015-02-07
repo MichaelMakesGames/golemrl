@@ -26,12 +26,11 @@ def charge_trigger(game,ability,event):
         return True
     return False
 def charge_effect(game,ability,event):
-    print 'in charge effect'
-    event.actor.add_ability('CHARGE_INPUT')
+    event.actor.add_ability('CHARGE_1')
     game.input_state = INPUT_DIRECTION_8
     return Event(EVENT_NONE)
 
-def charge_input_trigger(game,ability,event):
+def charge_1_trigger(game,ability,event):
     event_type = event.event_type
     if (event_type==EVENT_DIRECTION and
         ability in event.actor.abilities):
@@ -42,7 +41,7 @@ def charge_input_trigger(game,ability,event):
         return False
     else:
         return False
-def charge_input_effect(game,ability,event):
+def charge_1_effect(game,ability,event):
     actor = event.actor
     direction = event.direction
     actor.remove_ability(ability)
@@ -60,6 +59,62 @@ def charge_input_effect(game,ability,event):
 
     return movement_event
 
+def dodge_trigger(game,ability,event):
+    event_type = event.event_type
+    if (event_type == EVENT_ACTIVATE and
+        event.ability == ability and
+        ability in event.actor.abilities):
+        print 'dodge triggered'
+        return True
+    else:
+        return False
+def dodge_effect(game,ability,event):
+    print 'in dodge_effect'
+    actor = event.actor
+    actor.creature.add_status_effect('DODGING')
+    actor.add_ability('DODGE_1')
+    actor.add_ability('DODGE_1_ALT')
+    return Event(EVENT_USE,actor=actor,ability=ability)
+def dodge_1_trigger(game,ability,event):
+    event_type = event.event_type
+    if (event_type == EVENT_ATTACK and
+        ability in event.target.abilities and
+        event.hit = False):
+        print 'dodge 1 triggered'
+        return True
+    return False
+def dodge_1_effect(game,ability,event):
+    print 'in dodge_1_effect'
+    event_type = event.event_type
+    event.target.creature.remove_status_effect('DODGING')
+    event.target.remove_ability(ability)
+    event.target.remove_ability('DODGE_1_ALT')
+    if event.hit == False:
+        event.target.add_ability('DODGE_2')
+        game.input_state = INPUT_DIRECTION_8
+        return Event(EVENT_NONE)
+    else:
+        return Event(EVENT_NONE)
+def dodge_1_alt_trigger(game,ability,event):
+    pass
+def dodge_1_alt_effect(game,ability,event):
+    pass
+def dodge_2_trigger(game,ability,event):
+    event_type = event.event_type
+    if (event_type == EVENT_DIRECTION and
+        ability in event.actor.abilities):
+        print 'dodge 2 triggered'
+        return True
+    return False
+def dodge_2_effect(game,ability,event):
+    print 'in dodge_2_effect'
+    actor = event.actor
+    movement_event = actor.move_to(actor.x+event.direction[0],
+                                   actor.y+event.direction[1])
+    if movement_event.event_type == EVENT_MOVE:
+        actor.remove_ability(ability)
+        game.input_state = INPUT_NORMAL
+    return movement_event
 '''
 def get_target_touch(game,caster,direction):
     x = caster.x + direction[0]

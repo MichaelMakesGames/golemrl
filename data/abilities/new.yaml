@@ -8,9 +8,26 @@ CHARGE:
   message: You prepare to charge - choose a direction
   trigger: charge_trigger
   effect: charge_effect
-
-CHARGE_INPUT:
+CHARGE_1:
   name: Charge
   message: You charge your opponent!
-  trigger: charge_input_trigger
-  effect: charge_input_effect
+  trigger: charge_1_trigger
+  effect: charge_1_effect
+
+DODGE:
+  name: Dodge
+  message: You prepare to dodge!
+  trigger: dodge_trigger
+  effect: dodge_effect
+DODGE_1:
+  name: Dodge
+  trigger: dodge_1_trigger
+  effect: dodge_1_effect
+DODGE_1_ALT:
+  name: Dodge
+  trigger: dodge_1_alt_trigger
+  effect: dodge_1_alt_effect
+DODGE_2:
+  name: Dodge
+  trigger: dodge_2_trigger
+  effect: dodge_2_effect
