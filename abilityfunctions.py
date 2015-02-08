@@ -79,13 +79,12 @@ def dodge_1_trigger(game,ability,event):
     event_type = event.event_type
     if (event_type == EVENT_ATTACK and
         ability in event.target.abilities and
-        event.hit = False):
+        event.hit == False):
         print 'dodge 1 triggered'
         return True
     return False
 def dodge_1_effect(game,ability,event):
     print 'in dodge_1_effect'
-    event_type = event.event_type
     event.target.creature.remove_status_effect('DODGING')
     event.target.remove_ability(ability)
     event.target.remove_ability('DODGE_1_ALT')
@@ -95,10 +94,29 @@ def dodge_1_effect(game,ability,event):
         return Event(EVENT_NONE)
     else:
         return Event(EVENT_NONE)
+
 def dodge_1_alt_trigger(game,ability,event):
-    pass
+    event_type = event.event_type
+    if (event_type == EVENT_ATTACK and
+        ability in event.target.abilities and
+        event.hit == True):
+        print 'dodge 1 alt triggered'
+        return True
+    elif ((event_type==EVENT_MOVE or
+           event_type==EVENT_ATTACK) and
+          ability in event.actor.abilities):
+        return True
 def dodge_1_alt_effect(game,ability,event):
-    pass
+    if (event.event_type == EVENT_ATTACK and
+        ability in event.target.abilities):
+        dodger = event.target
+    else:
+        dodger = event.actor
+    dodger.creature.remove_status_effect('DODGING')
+    dodger.remove_ability(ability)
+    dodger.remove_ability('DODGE_1')
+    return Event(EVENT_NONE)
+
 def dodge_2_trigger(game,ability,event):
     event_type = event.event_type
     if (event_type == EVENT_DIRECTION and

@@ -21,6 +21,7 @@ DODGE:
   effect: dodge_effect
 DODGE_1:
   name: Dodge
+  message: You jump out of the way - choose a direction!
   trigger: dodge_1_trigger
   effect: dodge_1_effect
 DODGE_1_ALT:

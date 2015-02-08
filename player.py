@@ -85,7 +85,7 @@ class Player(Entity):
 
     def remove_ability(self,ability):
         if type(ability)==str:
-            ability = self.game.abilityies[ability]
+            ability = self.game.abilities[ability]
         if ability in self.abilities:
             self.abilities.remove(ability)
 
