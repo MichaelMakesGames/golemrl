@@ -9,7 +9,7 @@ from ai import AI
 class Breed:
     def __init__(self,game,breed_id,name,char,color,
                  health,agility,armor,perception,size,strength,materials,
-                 death_func=None):
+                 death_func=None,abilities=[]):
         self.game = game
         self.breed_id = breed_id
         self.name = name
@@ -24,6 +24,7 @@ class Breed:
         self.strength = strength
         self.materials = materials
         self.death_func = death_func
+        self.abilities = abilities
 
     def new(self,x,y,depth):
         entity = Entity(self.game,self.game.next_id(),

@@ -17,6 +17,7 @@ class Golem(Creature):
         self.fov = FOV(self.game,self)
         self.death_func=None
         self.ai=None
+        self.abilities=[]
 
     @property
     def name(self): return self.raw_name
@@ -92,3 +93,15 @@ class Golem(Creature):
     def remove_status_effect(self,status_effect):
         print "WARNING: Body part not specified for status effect; applying to torso"
         self.body_parts['Torso'].remove_status_effect(status_effect)
+
+    def add_ability(self,ability):
+        if type(ability)==str:
+            ability = self.game.abilities[ability]
+        if ability not in self.abilities:
+            self.abilities.append(ability)
+
+    def remove_ability(self,ability):
+        if type(ability)==str:
+            ability = self.game.abilities[ability]
+        if ability in self.abilities:
+            self.abilities.remove(ability)

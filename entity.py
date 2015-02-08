@@ -22,8 +22,6 @@ class Entity(Subject):
         self.move_through = move_through
         self.see_through = see_through
 
-        self.abilities = [] #WARNING clean this up!
-
         self.creature = creature
         if self.creature:
             self.creature.owner = self

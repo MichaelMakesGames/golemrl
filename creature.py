@@ -90,6 +90,9 @@ class Creature:
     @property
     def death_func(self):
         return self.breed.death_func
+    @property
+    def abilities(self):
+        return self.breed.abilities
 
     def update(self):
         se_to_remove = []

@@ -20,7 +20,6 @@ class Player(Entity):
         Entity.__init__(self,*args,**kwargs)
 
         self.materials = {}
-        self.abilities = []
         self.words = []
         self.active = None
         self.ghost = False
@@ -77,17 +76,6 @@ class Player(Entity):
         if word not in self.words:
             self.append(word)
 
-    def add_ability(self,ability):
-        if type(ability)==str:
-            ability = self.game.abilities[ability]
-        if ability not in self.abilities:
-            self.abilities.append(ability)
-
-    def remove_ability(self,ability):
-        if type(ability)==str:
-            ability = self.game.abilities[ability]
-        if ability in self.abilities:
-            self.abilities.remove(ability)
 
     def add_trait(self,bp,trait):
         if type(bp) == str:

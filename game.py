@@ -279,9 +279,9 @@ class Game:
         for ability in self.abilities.values():
             self.player.add_observer(ability)
             ability.add_observer(self.player.input_handler)
-        self.player.add_ability(self.abilities['HEAL'])
-        self.player.add_ability(self.abilities['CHARGE'])
-        self.player.add_ability(self.abilities['DODGE'])
+        self.player.creature.add_ability(self.abilities['HEAL'])
+        self.player.creature.add_ability(self.abilities['CHARGE'])
+        self.player.creature.add_ability(self.abilities['DODGE'])
         for word_id in self.words:
             self.player.words.append(self.words[word_id])
 
