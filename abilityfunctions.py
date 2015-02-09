@@ -54,7 +54,7 @@ def charge_1_effect(game,ability,event):
         if second_tile.creature:
             actor.creature.add_status_effect('OFF_BALANCE')
             actor.creature.add_status_effect('CHARGING')
-            return actor.creature.attack(second_tile.creature)
+            actor.creature.attack(second_tile.creature)
             actor.creature.remove_status_effect('CHARGING')
 
     return movement_event
