@@ -71,6 +71,8 @@ class MessageLog(Observer):
         ### Ability events ###
         elif event.event_type == EVENT_RESOLVE_ABILITY:
             message = event.ability.message
+            if event.ability.color:
+                color = event.ability.color
         elif event.event_type == EVENT_CANCEL:
             message = "Canceled"
 

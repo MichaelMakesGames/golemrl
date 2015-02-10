@@ -1,16 +1,20 @@
 HEAL:
   name: Heal
+  message: You feel refreshed
+  color: light green
   trigger: heal_trigger
   effect:  heal_effect
 
 CHARGE:
   name: Charge
   message: You prepare to charge - choose a direction
+  color: light red
   trigger: charge_trigger
   effect: charge_effect
 CHARGE_1:
   name: Charge
   message: You charge your opponent!
+  color: light red
   trigger: charge_1_trigger
   effect: charge_1_effect
 

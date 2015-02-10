@@ -197,19 +197,12 @@ class Game:
 
         for ability_id in self.abilities:
             ability = self.abilities[ability_id]
-            #ability['ability_type'] = ability['type']
-            #del ability['type']
             ability = Ability(self, ability_id, **ability)
             self.abilities[ability_id] = ability
-
-            #yamlhelp.convert_keys(ability.cost,self.materials)
-
-            #if ability.requires == None:
-            #    ability.requires = [None,None]
-            #else:
-            #    ability.requires[1] = self.words[ability.requires[1]]
             ability.trigger = eval('abilityfunctions.%s'%ability.trigger)
             ability.effect  = eval('abilityfunctions.%s'%ability.effect)
+            if ability.color:
+                ability.color = yamlhelp.load_color(ability.color)
 
     def load_breeds(self,files):
         for file_name in files:
