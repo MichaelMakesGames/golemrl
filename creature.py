@@ -17,6 +17,7 @@ class Creature:
         self.fov = FOV(self.game,self)
         self.ai = AI(self.game,self)
         self.status_effects = []
+        self.energy = 0
 
     @property
     def name(self):
@@ -67,6 +68,9 @@ class Creature:
     @property
     def damage_mod(self):
         return sum([se.damage_mod for se in self.status_effects])
+    @property
+    def speed_mod(self):
+        return sum([se.speed_mod for se in self.status_effects])
 
     @property
     def max_health(self): return self.breed.max_health + self.health_mod
@@ -83,10 +87,10 @@ class Creature:
 
     @property
     def materials(self): return self.breed.materials
-
     @property
     def majority_material(self):
         return sorted(self.materials,key=lambda m: self.materials[m])[-1]
+
     @property
     def death_func(self):
         return self.breed.death_func
@@ -94,17 +98,26 @@ class Creature:
     def abilities(self):
         return self.breed.abilities
 
-    def update(self):
-        se_to_remove = []
-        for se in self.status_effects:
-            remove = se.update()
-            if remove:
-                se_to_remove.append(se)
-        for se in se_to_remove:
-            self.remove_status_effect(se)
+    @property
+    def speed(self):
+        return self.breed.speed + self.speed_mod
 
-        if self.alive:
-            self.ai.update()
+    def update(self):
+        self.energy += self.speed
+        if self.energy >= ENERGY_THRESHOLD:
+            self.energy -= ENERGY_THRESHOLD
+            
+            #TODO status effect durations with new energy system
+            se_to_remove = []
+            for se in self.status_effects:
+                remove = se.update()
+                if remove:
+                    se_to_remove.append(se)
+            for se in se_to_remove:
+                self.remove_status_effect(se)
+
+            if self.alive:
+                self.ai.update()
 
     def defense_roll(self): #agility - size
         if (self.ai and self.ai.state != AI_FIGHTING):

@@ -1,6 +1,7 @@
 Player:
   char: '@' #quotes needed for some symbols
   color: white
+  speed: 10
   body_parts:
     Head:
       health: 15

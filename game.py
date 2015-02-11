@@ -403,6 +403,8 @@ class Game:
                 self.menu = None
 
             if self.state == STATE_PLAYING:
+                self.player.creature.energy -= ENERGY_THRESHOLD
+            while self.state == STATE_PLAYING:
                 player_room = self.cur_level.get_room_at(*self.player.pos)
                 if player_room:
                     active_rooms = [player_room]
@@ -424,7 +426,11 @@ class Game:
 
                 for entity in self.active_entities:
                     entity.update()
-                self.state = STATE_PAUSED
+                    
+                self.player.creature.energy += self.player.creature.speed
+                print self.player.creature.energy
+                if self.player.creature.energy >= ENERGY_THRESHOLD:
+                    self.state = STATE_PAUSED
 
             self.dungeon.update()
             self.render_all()

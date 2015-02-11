@@ -7,7 +7,7 @@ class StatusEffect:
                  perception_mod=0, size_mod=0, strength_mod=0,
                  damage_mod=0, accuracy_mod=0, defense_mod=0,
                  word_slots_mod=0,
-                 heal=0, damage=0, sound_mod=0):
+                 heal=0, damage=0, sound_mod=0, speed_mod=0):
                  
         self.status_effect_id = status_effect_id
         self.name = name
@@ -31,6 +31,7 @@ class StatusEffect:
         self.damage = damage
 
         self.sound_mod = sound_mod #multiplier
+        self.speed_mod = speed_mod
 
 class ActiveStatusEffect:
     def __init__(self,status_effect, creature, turns=None):
@@ -68,7 +69,8 @@ class ActiveStatusEffect:
     def heal(self): return self.status_effect.heal
     @property
     def sound_mod(self): return self.status_effect.sound_mod
-
+    @property
+    def speed_mod(self): return self.status_effect.speed_mod
     @property
     def word_slots_mod(self): return self.status_effect.word_slots_mod
 

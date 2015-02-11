@@ -7,13 +7,15 @@ from creature import Creature
 from fov import FOV
 
 class Golem(Creature):
-    def __init__(self,game,name,char,color,body_parts):
+    def __init__(self,game,name,char,color,body_parts,speed):
         self.game = game
         self.raw_name = name
         self.raw_char = char
         self.raw_color = color
         self.breed = self #WARNING so that code for handling other creatures works for players as well -- kinda messy...
         self.body_parts = body_parts
+        self.base_speed = speed
+        self.energy = 0
         self.fov = FOV(self.game,self)
         self.death_func=None
         self.ai=None
@@ -69,6 +71,13 @@ class Golem(Creature):
     @property
     def damage_mod(self):
         return sum([part.damage_mod for part in self.intact_parts])
+
+    @property
+    def speed_mod(self):
+        return sum([part.speed_mod for part in self.intact_parts])
+    @property
+    def speed(self):
+        return self.base_speed + self.speed_mod
 
     @property
     def alive(self):

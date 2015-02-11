@@ -9,6 +9,7 @@ from ai import AI
 class Breed:
     def __init__(self,game,breed_id,name,char,color,
                  health,agility,armor,perception,size,strength,materials,
+                 speed=10,
                  death_func=None,abilities=[]):
         self.game = game
         self.breed_id = breed_id
@@ -23,6 +24,7 @@ class Breed:
         self.size = size
         self.strength = strength
         self.materials = materials
+        self.speed = speed
         self.death_func = death_func
         self.abilities = abilities
 

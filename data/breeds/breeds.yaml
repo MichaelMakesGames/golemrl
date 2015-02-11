@@ -8,6 +8,7 @@ ANIMATE_CLAY:
   perception: 6
   size: 6
   strength: 6
+  speed: 5
   materials:
     CLAY: 5
 
