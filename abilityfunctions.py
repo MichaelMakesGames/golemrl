@@ -90,6 +90,7 @@ def dodge_1_effect(game,ability,event):
     event.target.creature.remove_ability('DODGE_1_ALT')
     if event.hit == False:
         event.target.creature.add_ability('DODGE_2')
+        event.target.creature.energy += ENERGY_THRESHOLD
         game.input_state = INPUT_DIRECTION_8
         return Event(EVENT_NONE)
     else:
