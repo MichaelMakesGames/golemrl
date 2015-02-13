@@ -6,7 +6,7 @@ from event import Event
 class BodyPart(Creature):
     def __init__(self,golem,name,
                  word_slots,
-                 health,agility,armor,perception,size,strength,
+                 health,agility,armor,perception,size,strength,speed,
                  vital=False,
                  traits=[]):
         self.golem = golem
@@ -25,6 +25,7 @@ class BodyPart(Creature):
         self.base_perception = perception
         self.base_size = size
         self.base_strength = strength
+        self.base_speed = speed
 
     @property
     def entity(self):
@@ -52,6 +53,9 @@ class BodyPart(Creature):
     @property
     def strength(self):
         return self.base_strength + self.strength_mod
+    @property
+    def speed(self):
+        return self.base_speed + self.speed_mod
     @property
     def word_slots_mod(self):
         return sum([se.word_slots_mod for se in self.status_effects])

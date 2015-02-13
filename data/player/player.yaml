@@ -1,7 +1,6 @@
 Player:
   char: '@' #quotes needed for some symbols
   color: white
-  speed: 10
   body_parts:
     Head:
       health: 15
@@ -12,6 +11,7 @@ Player:
       perception: 9
       strength: 0
       word_slots: 1
+      speed: 1
       traits:
         - ERODED_HEAD
     Torso:
@@ -23,6 +23,7 @@ Player:
       perception: 0
       strength: 3
       word_slots: 3
+      speed: 1
       traits:
         - ERODED_TORSO
     L Arm:
@@ -33,6 +34,7 @@ Player:
       perception: 0
       strength: 6
       word_slots: 2
+      speed: 2
       traits:
         - ERODED_ARM
     R Arm:
@@ -43,6 +45,7 @@ Player:
       perception: 0
       strength: 6
       word_slots: 2
+      speed: 2
       traits:
         - ERODED_ARM
     L Leg:
@@ -53,6 +56,7 @@ Player:
       perception: 0
       strength: 3
       word_slots: 2
+      speed: 2
       traits:
         - ERODED_LEG
     R Leg:
@@ -63,5 +67,6 @@ Player:
       perception: 0
       strength: 3
       word_slots: 2
+      speed: 2
       traits:
         - ERODED_LEG

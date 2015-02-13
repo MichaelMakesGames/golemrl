@@ -351,7 +351,8 @@ class Game:
         for stat in (('Size',self.player.creature.size),
                      ('Agility',self.player.creature.agility),
                      ('Perception',self.player.creature.perception),
-                     ('Strength',self.player.creature.strength)):
+                     ('Strength',self.player.creature.strength),
+                     ('Speed',self.player.creature.speed)):
             x = 2
             self.panel_con.print_string(x,y,'%s: %i'%stat)
             y += 1
