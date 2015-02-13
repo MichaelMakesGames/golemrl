@@ -249,9 +249,15 @@ class Game:
             yamlhelp.merge(data,player_data)
         player_name = player_data.keys()[0]
         player_data = player_data[player_name]
-
+        if 'abilities' in player_data:
+            starting_abilities = player_data['abilities']
+            del player_data['abilities']
+        else:
+            starting_abilities = []
         player_creature = Golem(self,player_name,**player_data)
         player_creature.raw_color = yamlhelp.load_color(player_creature.raw_color)
+        for ability in starting_abilities:
+            player_creature.add_ability(ability)
         for bp_name in player_creature.body_parts:
             bp = player_creature.body_parts[bp_name]
             bp = BodyPart(player_creature,bp_name,**bp)
@@ -272,9 +278,6 @@ class Game:
         for ability in self.abilities.values():
             self.player.add_observer(ability)
             ability.add_observer(self.player.input_handler)
-        self.player.creature.add_ability(self.abilities['HEAL'])
-        self.player.creature.add_ability(self.abilities['CHARGE'])
-        self.player.creature.add_ability(self.abilities['DODGE'])
         for word_id in self.words:
             self.player.words.append(self.words[word_id])
 

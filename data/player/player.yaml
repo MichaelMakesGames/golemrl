@@ -1,6 +1,10 @@
 Player:
   char: '@' #quotes needed for some symbols
   color: white
+  abilities:
+    - HEAL
+    - CHARGE
+    - DODGE
   body_parts:
     Head:
       health: 15
