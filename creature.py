@@ -103,7 +103,6 @@ class Creature:
         return self.breed.speed + self.speed_mod
 
     def update(self):
-        self.energy += self.speed
         if self.energy >= ENERGY_THRESHOLD:
             self.energy -= ENERGY_THRESHOLD
             
@@ -118,6 +117,7 @@ class Creature:
 
             if self.alive:
                 self.ai.update()
+        self.energy += self.speed
 
     def defense_roll(self): #agility - size
         if (self.ai and self.ai.state != AI_FIGHTING):

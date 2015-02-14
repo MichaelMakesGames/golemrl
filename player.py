@@ -100,3 +100,20 @@ class Player(Entity):
             return bp.remove_trait(trait)
         else:
             return Event(EVENT_NONE)
+
+    def update(self):
+        if self.creature.energy >= ENERGY_THRESHOLD:
+            self.creature.energy -= ENERGY_THRESHOLD
+            while not libtcod.console_is_window_closed():
+                libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE,self.game.key, self.game.mouse)
+                self.game.state = self.input_handler(self.game.key,
+                                                     self.game.mouse,
+                                                     self.game.input_state,
+                                                     self.game.menu)
+                if self.game.menu and self.game.state != STATE_MENU:
+                    self.game.menu = None
+                if self.game.state == STATE_PLAYING:
+                    self.creature.update()
+                    return
+        else:
+            self.creature.update()

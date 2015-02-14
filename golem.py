@@ -84,6 +84,7 @@ class Golem(Creature):
     def update(self):
         for bp in self.body_parts.values():
             bp.update()
+        self.energy += self.speed
 
     def take_damage(self,damage_dealt,degree):
         part = self.game.rng.choose_weighted(self.intact_parts,

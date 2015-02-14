@@ -51,6 +51,9 @@ class Game:
         self.state = STATE_PLAYING
         self.input_state = INPUT_NORMAL
 
+        self.key = libtcod.Key()
+        self.mouse = libtcod.Mouse()
+
     @property
     def depth(self):
         return self.player.depth
@@ -392,49 +395,49 @@ class Game:
         self.panel_con.blit()
 
     def play(self):
-        key = libtcod.Key()
-        mouse = libtcod.Mouse()
-
+        self.dungeon.update()
+        self.render_all()
+        libtcod.console_flush()
         t = time.time()
         while not libtcod.console_is_window_closed():
-            libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, key, mouse)
+            #libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS|libtcod.EVENT_MOUSE, self.key, self.mouse)
+
+            #self.state = self.player.input_handler(key,mouse,
+            #                                       self.input_state,
+            #                                       self.menu)
+            #if self.menu and self.state != STATE_MENU:
+            #    self.menu = None
+
+            #if self.state == STATE_PLAYING:
+            #    self.player.creature.energy -= ENERGY_THRESHOLD
+            #while self.state == STATE_PLAYING:
+            player_room = self.cur_level.get_room_at(*self.player.pos)
+            if player_room:
+                active_rooms = [player_room]
+                self.active_region = []
+                for room in player_room.connections:
+                    if room not in active_rooms:
+                        active_rooms.append(room)
+                        for r in room.connections:
+                            if r not in active_rooms:
+                                active_rooms.append(room)
+                for room in active_rooms:
+                    self.active_region += room.tile_positions
+            else:
+                self.active_region = [self.player.pos]
+            self.active_entities=[]
+            for entity in self.entities:
+                if entity.pos in self.active_region:
+                    self.active_entities.append(entity)
+
             self.clear_all()
-
-            self.state = self.player.input_handler(key,mouse,
-                                                   self.input_state,
-                                                   self.menu)
-            if self.menu and self.state != STATE_MENU:
-                self.menu = None
-
-            if self.state == STATE_PLAYING:
-                self.player.creature.energy -= ENERGY_THRESHOLD
-            while self.state == STATE_PLAYING:
-                player_room = self.cur_level.get_room_at(*self.player.pos)
-                if player_room:
-                    active_rooms = [player_room]
-                    self.active_region = []
-                    for room in player_room.connections:
-                        if room not in active_rooms:
-                            active_rooms.append(room)
-                            for r in room.connections:
-                                if r not in active_rooms:
-                                    active_rooms.append(room)
-                    for room in active_rooms:
-                        self.active_region += room.tile_positions
-                else:
-                    self.active_region = [self.player.pos]
-                self.active_entities=[]
-                for entity in self.entities:
-                    if entity.pos in self.active_region:
-                        self.active_entities.append(entity)
-
-                for entity in self.active_entities:
-                    entity.update()
+            for entity in self.active_entities:
+                entity.update()
                     
-                self.player.creature.energy += self.player.creature.speed
-                print self.player.creature.energy
-                if self.player.creature.energy >= ENERGY_THRESHOLD:
-                    self.state = STATE_PAUSED
+                #self.player.creature.energy += self.player.creature.speed
+                #print self.player.creature.energy
+                #if self.player.creature.energy >= ENERGY_THRESHOLD:
+                    #self.state = STATE_PAUSED
 
             self.dungeon.update()
             self.render_all()
